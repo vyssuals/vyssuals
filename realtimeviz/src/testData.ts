@@ -26,6 +26,5 @@ export function generateDummyData() {
             },
         };
         addDataItem(item);
-        console.log('item added')
     }
 }
