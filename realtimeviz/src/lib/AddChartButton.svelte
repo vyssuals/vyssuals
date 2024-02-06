@@ -10,7 +10,7 @@
 
 </script>
 
-<button on:click={handleClick}>Click Me</button>
+<button on:click={handleClick}>Add Diagram</button>
 
 <!-- Render Component B conditionally -->
 {#if $showChartConfigurator}
