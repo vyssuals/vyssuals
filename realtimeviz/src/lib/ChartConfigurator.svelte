@@ -7,23 +7,24 @@
     import { logDiagramInfo } from '../store';
 
   let attributeKeys: string[] = []; // Array to hold unique attribute keys
-  let selectedShowValues: string = '';
-  let selectedGroupBy: string = '';
-
+  
   // Subscribe to changes in the dataset store
   const unsubscribe = dataset.subscribe((value: DataItem[]) => {
-    // Extract all unique attribute keys
-    const allKeys: string[] = value.flatMap(item => Object.keys(item.attributes));
-    attributeKeys = Array.from(new Set(allKeys));
-  });
+      // Extract all unique attribute keys
+      const allKeys: string[] = value.flatMap(item => Object.keys(item.attributes));
+      attributeKeys = Array.from(new Set(allKeys));
+    });
+
+    let selectedShowValues: string = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
+    let selectedGroupBy: string = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
 
   // Unsubscribe after the initial update
   onMount(() => unsubscribe());
 
   const diagramInfo: DiagramInfo = { 
     diagramNumber: getDiagramCount() + 1,
-    groupBy: 'none',
-    showValues: 'none'
+    groupBy: '',
+    showValues: ''
     }
 
   function handleCreateDiagram() {
