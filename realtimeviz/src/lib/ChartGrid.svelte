@@ -37,4 +37,8 @@
         padding: 20px;
         text-align: center;
     }
+
+    .grid-item:hover {
+        filter: drop-shadow(0 0 0.5em #05305548);
+    }
 </style>

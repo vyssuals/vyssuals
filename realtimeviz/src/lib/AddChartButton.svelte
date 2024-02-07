@@ -7,13 +7,12 @@
     showChartConfigurator.set(true);
   }
 
-
 </script>
 
 <button on:click={handleClick}>Add Diagram</button>
 
-<!-- Render Component B conditionally -->
-{#if $showChartConfigurator}
-  <ChartConfigurator />
-{/if}
-
+<style>
+    button:hover {
+    filter: drop-shadow(0 0 0.5em #05305548);
+  }
+</style>

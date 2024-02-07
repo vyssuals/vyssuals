@@ -1,9 +1,10 @@
 <script lang="ts">
-  import Counter from './lib/AddChartButton.svelte'
+  import AddChartButton from './lib/AddChartButton.svelte'
   import { onMount } from 'svelte';
-  import { logDatasetContent } from './store';
+  import { logDatasetContent, showChartConfigurator } from './store';
   import { generateDummyData } from './testData';
   import ChartGrid from './lib/ChartGrid.svelte';
+  import ChartConfigurator from './lib/ChartConfigurator.svelte';
 
   onMount(() => {
     generateDummyData();
@@ -13,28 +14,17 @@
 </script>
 
 <main>
-  <div class="card">
-    <Counter />
-  </div>
-  <div class="card">
+  {#if !$showChartConfigurator}
+    <div >
+      <AddChartButton />
+    </div>
+  {/if}
+  {#if $showChartConfigurator}
+    <div >
+      <ChartConfigurator />
+    </div>
+  {/if}
+  <div >
     <ChartGrid />
   </div>
 </main>
-
-<style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
-</style>
