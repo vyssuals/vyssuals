@@ -30,12 +30,12 @@
 
 <div>
   <h2>Chart Configurator</h2>
-  
+
   <label for="chartType">Chart Type:</label>
   <select id="chartType" bind:value={chartType}> 
-    <option value="bar">Bar Chart</option>
-    <option value="pie">Pie Chart</option>
-    <option value="line">Line Chart</option>
+    <option value="bar">Bar</option>
+    <option value="doughnut">Doughnut</option>
+    <option value="total">Total</option>
   </select>
 
   <label for="showValues">Show Values Of:</label>
@@ -45,12 +45,14 @@
     {/each}
   </select>
 
-  <label for="groupBy">Grouped By:</label>
-  <select id="groupBy" bind:value={selectedGroupBy}>
-    {#each attributeKeys as key}
-      <option value={key}>{key}</option>
-    {/each}
-  </select>
+  {#if !(chartType === 'total')}
+    <label for="groupBy">Grouped By:</label>
+    <select id="groupBy" bind:value={selectedGroupBy}>
+      {#each attributeKeys as key}
+        <option value={key}>{key}</option>
+      {/each}
+    </select>
+  {/if}
 
   <button on:click={handleCreateChart}>Create Diagram</button>
 </div>

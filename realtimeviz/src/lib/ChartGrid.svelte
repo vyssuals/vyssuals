@@ -1,9 +1,8 @@
-<!-- GridFromStore.svelte -->
-
 <script lang="ts">
     import { chartConfigs } from '../store';
     import { onMount } from 'svelte';
     import type { ChartConfig } from '../types';
+    import Chart from './Chart.svelte';
 
     // Define an empty array to hold chart configurations
     let chartConfigurations: ChartConfig[] = [];
@@ -40,7 +39,10 @@
     <div class="grid-container">
         <!-- Iterate over the chart configurations and display their index -->
         {#each chartConfigurations as config, index}
-            <div class="grid-item">{index}</div>
+            <div class="grid-item">
+                {index}
+                <Chart chartIndex={index} />
+            </div>
         {/each}
     </div>
 {/if}
