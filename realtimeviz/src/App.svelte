@@ -18,6 +18,7 @@
   </div>
   <div class="card">
     <ChartGrid />
+  </div>
 </main>
 
 <style>

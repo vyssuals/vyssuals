@@ -1,24 +1,28 @@
 <script lang="ts">
     import { chartConfigs } from '../store';
-    import { onMount } from 'svelte';
-    import type { ChartConfig } from '../types';
     import Chart from './Chart.svelte';
 
-    // Define an empty array to hold chart configurations
-    let chartConfigurations: ChartConfig[] = [];
-
-    // Subscribe to the chartConfigs store and update the local array
-    const unsubscribe = chartConfigs.subscribe(value => {
-        chartConfigurations = value;
-    });
-
-    // Unsubscribe from the store when the component is destroyed
-    onMount(() => {
-        return () => {
-            unsubscribe();
-        };
-    });
+    // Function to remove chart at the given index
+    function removeChart(index: number) {
+        chartConfigs.update(configs => {
+            // Create a new array excluding the chart configuration at the given index
+            const newConfigs = configs.filter((_, i) => i !== index);
+            return newConfigs;
+        });
+    }
 </script>
+
+{#if $chartConfigs.length > 0}
+    <div class="grid-container">
+        <!-- Iterate over the chart configurations and display their index -->
+        {#each $chartConfigs as config, index}
+            <div class="grid-item">
+                <Chart chartConfig={config} />
+                <button on:click={() => removeChart(index)}>Remove</button> <!-- Button to remove chart -->
+            </div>
+        {/each}
+    </div>
+{/if}
 
 <style>
     /* CSS styles for the grid */
@@ -34,15 +38,3 @@
         text-align: center;
     }
 </style>
-
-{#if chartConfigurations.length > 0}
-    <div class="grid-container">
-        <!-- Iterate over the chart configurations and display their index -->
-        {#each chartConfigurations as config, index}
-            <div class="grid-item">
-                {index}
-                <Chart chartIndex={index} />
-            </div>
-        {/each}
-    </div>
-{/if}

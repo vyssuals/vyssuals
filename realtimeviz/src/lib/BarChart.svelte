@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ChartConfig } from "../types";
     import { Bar } from 'svelte-chartjs';
+    import { formatTitle } from "./text";
     
     import {
         Chart,
@@ -25,7 +26,5 @@
   );
 
 </script>
-
-<h1>BarChart</h1>
-<p>{config.type}</p>
+<h2>{formatTitle(config)}</h2>
 <Bar {data} options={{ responsive: true }} />

@@ -1,7 +1,10 @@
+import { startColor, endColor } from '../store';
+import { get } from 'svelte/store';
+
 // function for creating an array of colors. inputs: number of colors, start color, end color.
-export function createColorArray(numColors: number, startColor: string, endColor: string): string[] {
-    const start = hexToRgb(startColor);
-    const end = hexToRgb(endColor);
+export function createColorArray(numColors: number): string[] {
+    const start = hexToRgb(get(startColor));
+    const end = hexToRgb(get(endColor));
     const steps = numColors - 1;
     const colors = [];
     for (let i = 0; i < numColors; i++) {

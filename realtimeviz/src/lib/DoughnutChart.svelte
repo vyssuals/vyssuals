@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ChartConfig } from "../types";
     import { Doughnut } from 'svelte-chartjs';
+    import { formatTitle } from "./text";
     
     import {
       Chart as ChartJS,
@@ -18,6 +19,5 @@
 
 </script>
 
-<h1>DoughnutChart</h1>
-<p>{config.type}</p>
+<h2>{formatTitle(config)}</h2>
 <Doughnut {data} options={{ responsive: true }} />

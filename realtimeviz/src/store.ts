@@ -6,6 +6,8 @@ import type { ChartConfig } from './types';
 
 
 export const showChartConfigurator = writable(false);
+export const startColor: Writable<string> = writable('#4CAF50');
+export const endColor: Writable<string> = writable('#FFC107');
 
 // Dataset
 const initialData: DataItem[] = [];
@@ -32,20 +34,23 @@ export function getAttributeValues(attribute: string): string[] {
 
 
 // aggregate values of a specific attribute, sum if numeric, count if not. inputs: attribute to aggregate, list of labels to aggregate by, attibute key of labels
-export function aggregateAttribute(aggregateAttribute: string, label: string, groupBy: string): number {
+export function aggregateAttributeBy(aggregateAttribute: string, label: string, groupBy: string): number {
     let result = 0;
     dataset.subscribe(data => {
         data.forEach(item => {
             if (item.attributes[groupBy] === label) {
                 if (aggregateAttribute in item.attributes) {
-                    result += item.attributes[aggregateAttribute];
+                    if (!isNaN(item.attributes[aggregateAttribute])) {
+                        result += item.attributes[aggregateAttribute];
+                    } else {
+                        result += 1; // Increment the count if the attribute is not a number
+                    }
                 }
             }
         });
     })();
     return result;
 }
-
 
 
 export function logDatasetContent() {
@@ -61,15 +66,22 @@ export function logDatasetContent() {
 // create store for list of ChartConfigs
 export const chartConfigs: Writable<ChartConfig[]> = writable([]);
 
+// Subscribe to chartConfigs changes and log its value
+// const unsubscribeChartConfigs = chartConfigs.subscribe(value => {
+//     console.log('chartConfigs updated:', value);
+// });
+
 export function addChartConfig(config: ChartConfig) {
     chartConfigs.update(data => [...data, config]);
 }
 
 // function for creating a chart config, returns chartconfig
-export function createChartConfig(type: string, data: any, options: any): ChartConfig {
+export function createChartConfig(type: string, data: any, showValues: string, groupBy: string ,options: any): ChartConfig {
     return {
         type: type,
         data: data,
+        showValues: showValues,
+        groupBy: groupBy,
         options: options
     };
 }
@@ -84,7 +96,7 @@ export function createChartData(labels: string[], datasets: any[]): any {
 
 // function for creating chart dataset, returns chart dataset
 export function createChartDataset(label: string, data: number[], ): any {
-    let backgroundColor = createColorArray(data.length, '#4CAF50', '#FFC107');
+    let backgroundColor = createColorArray(data.length);
     let borderWidth = 2;
     let borderColor = darkenColors(backgroundColor);
     
@@ -101,10 +113,10 @@ export function createChartDataset(label: string, data: number[], ): any {
 export function createChartConfigFromDiagram(chartType: string, groupBy: string, showValues: string): void {
     const labels = getAttributeValues(groupBy);
     const data = createChartData(labels, [
-        createChartDataset(showValues, labels.map(label => aggregateAttribute(showValues, label, groupBy)))
+        createChartDataset(showValues, labels.map(label => aggregateAttributeBy(showValues, label, groupBy)))
     ]);
     const options = {};
-    addChartConfig(createChartConfig(chartType, data, options));
+    addChartConfig(createChartConfig(chartType, data, showValues, groupBy, options));
 }
 
 export function logChartConfigs() {

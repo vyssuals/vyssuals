@@ -3,7 +3,8 @@
     import { dataset, logChartConfigs } from '../store';
     import { showChartConfigurator } from '../store';
     import type { DataItem } from '../types';
-    import { createChartConfigFromDiagram } from '../store';
+    import { createChartConfigFromDiagram as createChartConfigFromSelection } from '../store';
+    import ColorSelector from './ColorSelector.svelte';
 
   let attributeKeys: string[] = []; // Array to hold unique attribute keys
   
@@ -22,9 +23,8 @@
   onMount(() => unsubscribe());
 
   function handleCreateChart() {
-    createChartConfigFromDiagram(chartType, selectedGroupBy, selectedShowValues);
+    createChartConfigFromSelection(chartType, selectedGroupBy, selectedShowValues);
     showChartConfigurator.update(value => !value);
-    logChartConfigs();
   }
 </script>
 
@@ -54,5 +54,8 @@
     </select>
   {/if}
 
+  <ColorSelector />
+
   <button on:click={handleCreateChart}>Create Diagram</button>
+  <button on:click={() => showChartConfigurator.update(value => !value)}>Cancel</button>
 </div>

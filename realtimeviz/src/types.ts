@@ -18,5 +18,7 @@ export interface Data {
   export interface ChartConfig {
     type: string;
     data: Data;
+    showValues: string;
+    groupBy: string;
     options: Record<string, any>;
   }
