@@ -1,10 +1,9 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { dataset } from '../store';
+    import { dataset, logChartConfigs } from '../store';
     import { showChartConfigurator } from '../store';
-    import { getDiagramCount, addDiagramInfo } from '../store';
-    import type { DataItem, DiagramInfo } from '../types';
-    import { logDiagramInfo } from '../store';
+    import type { DataItem } from '../types';
+    import { createChartConfigFromDiagram } from '../store';
 
   let attributeKeys: string[] = []; // Array to hold unique attribute keys
   
@@ -21,18 +20,10 @@
   // Unsubscribe after the initial update
   onMount(() => unsubscribe());
 
-  const diagramInfo: DiagramInfo = { 
-    diagramNumber: getDiagramCount() + 1,
-    groupBy: '',
-    showValues: ''
-    }
-
-  function handleCreateDiagram() {
-    diagramInfo.groupBy = selectedGroupBy;
-    diagramInfo.showValues = selectedShowValues;
-    addDiagramInfo(diagramInfo);
+  function handleCreateChart() {
+    createChartConfigFromDiagram(selectedGroupBy, selectedShowValues);
     showChartConfigurator.update(value => !value);
-    logDiagramInfo();
+    logChartConfigs();
   }
 </script>
 
@@ -51,5 +42,5 @@
     {/each}
   </select>
 
-  <button on:click={handleCreateDiagram}>Create Diagram</button>
+  <button on:click={handleCreateChart}>Create Diagram</button>
 </div>

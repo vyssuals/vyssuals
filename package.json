@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "chart.js": "^4.4.1",
+    "svelte-chartjs": "^3.1.5"
+  }
+}

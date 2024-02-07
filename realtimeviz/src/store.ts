@@ -1,6 +1,8 @@
 import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
-import type { DataItem, DiagramInfo } from './types';
+import type { DataItem } from './types';
+import { createColorArray, darkenColors } from './lib/colors';
+import type { ChartConfig } from './types';
 
 
 export const showChartConfigurator = writable(false);
@@ -13,6 +15,39 @@ export function addDataItem(item: DataItem) {
     dataset.update(data => [...data, item]);
 }
 
+// get all unique values of a specific attribute
+export function getAttributeValues(attribute: string): string[] {
+    let result: string[] = [];
+    dataset.subscribe(data => {
+        data.forEach(item => {
+            if (attribute in item.attributes) {
+                if (!result.includes(item.attributes[attribute])) {
+                    result.push(item.attributes[attribute]);
+                }
+            }
+        });
+    })();
+    return result;
+}
+
+
+// aggregate values of a specific attribute, sum if numeric, count if not. inputs: attribute to aggregate, list of labels to aggregate by, attibute key of labels
+export function aggregateAttribute(aggregateAttribute: string, label: string, groupBy: string): number {
+    let result = 0;
+    dataset.subscribe(data => {
+        data.forEach(item => {
+            if (item.attributes[groupBy] === label) {
+                if (aggregateAttribute in item.attributes) {
+                    result += item.attributes[aggregateAttribute];
+                }
+            }
+        });
+    })();
+    return result;
+}
+
+
+
 export function logDatasetContent() {
     console.log('Dataset:');
     dataset.subscribe(value => {
@@ -22,27 +57,61 @@ export function logDatasetContent() {
     })();
 }
 
-// Diagrams
-const initialDiagramInfo: DiagramInfo[] = [];
-export const diagramsInfo: Writable<DiagramInfo[]> = writable(initialDiagramInfo)
 
-export function addDiagramInfo(item: DiagramInfo) {
-    diagramsInfo.update(data => [...data, item])
+// create store for list of ChartConfigs
+export const chartConfigs: Writable<ChartConfig[]> = writable([]);
+
+export function addChartConfig(config: ChartConfig) {
+    chartConfigs.update(data => [...data, config]);
 }
 
-export function getDiagramCount(): number {
-    let count = 0;
-    diagramsInfo.subscribe(diagrams => {
-        count = diagrams.length;
-    });
-    return count;
+// function for creating a chart config, returns chartconfig
+export function createChartConfig(type: string, data: any, options: any): ChartConfig {
+    return {
+        type: type,
+        data: data,
+        options: options
+    };
 }
 
-export function logDiagramInfo() {
-    console.log('Diagrams:');
-    diagramsInfo.subscribe(value => {
+// function for creating chart data, returns chart data
+export function createChartData(labels: string[], datasets: any[]): any {
+    return {
+        labels: labels,
+        datasets: datasets
+    };
+}
+
+// function for creating chart dataset, returns chart dataset
+export function createChartDataset(label: string, data: number[], ): any {
+    let backgroundColor = createColorArray(data.length, '#4CAF50', '#FFC107');
+    let borderWidth = 2;
+    let borderColor = darkenColors(backgroundColor);
+    
+    return {
+        label: label,
+        data: data,
+        backgroundColor: backgroundColor,
+        borderWidth: borderWidth,
+        borderColor: borderColor
+    };
+}
+
+// function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
+export function createChartConfigFromDiagram(groupBy: string, showValues: string): void {
+    const labels = getAttributeValues(groupBy);
+    const data = createChartData(labels, [
+        createChartDataset(showValues, labels.map(label => aggregateAttribute(showValues, label, groupBy)))
+    ]);
+    const options = {};
+    addChartConfig(createChartConfig('bar', data, options));
+}
+
+export function logChartConfigs() {
+    console.log('ChartConfigs:');
+    chartConfigs.subscribe(value => {
         value.forEach(item => {
-            console.log(`Number: ${item.diagramNumber}, groupBy: ${item.groupBy}, showValues: ${item.showValues}`);
+            console.log(`Type: ${item.type}, Data:`, item.data, `Options:`, item.options);
         });
     })();
 }
