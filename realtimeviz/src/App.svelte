@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { logDatasetContent } from './store';
   import { generateDummyData } from './testData';
+  import ChartGrid from './lib/ChartGrid.svelte';
 
   onMount(() => {
     generateDummyData();
@@ -15,6 +16,8 @@
   <div class="card">
     <Counter />
   </div>
+  <div class="card">
+    <ChartGrid />
 </main>
 
 <style>

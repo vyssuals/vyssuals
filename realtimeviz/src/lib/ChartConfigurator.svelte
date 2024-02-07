@@ -13,7 +13,8 @@
       const allKeys: string[] = value.flatMap(item => Object.keys(item.attributes));
       attributeKeys = Array.from(new Set(allKeys));
     });
-
+    
+    let chartType: string = 'bar';
     let selectedShowValues: string = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
     let selectedGroupBy: string = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
 
@@ -21,13 +22,22 @@
   onMount(() => unsubscribe());
 
   function handleCreateChart() {
-    createChartConfigFromDiagram(selectedGroupBy, selectedShowValues);
+    createChartConfigFromDiagram(chartType, selectedGroupBy, selectedShowValues);
     showChartConfigurator.update(value => !value);
     logChartConfigs();
   }
 </script>
 
 <div>
+  <h2>Chart Configurator</h2>
+  
+  <label for="chartType">Chart Type:</label>
+  <select id="chartType" bind:value={chartType}> 
+    <option value="bar">Bar Chart</option>
+    <option value="pie">Pie Chart</option>
+    <option value="line">Line Chart</option>
+  </select>
+
   <label for="showValues">Show Values Of:</label>
   <select id="showValues" bind:value={selectedShowValues}>
     {#each attributeKeys as key}

@@ -98,13 +98,13 @@ export function createChartDataset(label: string, data: number[], ): any {
 }
 
 // function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
-export function createChartConfigFromDiagram(groupBy: string, showValues: string): void {
+export function createChartConfigFromDiagram(chartType: string, groupBy: string, showValues: string): void {
     const labels = getAttributeValues(groupBy);
     const data = createChartData(labels, [
         createChartDataset(showValues, labels.map(label => aggregateAttribute(showValues, label, groupBy)))
     ]);
     const options = {};
-    addChartConfig(createChartConfig('bar', data, options));
+    addChartConfig(createChartConfig(chartType, data, options));
 }
 
 export function logChartConfigs() {
