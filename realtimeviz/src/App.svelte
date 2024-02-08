@@ -11,6 +11,7 @@
     // generate more dummy data every 5 seconds
     setInterval(() => {
       generateDummyData();
+      console.log('Generated more dummy data');
     }, 5000);
     logDatasetContent(); // Call logDatasetContent after generateDummyData
 });

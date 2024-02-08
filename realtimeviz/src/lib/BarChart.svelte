@@ -1,7 +1,9 @@
 <script lang="ts">
     import type { ChartConfig } from "../types";
+    import { chartConfigs, dataset } from "../store";
     import { Bar } from 'svelte-chartjs';
     import { formatTitle } from "./text";
+    import { createChartData } from "./dataUtils";
     
     import {
         Chart,
@@ -13,8 +15,14 @@
         LinearScale,
     } from 'chart.js';
 
-    export let config: ChartConfig;
-    const data = config.data;
+    export let index: number;
+    let data: any;
+    let config: ChartConfig;
+    
+    $: {
+      config = $chartConfigs[index];
+      data = createChartData($dataset, config);
+    }
 
     Chart.register(
     Title,

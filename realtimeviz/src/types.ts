@@ -4,7 +4,7 @@ export interface DataItem {
 }
 
 
-export interface Data {
+export interface ChartData {
     labels: string[];
     datasets: {
       label: string;
@@ -17,8 +17,6 @@ export interface Data {
 
   export interface ChartConfig {
     type: string;
-    data: Data;
     showValues: string;
     groupBy: string;
-    options: Record<string, any>;
   }

@@ -5,8 +5,8 @@ import { get } from 'svelte/store';
 export function createColorArray(numColors: number): string[] {
     const start = hexToRgb(get(startColor));
     const end = hexToRgb(get(endColor));
-    const steps = numColors - 1;
-    const colors = [];
+    const steps: number = numColors - 1;
+    const colors: string[] = [];
     for (let i = 0; i < numColors; i++) {
         const rgb = {
             r: Math.round(start.r + (end.r - start.r) * (i / steps)),

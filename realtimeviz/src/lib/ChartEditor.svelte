@@ -1,15 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getUniqueAttributeKeys } from '../store';
-  import { saveChartConfig } from '../store';
+  import { dataset } from '../store';
   import { startColor, endColor, editChartIndex, showChartEditor, chartConfigs } from "../store";
+  import { getUniqueAttributeKeys,  } from './dataUtils';
+  import type { ChartConfig } from '../types';
 
 
   let chartType: string;
   let selectedShowValues: string;
   let selectedGroupBy: string;
 
-  let attributeKeys = getUniqueAttributeKeys();
+  let attributeKeys = getUniqueAttributeKeys($dataset);
 
   if ($editChartIndex === -1) {
     // In this scenario, we are creating a new chart, 
@@ -45,6 +46,60 @@
       editChartIndex.set(-1);
     }
   }
+
+export function addChartConfig(config: ChartConfig) {
+    chartConfigs.update(data => [...data, config]);
+}
+
+
+// function for creating a chart config, returns chartconfig
+export function createChartConfig(type: string, showValues: string, groupBy: string): ChartConfig {
+    return {
+        type: type,
+        showValues: showValues,
+        groupBy: groupBy,
+    };
+}
+
+// function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
+export function saveChartConfig(chartType: string, groupBy: string, showValues: string): void {
+    const config = createChartConfig(chartType, showValues, groupBy);
+    editChartIndex.subscribe((index) => {
+        if (index > -1) {
+            updateChartConfig(config, index);
+        } 
+        else 
+        {
+        addChartConfig(config);
+        }
+    })();
+}
+// // function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
+// export function saveChartConfig(chartType: string, groupBy: string, showValues: string): void {
+//     const labels = getAttributeValues($dataset, groupBy);
+//     const data = createChartData(labels, [
+//         createChartDataset(showValues, labels.map(label => aggregateAttributeBy($dataset, showValues, label, groupBy)))
+//     ]);
+//     const options = {};
+//     const config = createChartConfig(chartType, data, showValues, groupBy, options);
+//     editChartIndex.subscribe((index) => {
+//         if (index > -1) {
+//             updateChartConfig(config, index);
+//         } 
+//         else 
+//         {
+//         addChartConfig(config);
+//         }
+//     })();
+// }
+
+export function updateChartConfig(config: ChartConfig, index: number) {
+    chartConfigs.update(data => {
+        data[index] = config;
+        return data;
+    });
+}
+
 
   onMount(() => {
     setTimeout(() => {

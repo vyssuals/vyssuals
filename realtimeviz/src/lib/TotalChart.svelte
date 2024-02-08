@@ -1,13 +1,20 @@
 <script lang="ts">
     import type { ChartConfig } from "../types";
+    import { chartConfigs, dataset } from "../store";
     import { titleCase } from "./text";
-    export let config: ChartConfig;
+    import { getAttributeValues } from "./dataUtils";
 
-    // sum all values of config.data.datasets[0].data
-    let total = 0;
-    config.data.datasets[0].data.forEach((value: number) => {
-        total += value;
-    });
+    export let index: number;
+    let config: ChartConfig;
+
+    let total:number = 0;
+
+    $: {
+      config = $chartConfigs[index];
+        let values = getAttributeValues($dataset, config.showValues);
+        // convert all values to numbers and sum them
+        total = values.map(Number).reduce((a, b) => a + b, 0);
+    }
 
 </script>
 

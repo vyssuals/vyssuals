@@ -22,7 +22,7 @@
     <div class="grid-container">
         {#each $chartConfigs as config, index}
             <div class="grid-item">
-                <Chart chartConfig={config} />
+                <Chart index={index} />
                 <button class="close-button" on:click={() => handleRemoveChart(index)}>x</button>
                 <button class="edit-button" on:click={() => handleEditChart(index)}>...</button>             
             </div>
