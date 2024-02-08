@@ -33,6 +33,15 @@
     LinearScale
   );
 
+  let options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
+  }
+
 </script>
 <h2>{formatTitle(config)}</h2>
-<Bar {data} options={{ responsive: true }} />
+<Bar {data} {options} />

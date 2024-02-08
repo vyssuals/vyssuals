@@ -62,14 +62,14 @@ export function createChartData(dataset: DataItem[], chartConfig: ChartConfig): 
 // function for creating chart dataset, returns chart dataset
 export function createChartDataset(label: string, data: number[], ): any {
 let backgroundColor = createColorArray(data.length);
-let borderWidth = 2;
-let borderColor = darkenColors(backgroundColor);
-
 return {
     label: label,
     data: data,
     backgroundColor: backgroundColor,
-    borderWidth: borderWidth,
-    borderColor: borderColor
+    borderWidth: 2,
+    // borderColor: darkenColors(backgroundColor),
+    borderColor: '#ffffff00',
+    borderRadius: 5,
+    offset: 5
 };
 }
