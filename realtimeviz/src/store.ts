@@ -6,6 +6,8 @@ import type { ChartConfig } from './types';
 
 
 export const showChartEditor = writable(false);
+export const editChartIndex: Writable<number> = writable(-1);
+
 export const startColor: Writable<string> = writable('#4CAF50');
 export const endColor: Writable<string> = writable('#FFC107');
 
@@ -15,6 +17,20 @@ export const dataset: Writable<DataItem[]> = writable(initialData);
 
 export function addDataItem(item: DataItem) {
     dataset.update(data => [...data, item]);
+}
+
+export function getUniqueAttributeKeys(): string[] {
+    let result: string[] = [];
+    dataset.subscribe(data => {
+        data.forEach(item => {
+            Object.keys(item.attributes).forEach(key => {
+                if (!result.includes(key)) {
+                    result.push(key);
+                }
+            });
+        });
+    })();
+    return result;
 }
 
 // get all unique values of a specific attribute
@@ -110,13 +126,29 @@ export function createChartDataset(label: string, data: number[], ): any {
 }
 
 // function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
-export function createChartConfigFromSelection(chartType: string, groupBy: string, showValues: string): void {
+export function saveChartConfig(chartType: string, groupBy: string, showValues: string): void {
     const labels = getAttributeValues(groupBy);
     const data = createChartData(labels, [
         createChartDataset(showValues, labels.map(label => aggregateAttributeBy(showValues, label, groupBy)))
     ]);
     const options = {};
-    addChartConfig(createChartConfig(chartType, data, showValues, groupBy, options));
+    const config = createChartConfig(chartType, data, showValues, groupBy, options);
+    editChartIndex.subscribe((index) => {
+        if (index > -1) {
+            updateChartConfig(config, index);
+        } 
+        else 
+        {
+        addChartConfig(config);
+        }
+    })();
+}
+
+export function updateChartConfig(config: ChartConfig, index: number) {
+    chartConfigs.update(data => {
+        data[index] = config;
+        return data;
+    });
 }
 
 export function logChartConfigs() {

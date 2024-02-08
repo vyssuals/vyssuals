@@ -4,10 +4,14 @@
   import { logDatasetContent, showChartEditor } from './store';
   import { generateDummyData } from './testData';
   import ChartGrid from './lib/ChartGrid.svelte';
-  import ChartConfigurator from './lib/ChartEditor.svelte';
+  import ChartEditor from './lib/ChartEditor.svelte';
 
   onMount(() => {
     generateDummyData();
+    // generate more dummy data every 5 seconds
+    setInterval(() => {
+      generateDummyData();
+    }, 5000);
     logDatasetContent(); // Call logDatasetContent after generateDummyData
 });
 
@@ -15,9 +19,9 @@
 
 <main>
   {#if $showChartEditor}
-  <div >
-    <ChartConfigurator />
-  </div>
+    <div >
+      <ChartEditor />
+    </div>
   {/if}
   <div >
     <ChartGrid />

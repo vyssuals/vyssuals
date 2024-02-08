@@ -5,7 +5,7 @@ export function formatTitle(chartConfig: ChartConfig): string {
 }
 
 // title case function
-function titleCase(str: string): string {
+export function titleCase(str: string): string {
     return str.toLowerCase().split(' ').map(function(word) {
         return word.replace(word[0], word[0].toUpperCase());
     }).join(' ');

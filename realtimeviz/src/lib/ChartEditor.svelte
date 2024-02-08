@@ -1,37 +1,48 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import { dataset } from '../store';
-    import { showChartEditor } from '../store';
-    import type { DataItem } from '../types';
-    import { createChartConfigFromSelection } from '../store';
+  import { onMount } from 'svelte';
+  import { getUniqueAttributeKeys } from '../store';
+  import { saveChartConfig } from '../store';
+  import { startColor, endColor, editChartIndex, showChartEditor, chartConfigs } from "../store";
 
-    import { startColor, endColor } from "../store";
 
-  let attributeKeys: string[] = []; // Array to hold unique attribute keys
-  
-  // Subscribe to changes in the dataset store
-  const unsubscribe = dataset.subscribe((value: DataItem[]) => {
-      // Extract all unique attribute keys
-      const allKeys: string[] = value.flatMap(item => Object.keys(item.attributes));
-      attributeKeys = Array.from(new Set(allKeys));
-    });
-    
-    let chartType: string = 'bar';
-    let selectedShowValues: string = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
-    let selectedGroupBy: string = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
+  let chartType: string;
+  let selectedShowValues: string;
+  let selectedGroupBy: string;
 
-  // Unsubscribe after the initial update
-  onMount(() => unsubscribe());
+  let attributeKeys = getUniqueAttributeKeys();
+
+  if ($editChartIndex === -1) {
+    // In this scenario, we are creating a new chart, 
+    // so we set the default values to the first attribute key
+    selectedShowValues = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
+    selectedGroupBy = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
+    chartType = 'bar';
+  }
+  else 
+  {
+    // In this scenario, we are editing an existing chart,
+    // so we set the default values to the values of the chart being edited
+    selectedShowValues = $chartConfigs[$editChartIndex].showValues;
+    selectedGroupBy = $chartConfigs[$editChartIndex].groupBy;
+    chartType = $chartConfigs[$editChartIndex].type;
+  }
 
   function handleCreateChart() {
-    createChartConfigFromSelection(chartType, selectedGroupBy, selectedShowValues);
+    saveChartConfig(chartType, selectedGroupBy, selectedShowValues);
     showChartEditor.update(value => !value);
+  }
+
+  function handleUpdateChart() {
+    saveChartConfig(chartType, selectedGroupBy, selectedShowValues);
+    showChartEditor.update(value => !value);
+    editChartIndex.set(-1);
   }
 
   function handleClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
     if (!target.closest('.chart-editor')) {
       showChartEditor.set(false);
+      editChartIndex.set(-1);
     }
   }
 
@@ -88,7 +99,11 @@
       <input type="color" id="endColor" bind:value={$endColor} />
     </div>
 
-    <button on:click={handleCreateChart}>Create Diagram</button>
+    {#if $editChartIndex > -1}
+      <button on:click={handleUpdateChart}>Update Chart</button>
+    {:else}
+    <button on:click={handleCreateChart}>Create Chart</button>
+    {/if}
   </div>
 
 </div>
