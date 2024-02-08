@@ -5,7 +5,7 @@ import { createColorArray, darkenColors } from './lib/colors';
 import type { ChartConfig } from './types';
 
 
-export const showChartConfigurator = writable(false);
+export const showChartEditor = writable(false);
 export const startColor: Writable<string> = writable('#4CAF50');
 export const endColor: Writable<string> = writable('#FFC107');
 
@@ -110,7 +110,7 @@ export function createChartDataset(label: string, data: number[], ): any {
 }
 
 // function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
-export function createChartConfigFromDiagram(chartType: string, groupBy: string, showValues: string): void {
+export function createChartConfigFromSelection(chartType: string, groupBy: string, showValues: string): void {
     const labels = getAttributeValues(groupBy);
     const data = createChartData(labels, [
         createChartDataset(showValues, labels.map(label => aggregateAttributeBy(showValues, label, groupBy)))

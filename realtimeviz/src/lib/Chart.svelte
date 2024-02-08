@@ -1,6 +1,5 @@
 <!-- Chart.svelte -->
 <script lang="ts">
-    import { onMount } from 'svelte';
     import { type ChartConfig } from '../types'; // Define your types for data and config
     import BarChart from './BarChart.svelte';
     import DoughnutChart from './DoughnutChart.svelte';

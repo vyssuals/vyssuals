@@ -10,5 +10,5 @@
 
 </script>
 
-<h1>Total</h1>
-<p>{total}</p>
+<h2>Total</h2>
+<h1>{total}</h1>
