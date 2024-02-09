@@ -74,24 +74,6 @@ export function saveChartConfig(chartType: string, groupBy: string, showValues: 
         }
     })();
 }
-// // function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
-// export function saveChartConfig(chartType: string, groupBy: string, showValues: string): void {
-//     const labels = getAttributeValues($dataset, groupBy);
-//     const data = createChartData(labels, [
-//         createChartDataset(showValues, labels.map(label => aggregateAttributeBy($dataset, showValues, label, groupBy)))
-//     ]);
-//     const options = {};
-//     const config = createChartConfig(chartType, data, showValues, groupBy, options);
-//     editChartIndex.subscribe((index) => {
-//         if (index > -1) {
-//             updateChartConfig(config, index);
-//         } 
-//         else 
-//         {
-//         addChartConfig(config);
-//         }
-//     })();
-// }
 
 export function updateChartConfig(config: ChartConfig, index: number) {
     chartConfigs.update(data => {
