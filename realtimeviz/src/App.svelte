@@ -9,15 +9,15 @@
   import Instructions from './lib/Instructions.svelte';
     import Connector from './lib/connectors/Connector.svelte';
 
-//   onMount(() => {
-//     generateDummyData();
-//     // generate more dummy data every 5 seconds
-//     setInterval(() => {
-//       generateDummyData();
-//       console.log('Generated more dummy data');
-//     }, 5000);
-//     logDatasetContent(); // Call logDatasetContent after generateDummyData
-// });
+  onMount(() => {
+    generateDummyData();
+    // generate more dummy data every 5 seconds
+    setInterval(() => {
+      generateDummyData();
+      console.log('Generated more dummy data');
+    }, 5000);
+    logDatasetContent(); // Call logDatasetContent after generateDummyData
+});
 </script>
 
 <main>
@@ -56,5 +56,8 @@
     color: #7d7d7d;
     font-style: italic;
     font-weight: 300;
+  }
+  a:hover {
+    color: #05ACFF;
   }
 </style>

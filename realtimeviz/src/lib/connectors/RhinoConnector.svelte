@@ -1,1 +1,1 @@
-<h1>rhino connector</h1>
+<h1>Rhino Connector</h1>

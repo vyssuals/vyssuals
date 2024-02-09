@@ -2,6 +2,7 @@
   import RevitConnector from "./RevitConnector.svelte";
   import RhinoConnector from "./RhinoConnector.svelte";
   import { showConnector } from "../store";
+  import { onMount } from 'svelte';
 
 let connector: any;
 
@@ -16,13 +17,34 @@ switch($showConnector) {
     console.error('Invalid connector specified');
 }
 
+
+function handleClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.connector')) {
+      showConnector.set('');
+
+    }
+  }
+
+  onMount(() => {
+    setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 100); // Add a delay of 100 milliseconds
+    
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  });
+
 </script>
 
 <div class="connector-overlay">
+  <div class="connector">
+
 {#if connector}
   <svelte:component this={connector} />
 {/if}
-<h1>Test</h1>
+</div>
 </div>
 
 <style>
@@ -37,6 +59,16 @@ switch($showConnector) {
       align-items: center;
       z-index: 9999;
       filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
+    }
+
+    .connector {
+        display: flex;
+        flex-direction: column;
+        max-width: 300px;
+        gap: 10px;
+        background-color: var(--card-background-color);
+        border-radius: 1em;
+        padding: 1em;
     }
   
 </style>
