@@ -1,8 +1,8 @@
 <script lang="ts">
   import AddChartButton from './lib/AddChartButton.svelte'
   import { onMount } from 'svelte';
-  import { logDatasetContent, showChartEditor } from './store';
-  import { generateDummyData } from './testData';
+  import { logDatasetContent, showChartEditor } from './lib/store';
+  import { generateDummyData } from './lib/tests/testData';
   import ChartGrid from './lib/ChartGrid.svelte';
   import ChartEditor from './lib/ChartEditor.svelte';
 

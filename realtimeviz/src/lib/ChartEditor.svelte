@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { dataset } from '../store';
-  import { startColor, endColor, editChartIndex, showChartEditor, chartConfigs } from "../store";
-  import { getUniqueAttributeKeys,  } from './dataUtils';
-  import type { ChartConfig } from '../types';
+  import { dataset } from './store';
+  import { startColor, endColor, editChartIndex, showChartEditor, chartConfigs } from './store';
+  import { getUniqueAttributeKeys,  } from './utils/dataUtils';
+  import type { ChartConfig } from './types';
 
 
   let chartType: string;

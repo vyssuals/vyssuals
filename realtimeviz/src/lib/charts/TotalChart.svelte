@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { ChartConfig, DataItem } from "../types";
     import { chartConfigs, dataset } from "../store";
-    import { titleCase } from "./text";
-    import { getAttributeValues, allAttributeValuesAreNumbers } from "./dataUtils";
+    import { titleCase } from "../utils/textUtils";
+    import { getAttributeValues, allAttributeValuesAreNumbers } from "../utils/dataUtils";
 
     export let index: number;
     let config: ChartConfig;

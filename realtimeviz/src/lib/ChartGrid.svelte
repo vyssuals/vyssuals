@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { chartConfigs, editChartIndex } from '../store';
-    import Chart from './Chart.svelte';
-    import { showChartEditor } from '../store';
+    import { chartConfigs, editChartIndex } from './store';
+    import Chart from './charts/Chart.svelte';
+    import { showChartEditor } from './store';
 
     function handleRemoveChart(index: number) {
         chartConfigs.update(configs => {

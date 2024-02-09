@@ -2,8 +2,8 @@
     import type { ChartConfig } from "../types";
     import { chartConfigs, dataset } from "../store";
     import { Bar } from 'svelte-chartjs';
-    import { formatTitle } from "./text";
-    import { createChartData } from "./dataUtils";
+    import { formatTitle } from "../utils/textUtils";
+    import { createChartData } from "../utils/dataUtils";
     
     import {
         Chart,

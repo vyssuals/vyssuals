@@ -1,7 +1,7 @@
 // testData.ts
 
-import { type DataItem } from './types';
-import { addDataItem } from './store';
+import { type DataItem } from '../types';
+import { addDataItem } from '../store';
 
 // Function to generate a random number between min and max (inclusive)
 function getRandomNumber(min: number, max: number): number {

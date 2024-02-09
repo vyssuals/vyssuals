@@ -1,5 +1,5 @@
 <script>
-  import { showChartEditor } from '../store';
+  import { showChartEditor } from './store';
 
 
   function handleClick() {

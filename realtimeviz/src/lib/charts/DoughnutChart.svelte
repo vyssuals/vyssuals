@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { ChartConfig } from "../types";
     import { Doughnut } from 'svelte-chartjs';
-    import { formatTitle } from "./text";
-    import { createChartData } from "./dataUtils";
+    import { formatTitle } from "../utils/textUtils";
+    import { createChartData } from "../utils/dataUtils";
     import { chartConfigs, dataset } from "../store";
     
     import {
