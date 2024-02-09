@@ -163,7 +163,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    filter: drop-shadow(0 0 0.5em #05305548);
+    filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
   }
 
   .chart-editor {
@@ -184,7 +184,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
   }
 
   label {
-    font-weight: medium;
+    font-weight: 600;
     align-self: center;
   }
   
@@ -210,6 +210,6 @@ export function updateChartConfig(config: ChartConfig, index: number) {
   }
 
   button:hover {
-    filter: drop-shadow(0 0 0.2em #4e4f4f48);
+    filter: drop-shadow(0 0 0.2em #4f4f4f48);
   }
-</style>
+</style> 
