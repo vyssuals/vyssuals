@@ -15,12 +15,11 @@
   button {
     margin-top: 2em;
     border: none;
-    background-image: linear-gradient(to right, #05acffa0, #dc0999a8);
+    background-image: linear-gradient(to left, #05acffa0, #dc0999a8);
     color: white;
-    /* -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent; */
   }
     button:hover {
       filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
+      color: black;
     }
 </style>

@@ -186,8 +186,9 @@ export function updateChartConfig(config: ChartConfig, index: number) {
   }
 
   label {
-    font-weight: 500;
+    font-weight: 300;
     align-self: center;
+    font-size: 0.9em;
   }
   
   select {
@@ -205,13 +206,15 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     border: none;
   }
   button {
-    padding: 10px;
-    background-color: #00000029;
+    background-color: var(--background-color);
     border: none;
+    color: var(--color);
     cursor: pointer;
+
   }
 
   button:hover {
-    filter: drop-shadow(0 0 0.2em #4f4f4f48);
+    filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
+    color: #05acffa0;
   }
 </style> 

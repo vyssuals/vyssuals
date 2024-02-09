@@ -52,7 +52,7 @@
     }
 
     .grid-item:hover {
-        filter: drop-shadow(0 0 0.5em #4e4f4f48);
+        filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
     }
 
     .grid-item:hover .close-button {

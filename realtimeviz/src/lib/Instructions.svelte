@@ -7,8 +7,8 @@
 </script>
 
 <h1 class="gradient-text">Vyssuals</h1>
-<h2>Data Visualisation for Desktop Applications</h2>
-<p>Download and Install Live Connector:</p>
+<h2>Real-Time Browser Data Visualisation</h2>
+<p>Connector Plugins:</p>
 <div>
     <button on:click={() => handleClickConnector('revit')}>Revit</button>
     <button on:click={() => handleClickConnector('rhino')}>Rhino</button>
@@ -23,9 +23,10 @@
     }
     button {
         text-decoration: none;
-        color: rgb(45, 45, 45);
+        /* color: rgb(45, 45, 45); */
         margin: 0.6em;
-        font-weight: 300;
+        background-color: var(--card-background-color);
+        /* font-weight: 300; */
     }
 
     button:hover {
