@@ -31,15 +31,25 @@
 {/if}
 
 <style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(300px, 1fr)); /* 3 columns with a minimum width of 300px */
+        gap: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
 
+    @media (max-width: 900px) {
         .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(300px, 1fr)); /* 3 columns with a minimum width of 200px */
-            gap: 10px;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(2, minmax(300px, 1fr)); /* 2 columns with a minimum width of 300px */
         }
+    }
 
+    @media (max-width: 600px) {
+        .grid-container {
+            grid-template-columns: repeat(1, minmax(300px, 1fr)); /* 1 column with a minimum width of 300px */
+        }
+    }
 
     .grid-item:hover {
         filter: drop-shadow(0 0 0.5em #4e4f4f48);

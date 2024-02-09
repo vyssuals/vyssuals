@@ -2,7 +2,7 @@
     import type { ChartConfig, DataItem } from "../types";
     import { chartConfigs, dataset } from "../store";
     import { titleCase } from "./text";
-    import { getAttributeValues } from "./dataUtils";
+    import { getAttributeValues, allAttributeValuesAreNumbers } from "./dataUtils";
 
     export let index: number;
     let config: ChartConfig;
@@ -15,6 +15,7 @@
         return total;
     }
 
+
     // function for formatting large numbers with ` , e.g. 1`000`000
     function formatNumber(num: number) {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
@@ -24,7 +25,12 @@
 
     $: {
       config = $chartConfigs[index];
+      if (allAttributeValuesAreNumbers($dataset, config.showValues)) {
         total = aggregateAttributeValues($dataset, config.showValues);
+      } else {
+        // count the number of unique items in the dataset
+        total = getAttributeValues($dataset, config.showValues).length;
+      }
     }
 
 </script>

@@ -27,6 +27,15 @@ export function getAttributeValues(dataset: DataItem[], attribute: string): stri
     return result;
 }
 
+// function for checking if all attribute values are numbers
+export function allAttributeValuesAreNumbers(dataset: DataItem[], attribute: string) {
+    for (let i = 0; i < dataset.length; i++) {
+        if (isNaN(Number(dataset[i].attributes[attribute]))) {
+            return false;
+        }
+    }
+    return true;
+}
 
 // aggregate values of a specific attribute, sum if numeric, count if not. inputs: attribute to aggregate, list of labels to aggregate by, attibute key of labels
 export function aggregateAttributeBy(dataset: DataItem[], aggregateAttribute: string, label: string, groupBy: string): number {

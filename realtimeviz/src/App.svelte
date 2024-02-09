@@ -20,14 +20,32 @@
 
 <main>
   {#if $showChartEditor}
-    <div >
+    <div>
       <ChartEditor />
     </div>
   {/if}
-  <div >
+  <div>
     <ChartGrid />
   </div>
-    <div >
-      <AddChartButton />
-    </div>
+  <div>
+    <AddChartButton />
+  </div>
 </main>
+<footer>
+  <a href="https://www.yssentyl.com">© Yssentyl 2024</a>
+</footer>
+
+<style>
+  footer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 2em;
+
+  }
+  a {
+    text-decoration: none;
+    color: #7d7d7d;
+    font-style: italic;
+  }
+</style>
