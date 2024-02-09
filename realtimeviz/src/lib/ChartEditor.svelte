@@ -186,7 +186,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
   }
 
   label {
-    font-weight: 600;
+    font-weight: 500;
     align-self: center;
   }
   

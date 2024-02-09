@@ -12,6 +12,7 @@ export const endColor: Writable<string> = writable('#05ACFF');
 
 export const chartConfigs: Writable<ChartConfig[]> = writable([]);
 
+export const showConnector: Writable<string> = writable('');
 
 // Dataset
 const initialData: DataItem[] = [];

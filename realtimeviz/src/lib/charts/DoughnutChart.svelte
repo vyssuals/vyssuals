@@ -29,7 +29,6 @@
     responsive: true,
     plugins: {
       legend: {
-        display: true,
         position: "bottom"
       }
     }
