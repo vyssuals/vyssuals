@@ -31,11 +31,15 @@
 {/if}
 
 <style>
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3 columns */
-        gap: 10px;
-    }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(300px, 1fr)); /* 3 columns with a minimum width of 200px */
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
 
     .grid-item:hover {
         filter: drop-shadow(0 0 0.5em #4e4f4f48);
@@ -55,6 +59,7 @@
         padding: 20px;
         text-align: center;
         border-radius: 1em;
+        max-height: 400px;
     }
 
     .close-button {

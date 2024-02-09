@@ -40,3 +40,8 @@
     {/if}
   </div>
   
+<style>
+  .chart-container {
+    height: 100%;
+  }
+</style>

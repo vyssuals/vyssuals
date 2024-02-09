@@ -15,6 +15,11 @@
         return total;
     }
 
+    // function for formatting large numbers with ` , e.g. 1`000`000
+    function formatNumber(num: number) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+    }
+
     let total:number = 0;
 
     $: {
@@ -25,11 +30,23 @@
 </script>
 
 <h2>Total {titleCase(config.showValues)}</h2>
-<h1>{total}</h1>
+<h3>{config.unitSymbol}</h3>
+<div class="total">
+    <h1>{formatNumber(total)}</h1>
+</div>
 
 <style>
     h1 {
-        text-align: center;
-        font-size: 3em;
+        font-size: 3rem;
+        margin-top: 0.3em;
+        margin-bottom: 0.37em;
+    }
+
+    .total {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
     }
 </style>
+        

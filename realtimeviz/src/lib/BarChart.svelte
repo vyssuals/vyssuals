@@ -35,13 +35,33 @@
 
   let options = {
     responsive: true,
+    maintainAspectRatio: true,
+    aspectRatio: 1,
     plugins: {
       legend: {
         display: false
       }
-    }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: true,
+          drawOnChartArea: false,
+          drawTicks: false,
+        }
+      },
+      y: {        
+        grid: {
+          display: true,
+          drawOnChartArea: false,
+          drawTicks: false,
+        }
+        }
+      }
   }
+
 
 </script>
 <h2>{formatTitle(config)}</h2>
+<h3>{config.unitSymbol}</h3>
 <Bar {data} {options} />

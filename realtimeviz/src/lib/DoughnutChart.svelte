@@ -38,4 +38,5 @@
 </script>
 
 <h2>{formatTitle(config)}</h2>
+<h3>{config.unitSymbol}</h3>
 <Doughnut {data} {options} />

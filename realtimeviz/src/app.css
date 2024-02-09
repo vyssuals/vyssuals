@@ -13,6 +13,10 @@
   --outline-color: #5d5d5d;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   display: flex;
@@ -40,6 +44,15 @@ button {
   transition: border-color 0.25s;
 }
 
+h2 {
+  margin: 0.5em;
+}
+
+h3 {
+  font-weight: 500;
+  font-size: 0.8em;
+  /* text-align: ; */
+}
 
 @media (prefers-color-scheme: light) {
   :root {

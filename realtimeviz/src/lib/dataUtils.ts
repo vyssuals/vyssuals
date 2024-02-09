@@ -69,7 +69,7 @@ return {
     borderWidth: 2,
     // borderColor: darkenColors(backgroundColor),
     borderColor: '#ffffff00',
-    borderRadius: 5,
+    borderRadius: 8,
     offset: 5
 };
 }

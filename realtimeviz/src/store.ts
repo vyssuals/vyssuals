@@ -7,8 +7,8 @@ import type { ChartConfig } from './types';
 export const showChartEditor = writable(false);
 export const editChartIndex: Writable<number> = writable(-1);
 
-export const startColor: Writable<string> = writable('#4CAF50');
-export const endColor: Writable<string> = writable('#FFC107');
+export const startColor: Writable<string> = writable('#DC0999');
+export const endColor: Writable<string> = writable('#05ACFF');
 
 export const chartConfigs: Writable<ChartConfig[]> = writable([]);
 

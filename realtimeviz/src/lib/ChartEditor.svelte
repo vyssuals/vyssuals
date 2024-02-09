@@ -9,6 +9,8 @@
   let chartType: string;
   let selectedShowValues: string;
   let selectedGroupBy: string;
+  let selectedUnitSymbol: string;
+  const unitSymbols = ['Count', 'm', 'm2', 'm3', 'ft', 'ft2', 'ft3'];
 
   let attributeKeys = getUniqueAttributeKeys($dataset);
 
@@ -18,6 +20,7 @@
     selectedShowValues = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
     selectedGroupBy = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
     chartType = 'bar';
+    selectedUnitSymbol = unitSymbols[0];
   }
   else 
   {
@@ -26,15 +29,16 @@
     selectedShowValues = $chartConfigs[$editChartIndex].showValues;
     selectedGroupBy = $chartConfigs[$editChartIndex].groupBy;
     chartType = $chartConfigs[$editChartIndex].type;
+    selectedUnitSymbol = $chartConfigs[$editChartIndex].unitSymbol;
   }
 
   function handleCreateChart() {
-    saveChartConfig(chartType, selectedGroupBy, selectedShowValues);
+    saveChartConfig(chartType, selectedGroupBy, selectedShowValues, selectedUnitSymbol);
     showChartEditor.update(value => !value);
   }
 
   function handleUpdateChart() {
-    saveChartConfig(chartType, selectedGroupBy, selectedShowValues);
+    saveChartConfig(chartType, selectedGroupBy, selectedShowValues, selectedUnitSymbol);
     showChartEditor.update(value => !value);
     editChartIndex.set(-1);
   }
@@ -51,19 +55,14 @@ export function addChartConfig(config: ChartConfig) {
     chartConfigs.update(data => [...data, config]);
 }
 
-
-// function for creating a chart config, returns chartconfig
-export function createChartConfig(type: string, showValues: string, groupBy: string): ChartConfig {
-    return {
-        type: type,
+// function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
+export function saveChartConfig(chartType: string, groupBy: string, showValues: string, unitSymbol: string): void {
+    const config = {
+        type: chartType,
         showValues: showValues,
         groupBy: groupBy,
-    };
-}
-
-// function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
-export function saveChartConfig(chartType: string, groupBy: string, showValues: string): void {
-    const config = createChartConfig(chartType, showValues, groupBy);
+        unitSymbol: unitSymbol
+    }
     editChartIndex.subscribe((index) => {
         if (index > -1) {
             updateChartConfig(config, index);
@@ -99,7 +98,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
   <div class="chart-editor">
     <h2>Chart Editor</h2>
 
-    <div class="config-opotion">
+    <div class="config-option">
       <label for="chartType">Chart Type:</label>
       <select id="chartType" bind:value={chartType}> 
         <option value="bar">Bar</option>
@@ -108,7 +107,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
       </select>
     </div>
 
-    <div class="config-opotion">
+    <div class="config-option">
       <label for="showValues">Show Values Of:</label>
       <select id="showValues" bind:value={selectedShowValues}>
         {#each attributeKeys as key}
@@ -118,7 +117,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     </div>
 
     {#if !(chartType === 'total')}
-      <div class="config-opotion">
+      <div class="config-option">
         <label for="groupBy">Grouped By:</label>
         <select id="groupBy" bind:value={selectedGroupBy}>
           {#each attributeKeys as key}
@@ -128,12 +127,20 @@ export function updateChartConfig(config: ChartConfig, index: number) {
       </div>
     {/if}
 
-    <div class="config-opotion">
+    <div class="config-option">
+      <label for="unitSymbol">Unit Symbol:</label>
+      <select id="unitSymbol" bind:value={selectedUnitSymbol}>
+        {#each unitSymbols as symbol}
+        <option value={symbol}>{symbol}</option>
+        {/each}
+    </div>
+
+    <div class="config-option">
       <label for="startColor">Start Color:</label>
-      <input type="color" id="startColor" bind:value={$startColor} />
+      <input class="color-input" type="color" id="startColor" bind:value={$startColor} />
 
       <label for="endColor">End Color:</label>
-      <input type="color" id="endColor" bind:value={$endColor} />
+      <input class="color-input" type="color" id="endColor" bind:value={$endColor} />
     </div>
 
     {#if $editChartIndex > -1}
@@ -169,7 +176,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     padding: 1em;
   }
 
-  .config-opotion {
+  .config-option {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     text-align: right;
@@ -178,7 +185,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
 
   label {
     font-weight: medium;
-    font-size: meduim;
+    align-self: center;
   }
   
   select {
@@ -187,8 +194,8 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     background-color: var(--card-background-color);
     border-color: var(--outline-color);
   }
-  
-  input {
+
+  .color-input {
     padding: 1px;
     border-radius: 0.5em;
     width: 100%;

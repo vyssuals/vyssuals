@@ -19,4 +19,5 @@ export interface ChartData {
     type: string;
     showValues: string;
     groupBy: string;
+    unitSymbol: string;
   }
