@@ -61,7 +61,9 @@ export function saveChartConfig(chartType: string, groupBy: string, showValues: 
         type: chartType,
         showValues: showValues,
         groupBy: groupBy,
-        unitSymbol: unitSymbol
+        unitSymbol: unitSymbol,
+        startColor: $startColor,
+        endColor: $endColor
     }
     editChartIndex.subscribe((index) => {
         if (index > -1) {

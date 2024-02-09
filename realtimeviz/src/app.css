@@ -4,7 +4,6 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #1e1e1e;
-  /* background-color: #242424; */
   
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -12,7 +11,6 @@
   -moz-osx-font-smoothing: grayscale;
   --outline-color: #5d5d5d;
   --card-background-color: #242424f0;
-  /* --card-background-color: #1e1e1e; */
   --dropshadow-color: #50505048;
 }
 
@@ -54,16 +52,13 @@ h2 {
 h3 {
   font-weight: 500;
   font-size: 0.8em;
-  /* text-align: ; */
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #f3f2f2e2;
-    /* background-color: #ffffff; */
     --card-background-color: #ffffffec;
-    /* --card-background-color: #f3f2f2e2; */
     --outline-color: #c2c2c2;
   }
 }

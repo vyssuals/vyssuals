@@ -20,4 +20,6 @@ export interface ChartData {
     showValues: string;
     groupBy: string;
     unitSymbol: string;
+    startColor: string;
+    endColor: string;
   }

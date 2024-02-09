@@ -58,27 +58,21 @@ export function aggregateAttributeBy(dataset: DataItem[], aggregateAttribute: st
 // function for creating chart data, returns chart data
 export function createChartData(dataset: DataItem[], chartConfig: ChartConfig): any {
     const labels = getAttributeValues(dataset, chartConfig.groupBy);
+    const data = labels.map(label => aggregateAttributeBy(dataset, chartConfig.showValues, label, chartConfig.groupBy));
+    const backgroundColor = createColorArray(data.length, chartConfig.startColor, chartConfig.endColor);
+
     return {
       labels: labels,
       datasets: [
-        createChartDataset(chartConfig.showValues, labels.map(
-          label => aggregateAttributeBy(dataset, chartConfig.showValues, label, chartConfig.groupBy)
-          ))
+        {
+          label: chartConfig.showValues,
+          data: data,
+          backgroundColor: backgroundColor,
+          borderWidth: 2,
+          borderColor: '#ffffff00',
+          borderRadius: 8,
+          offset: 5
+        }
       ]
     };
-  }
-  
-// function for creating chart dataset, returns chart dataset
-export function createChartDataset(label: string, data: number[], ): any {
-let backgroundColor = createColorArray(data.length);
-return {
-    label: label,
-    data: data,
-    backgroundColor: backgroundColor,
-    borderWidth: 2,
-    // borderColor: darkenColors(backgroundColor),
-    borderColor: '#ffffff00',
-    borderRadius: 8,
-    offset: 5
-};
 }
