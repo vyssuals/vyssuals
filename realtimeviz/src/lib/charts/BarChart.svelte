@@ -66,4 +66,4 @@
 
   <h2>{formatTitle(config)}</h2>
   <h3>{config.unitSymbol}</h3>
-  <Bar {data} {options} style="height: 80%; width: 600px"/>
+  <Bar {data} {options} style="height: 80%; width: 595px"/>

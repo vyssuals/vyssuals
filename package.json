@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "chart.js": "^4.4.1",
+    "html2canvas": "^1.4.1",
     "svelte-chartjs": "^3.1.5"
   }
 }

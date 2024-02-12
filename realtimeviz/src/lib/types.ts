@@ -16,6 +16,7 @@ export interface ChartData {
   }
 
   export interface ChartConfig {
+    id: string;
     type: string;
     showValues: string;
     groupBy: string;

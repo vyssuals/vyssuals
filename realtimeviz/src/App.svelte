@@ -7,7 +7,7 @@
   import ChartEditor from './lib/ChartEditor.svelte';
   import { chartConfigs } from './lib/store';
   import Welcome from './lib/Welcome.svelte';
-    import Connector from './lib/connectors/Connector.svelte';
+  import Connector from './lib/connectors/Connector.svelte';
 
   onMount(() => {
     generateDummyData();
@@ -18,9 +18,12 @@
     // }, 5000);
     // logDatasetContent(); // Call logDatasetContent after generateDummyData
 });
+
 </script>
 
 <main>
+
+
   {#if $chartConfigs.length === 0}
     <Welcome />
     {:else}
@@ -45,6 +48,10 @@
 </footer>
 
 <style>
+  main { 
+    padding: 2rem;
+  }
+
   footer {
     position: relative;
     display: flex;
@@ -61,4 +68,5 @@
   a:hover {
     color: #05ACFF;
   }
+
 </style>

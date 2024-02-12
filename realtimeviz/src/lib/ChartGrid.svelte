@@ -2,13 +2,16 @@
     import { chartConfigs, editChartIndex } from './store';
     import Chart from './charts/Chart.svelte';
     import { showChartEditor } from './store'; 
+    import html2canvas from 'html2canvas';
+    import { formatTitle } from './utils/textUtils';
+
+    let gridItem: any;
 
     const width: Record<string, string> = {
         'bar': '595px',
         'doughnut': '380px',
         'total': '165px'
     }
-
 
     function handleRemoveChart(index: number) {
         chartConfigs.update(configs => {
@@ -23,15 +26,35 @@
         showChartEditor.set(true);
     }
 
+    async function exportNodeAsPNG(node: HTMLElement, filename: string): Promise<void>  {
+        const canvas = await html2canvas(node);
+        const dataURL = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = dataURL;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+  }
+
+  function generateFileName(index: number): string {
+    // naming pattern: YYYY-MM-DD_Chart-Title_Index.png
+    const date = new Date().toISOString().split('T')[0];
+    const title = formatTitle($chartConfigs[index]);
+    return `${date}_${title}_${index}.png`;
+
+  }
+
 </script>
 
 
 <div class="grid-container">
-    {#each $chartConfigs as config, index}
-    <div class="grid-item" style="width: {width[config.type]}">
+    {#each $chartConfigs as config, index (config.id)}
+    <div class="grid-item" bind:this={gridItem} style="width: {width[config.type]}">
         <Chart index={index} />
-        <button class="close-button" on:click={() => handleRemoveChart(index)}>x</button>
-        <button class="edit-button" on:click={() => handleEditChart(index)}>...</button>             
+        <button class="close-button" on:click={() => handleRemoveChart(index)}>&times;</button>
+        <button class="edit-button" on:click={() => handleEditChart(index)}>&#9998;</button>             
+        <button class="export-button" on:click={() => exportNodeAsPNG(gridItem, generateFileName(index))}>&#x2197;</button>
     </div>
     {/each}
 </div>
@@ -68,15 +91,23 @@
         visibility: visible;
     }
 
+    .grid-item:hover .export-button {
+        visibility: visible;
+    }
+
+    button {
+        font-weight: 700;
+        font-size: large;
+        background-color: #00000000;
+        border: none;
+        cursor: pointer;
+        visibility: hidden;
+    }
 
     .close-button {
         position: absolute;
         top: 0.3em;
         right: 0.3em;
-        background-color: #00000000;
-        border: none;
-        cursor: pointer;
-        visibility: hidden;
     }
 
     .close-button:hover {
@@ -87,13 +118,19 @@
         position: absolute;
         top: 0.3em;
         left: 0.3em;
-        background-color: #00000000;
-        border: none;
-        cursor: pointer;
-        visibility: hidden;
     }
 
     .edit-button:hover {
+        filter: drop-shadow(0 0 8px #000000);
+    }
+
+    .export-button {
+        position: absolute;
+        top: 0.3em;
+        left: 2em;
+    }
+
+    .export-button:hover {
         filter: drop-shadow(0 0 8px #000000);
     }
 

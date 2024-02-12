@@ -62,6 +62,7 @@ export function addChartConfig(config: ChartConfig) {
 // function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
 export function saveChartConfig(chartType: string, groupBy: string, showValues: string, unitSymbol: string): void {
     const config = {
+        id: Math.random().toString(36).substr(2, 9),
         type: chartType,
         showValues: showValues,
         groupBy: groupBy,
