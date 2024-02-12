@@ -13,6 +13,8 @@
   let selectedGroupBy: string;
   let selectedUnitSymbol: string;
   const unitSymbols = ['Count', 'm', 'm2', 'm3', 'ft', 'ft2', 'ft3'];
+  let selectedStartColor: string;
+  let selectedEndColor: string;
 
   let attributeKeys = getUniqueAttributeKeys($dataset);
 
@@ -23,6 +25,8 @@
     selectedGroupBy = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
     chartType = 'bar';
     selectedUnitSymbol = unitSymbols[0];
+    selectedStartColor = $startColor;
+    selectedEndColor = $endColor;
   }
   else 
   {
@@ -32,6 +36,8 @@
     selectedGroupBy = $chartConfigs[$editChartIndex].groupBy;
     chartType = $chartConfigs[$editChartIndex].type;
     selectedUnitSymbol = $chartConfigs[$editChartIndex].unitSymbol;
+    selectedStartColor = $chartConfigs[$editChartIndex].startColor;
+    selectedEndColor = $chartConfigs[$editChartIndex].endColor;
   }
 
   function handleCreateChart() {
@@ -60,8 +66,8 @@ export function saveChartConfig(chartType: string, groupBy: string, showValues: 
         showValues: showValues,
         groupBy: groupBy,
         unitSymbol: unitSymbol,
-        startColor: $startColor,
-        endColor: $endColor
+        startColor: selectedStartColor,
+        endColor: selectedEndColor
     }
     editChartIndex.subscribe((index) => {
         if (index > -1) {
@@ -72,6 +78,8 @@ export function saveChartConfig(chartType: string, groupBy: string, showValues: 
         addChartConfig(config);
         }
     })();
+    startColor.set(selectedStartColor);
+    endColor.set(selectedEndColor);
 }
 
 export function updateChartConfig(config: ChartConfig, index: number) {
@@ -129,11 +137,11 @@ export function updateChartConfig(config: ChartConfig, index: number) {
         
         <div class="config-option">
           <label for="startColor">Start Color:</label>
-          <input class="color-input" type="color" id="startColor" bind:value={$startColor} />
+          <input class="color-input" type="color" id="startColor" bind:value={selectedStartColor} />
         </div>
         <div class="config-option">
           <label for="endColor">End Color:</label>
-          <input class="color-input" type="color" id="endColor" bind:value={$endColor} />
+          <input class="color-input" type="color" id="endColor" bind:value={selectedEndColor} />
         </div>
     </div>
         
