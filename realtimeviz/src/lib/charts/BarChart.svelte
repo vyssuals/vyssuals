@@ -34,9 +34,9 @@
   );
 
   let options = {
-    responsive: true,
-    maintainAspectRatio: true,
-    aspectRatio: 1,
+    responsive: false,
+    maintainAspectRatio: false,
+    // aspectRatio: 2,
     plugins: {
       legend: {
         display: false
@@ -62,6 +62,8 @@
 
 
 </script>
-<h2>{formatTitle(config)}</h2>
-<h3>{config.unitSymbol}</h3>
-<Bar {data} {options} />
+
+
+  <h2>{formatTitle(config)}</h2>
+  <h3>{config.unitSymbol}</h3>
+  <Bar {data} {options} style="height: 80%; width: 600px"/>

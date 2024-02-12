@@ -26,7 +26,7 @@
     ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
     let options = {
-    responsive: true,
+    responsive: false,
     plugins: {
       legend: {
         position: "bottom"
@@ -38,4 +38,5 @@
 
 <h2>{formatTitle(config)}</h2>
 <h3>{config.unitSymbol}</h3>
-<Doughnut {data} {options} />
+<Doughnut {data} {options} style="height: 80%; width: 400px" />
+

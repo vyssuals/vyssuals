@@ -5,17 +5,28 @@
         showConnector.set(connector);
     }
 </script>
+<div class="welcome">
 
-<h1 class="gradient-text">Vyssuals</h1>
-<h2>Real-Time Browser Data Visualisation</h2>
-<p>Connector Plugins:</p>
-<div>
-    <button on:click={() => handleClickConnector('revit')}>Revit</button>
-    <button on:click={() => handleClickConnector('rhino')}>Rhino</button>
+    <h1 class="gradient-text">Vyssuals</h1>
+    <h2>Real-Time Browser Data Visualisation</h2>
+    <p>Connector Plugins:</p>
+    <div>
+        <button on:click={() => handleClickConnector('revit')}>Revit</button>
+        <button on:click={() => handleClickConnector('rhino')}>Rhino</button>
+    </div>
+
 </div>
 
 
 <style>
+    .welcome {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20vh;
+}
+
     h2 {
         font-size: 1.5em;
         font-weight: 300;

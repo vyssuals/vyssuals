@@ -6,34 +6,35 @@
   import ChartGrid from './lib/ChartGrid.svelte';
   import ChartEditor from './lib/ChartEditor.svelte';
   import { chartConfigs } from './lib/store';
-  import Instructions from './lib/Instructions.svelte';
+  import Welcome from './lib/Welcome.svelte';
     import Connector from './lib/connectors/Connector.svelte';
 
   onMount(() => {
     generateDummyData();
     // generate more dummy data every 5 seconds
-    setInterval(() => {
-      generateDummyData();
-      console.log('Generated more dummy data');
-    }, 5000);
-    logDatasetContent(); // Call logDatasetContent after generateDummyData
+    // setInterval(() => {
+    //   generateDummyData();
+    //   console.log('Generated more dummy data');
+    // }, 5000);
+    // logDatasetContent(); // Call logDatasetContent after generateDummyData
 });
 </script>
 
 <main>
-  {#if $showChartEditor}
-    <ChartEditor />
-  {/if}
-
   {#if $chartConfigs.length === 0}
-    <Instructions />
+    <Welcome />
+    {:else}
+    <ChartGrid />
   {/if}
 
   {#if $showConnector.length > 0}
   <Connector />
   {/if}
+  
+  {#if $showChartEditor}
+    <ChartEditor />
+  {/if}
 
-  <ChartGrid />
   {#if $dataset.length > 0}
     <AddChartButton />
   {/if}

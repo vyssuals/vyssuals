@@ -1,7 +1,14 @@
 <script lang="ts">
     import { chartConfigs, editChartIndex } from './store';
     import Chart from './charts/Chart.svelte';
-    import { showChartEditor } from './store';
+    import { showChartEditor } from './store'; 
+
+    const width: Record<string, string> = {
+        'bar': '595px',
+        'doughnut': '380px',
+        'total': '165px'
+    }
+
 
     function handleRemoveChart(index: number) {
         chartConfigs.update(configs => {
@@ -18,37 +25,35 @@
 
 </script>
 
-{#if $chartConfigs.length > 0}
-    <div class="grid-container">
-        {#each $chartConfigs as config, index}
-            <div class="grid-item">
-                <Chart index={index} />
-                <button class="close-button" on:click={() => handleRemoveChart(index)}>x</button>
-                <button class="edit-button" on:click={() => handleEditChart(index)}>...</button>             
-            </div>
-        {/each}
+
+<div class="grid-container">
+    {#each $chartConfigs as config, index}
+    <div class="grid-item" style="width: {width[config.type]}">
+        <Chart index={index} />
+        <button class="close-button" on:click={() => handleRemoveChart(index)}>x</button>
+        <button class="edit-button" on:click={() => handleEditChart(index)}>...</button>             
     </div>
-{/if}
+    {/each}
+</div>
+
+    
 
 <style>
+
     .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(300px, 1fr)); /* 3 columns with a minimum width of 300px */
+        display: flex;
+        flex-wrap: wrap;
         gap: 10px;
-        margin-top: 20px;
-        margin-bottom: 20px;
+        justify-content: center;
     }
 
-    @media (max-width: 900px) {
-        .grid-container {
-            grid-template-columns: repeat(2, minmax(300px, 1fr)); /* 2 columns with a minimum width of 300px */
-        }
-    }
+    .grid-item {
+        text-align: center;
+        height: 400px;
+        background-color: var(--card-background-color);
+        padding: 20px;
+        border-radius: 1em;
 
-    @media (max-width: 600px) {
-        .grid-container {
-            grid-template-columns: repeat(1, minmax(300px, 1fr)); /* 1 column with a minimum width of 300px */
-        }
     }
 
     .grid-item:hover {
@@ -62,15 +67,7 @@
     .grid-item:hover .edit-button {
         visibility: visible;
     }
-    
-    .grid-item {
-        position: relative; /* Add this line to make the close button relative to the grid item */
-        background-color: var(--card-background-color);
-        padding: 20px;
-        text-align: center;
-        border-radius: 1em;
-        max-height: 400px;
-    }
+
 
     .close-button {
         position: absolute;

@@ -1,10 +1,12 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { dataset } from './store';
   import { startColor, endColor, editChartIndex, showChartEditor, chartConfigs } from './store';
   import { getUniqueAttributeKeys,  } from './utils/dataUtils';
   import type { ChartConfig } from './types';
+  import Draggable from './Draggable.svelte';
 
+  const left = (window.innerWidth / 2) - 135;
+  const top = (window.innerHeight / 2) - 250;
 
   let chartType: string;
   let selectedShowValues: string;
@@ -43,13 +45,9 @@
     editChartIndex.set(-1);
   }
 
-  function handleClickOutside(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.chart-editor')) {
-      showChartEditor.set(false);
-      editChartIndex.set(-1);
-    }
-  }
+function toggleChartEditor() {
+  showChartEditor.set(false)
+}
 
 export function addChartConfig(config: ChartConfig) {
     chartConfigs.update(data => [...data, config]);
@@ -83,42 +81,34 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     });
 }
 
-
-  onMount(() => {
-    setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
-    }, 100); // Add a delay of 100 milliseconds
-    
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  });
-
 </script>
-
-<div class="chart-editor-overlay">
-  <div class="chart-editor">
-    <h2>Chart Editor</h2>
-
-    <div class="config-option">
-      <label for="chartType">Chart Type:</label>
-      <select id="chartType" bind:value={chartType}> 
-        <option value="bar">Bar</option>
-        <option value="doughnut">Doughnut</option>
-        <option value="total">Total</option>
-      </select>
-    </div>
-
-    <div class="config-option">
-      <label for="showValues">Show Values Of:</label>
-      <select id="showValues" bind:value={selectedShowValues}>
-        {#each attributeKeys as key}
-        <option value={key}>{key}</option>
-        {/each}
-      </select>
-    </div>
-
-    {#if !(chartType === 'total')}
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  
+  <div class="chart-editor-overlay" on:click|self={toggleChartEditor}>
+    <Draggable {left} {top}>
+    <div class="chart-editor">
+      <h2>Chart Editor</h2>
+    <div>
+      <div class="config-option">
+        <label for="chartType">Chart Type:</label>
+        <select id="chartType" bind:value={chartType}> 
+          <option value="bar">Bar</option>
+          <option value="doughnut">Doughnut</option>
+          <option value="total">Total</option>
+        </select>
+      </div>
+      
+      <div class="config-option">
+        <label for="showValues">Show Values Of:</label>
+        <select id="showValues" bind:value={selectedShowValues}>
+          {#each attributeKeys as key}
+          <option value={key}>{key}</option>
+          {/each}
+        </select>
+      </div>
+      
+      {#if !(chartType === 'total')}
       <div class="config-option">
         <label for="groupBy">Grouped By:</label>
         <select id="groupBy" bind:value={selectedGroupBy}>
@@ -127,35 +117,39 @@ export function updateChartConfig(config: ChartConfig, index: number) {
           {/each}
         </select>
       </div>
-    {/if}
-
-    <div class="config-option">
-      <label for="unitSymbol">Unit Symbol:</label>
-      <select id="unitSymbol" bind:value={selectedUnitSymbol}>
-        {#each unitSymbols as symbol}
-        <option value={symbol}>{symbol}</option>
-        {/each}
+      {/if}
+      
+      <div class="config-option">
+        <label for="unitSymbol">Unit Symbol:</label>
+        <select id="unitSymbol" bind:value={selectedUnitSymbol}>
+          {#each unitSymbols as symbol}
+          <option value={symbol}>{symbol}</option>
+          {/each}
+        </div>
+        
+        <div class="config-option">
+          <label for="startColor">Start Color:</label>
+          <input class="color-input" type="color" id="startColor" bind:value={$startColor} />
+        </div>
+        <div class="config-option">
+          <label for="endColor">End Color:</label>
+          <input class="color-input" type="color" id="endColor" bind:value={$endColor} />
+        </div>
+    </div>
+        
+        {#if $editChartIndex > -1}
+        <button on:click={handleUpdateChart}>Update Chart</button>
+        {:else}
+        <button on:click={handleCreateChart}>Create Chart</button>
+        {/if}
+      </div>
+    </Draggable>
     </div>
 
-    <div class="config-option">
-      <label for="startColor">Start Color:</label>
-      <input class="color-input" type="color" id="startColor" bind:value={$startColor} />
-
-      <label for="endColor">End Color:</label>
-      <input class="color-input" type="color" id="endColor" bind:value={$endColor} />
-    </div>
-
-    {#if $editChartIndex > -1}
-      <button on:click={handleUpdateChart}>Update Chart</button>
-    {:else}
-    <button on:click={handleCreateChart}>Create Chart</button>
-    {/if}
-  </div>
-
-</div>
 
 <style>
-  .chart-editor-overlay {
+.chart-editor-overlay {
+    background: rgba(0, 0, 0, 0.149);
     position: fixed;
     top: 0;
     left: 0;
@@ -171,7 +165,8 @@ export function updateChartConfig(config: ChartConfig, index: number) {
   .chart-editor {
     display: flex;
     flex-direction: column;
-    max-width: 300px;
+    align-items: center;
+    width: 240px;
     gap: 10px;
     background-color: var(--card-background-color);
     border-radius: 1em;
@@ -183,6 +178,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     grid-template-columns: repeat(2, 1fr);
     text-align: right;
     gap: 5px;
+    margin: 10px;
   }
 
   label {
@@ -210,6 +206,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     border: none;
     color: var(--color);
     cursor: pointer;
+    width: 86%;
 
   }
 
@@ -217,4 +214,4 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
     color: #05acffa0;
   }
-</style> 
+</style>

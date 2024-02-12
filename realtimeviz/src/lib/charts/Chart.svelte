@@ -33,15 +33,8 @@
     }
   </script>
   
-  <div class="chart-container">
     <!-- Render the chart instance based on the type specified in the config -->
     {#if chartInstance}
-      <svelte:component this={chartInstance} index={index} />
+        <svelte:component this={chartInstance} index={index} />
+
     {/if}
-  </div>
-  
-<style>
-  .chart-container {
-    height: 100%;
-  }
-</style>
