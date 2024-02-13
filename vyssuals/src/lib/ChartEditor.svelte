@@ -5,8 +5,10 @@
   import type { ChartConfig } from './types';
   import Draggable from './Draggable.svelte';
 
+
   const left = (window.innerWidth / 2) - 135;
   const top = (window.innerHeight / 2) - 250;
+
 
   let chartType: string;
   let selectedShowValues: string;
@@ -47,7 +49,6 @@
 
   function handleUpdateChart() {
     saveChartConfig(chartType, selectedGroupBy, selectedShowValues, selectedUnitSymbol);
-    toggleChartEditor 
  }
   
   function toggleChartEditor() {
@@ -138,8 +139,8 @@ export function updateChartConfig(config: ChartConfig, index: number) {
         
         {#if !(chartType === 'total')}
         <div class="config-option">
-          <input class="color-input" type="color" id="startColor" bind:value={selectedStartColor} style="background-color: {selectedStartColor}"/>
-          <input class="color-input" type="color" id="endColor" bind:value={selectedEndColor} style="background-color: {selectedEndColor}"/>
+          <input class="color-input" type="color" id="startColor" bind:value={selectedStartColor} style="background-color: {selectedStartColor}" />
+          <input class="color-input" type="color" id="endColor" bind:value={selectedEndColor} style="background-color: {selectedEndColor}" />
         </div>
         {/if}
     </div>
