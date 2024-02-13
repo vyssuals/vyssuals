@@ -1,19 +1,11 @@
 <script lang="ts">
-    import type { ChartConfig, DataItem } from "../types";
+    import type { ChartConfig } from "../types";
     import { chartConfigs, dataset } from "../store";
     import { titleCase } from "../utils/textUtils";
-    import { getAttributeValues, allAttributeValuesAreNumbers } from "../utils/dataUtils";
+    import { getUniqueAttributeValues, allAttributeValuesAreNumbers, sumAttributeValues } from "../utils/dataUtils";
 
     export let index: number;
     let config: ChartConfig;
-
-    function aggregateAttributeValues(dataset: DataItem[], attribute: string) {
-        let total = 0;
-        for (let i = 0; i < dataset.length; i++) {
-            total += Number(dataset[i].attributes[attribute]);
-        }
-        return total;
-    }
 
     // function for formatting large numbers with ` , e.g. 1`000`000
     function formatNumber(num: number) {
@@ -39,11 +31,11 @@
     $: {
         config = $chartConfigs[index];
         if (allAttributeValuesAreNumbers($dataset, config.showValues)) {
-            total = aggregateAttributeValues($dataset, config.showValues);
+            total = sumAttributeValues($dataset, config.showValues);
             fullFormattedNumber = formatNumber(total);
         } else {
             // count the number of unique items in the dataset
-            total = getAttributeValues($dataset, config.showValues).length;
+            total = getUniqueAttributeValues($dataset, config.showValues).length;
             fullFormattedNumber = total.toString();
         }
     }
