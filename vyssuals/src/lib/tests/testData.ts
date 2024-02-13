@@ -2,6 +2,7 @@
 
 import { type DataItem } from '../types';
 import { addDataItem } from '../store';
+import { get } from 'svelte/store';
 
 // Function to generate a random number between min and max (inclusive)
 function getRandomNumber(min: number, max: number): number {
@@ -24,7 +25,7 @@ export function generateDummyData(dataSource: string, count: number) {
     const timestamp = new Date();
     for (let i = 1; i <= count; i++) {
         const item: DataItem = {
-            id: `item_${i}`,
+            id: `${getRandomNumber(1, 1000000)}`,
             dataSource,
             timestamp,
             attributes: {
