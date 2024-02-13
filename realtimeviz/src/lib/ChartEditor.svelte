@@ -42,17 +42,17 @@
 
   function handleCreateChart() {
     saveChartConfig(chartType, selectedGroupBy, selectedShowValues, selectedUnitSymbol);
-    showChartEditor.update(value => !value);
+    toggleChartEditor();
   }
 
   function handleUpdateChart() {
     saveChartConfig(chartType, selectedGroupBy, selectedShowValues, selectedUnitSymbol);
-    showChartEditor.update(value => !value);
+    toggleChartEditor 
+ }
+  
+  function toggleChartEditor() {
+    showChartEditor.set(false)
     editChartIndex.set(-1);
-  }
-
-function toggleChartEditor() {
-  showChartEditor.set(false)
 }
 
 export function addChartConfig(config: ChartConfig) {
@@ -136,14 +136,12 @@ export function updateChartConfig(config: ChartConfig, index: number) {
           {/each}
         </div>
         
+        {#if !(chartType === 'total')}
         <div class="config-option">
-          <label for="startColor">Start Color:</label>
-          <input class="color-input" type="color" id="startColor" bind:value={selectedStartColor} />
+          <input class="color-input" type="color" id="startColor" bind:value={selectedStartColor} style="background-color: {selectedStartColor}"/>
+          <input class="color-input" type="color" id="endColor" bind:value={selectedEndColor} style="background-color: {selectedEndColor}"/>
         </div>
-        <div class="config-option">
-          <label for="endColor">End Color:</label>
-          <input class="color-input" type="color" id="endColor" bind:value={selectedEndColor} />
-        </div>
+        {/if}
     </div>
         
         {#if $editChartIndex > -1}
@@ -207,9 +205,17 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     padding: 1px;
     border-radius: 0.5em;
     width: 100%;
-    background-color: var(--card-background-color);
+    /* background-color: var(--card-background-color); */
+    border: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .color-input::-webkit-color-swatch {
     border: none;
   }
+
   button {
     background-color: var(--background-color);
     border: none;
