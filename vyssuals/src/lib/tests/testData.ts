@@ -26,7 +26,7 @@ export function generateDummyData(dataSource: string, count: number) {
             id: `item_${i}`,
             dataSource,
             attributes: {
-                Area: getRandomNumber(10, 100), // Generate a random value for 'area'
+                Area: getRandomNumber(1, 10), // Generate a random value for 'area'
                 Category: getRandomElement(categories), // Select a random category
                 Level: getRandomElement(levels), // Select a random level
                 // Generate a random value for 'fireRating' if the category is 'walls' or 'floors
