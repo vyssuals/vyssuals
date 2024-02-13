@@ -90,24 +90,3 @@ export function createChartData(dataset: DataItem[], chartConfig: ChartConfig): 
 }
 
 
-// // function for creating chart data, returns chart data
-// export function createChartData(dataset: DataItem[], chartConfig: ChartConfig): any {
-//     const labels = getAttributeValues(dataset, chartConfig.groupBy);
-//     const data = labels.map(label => aggregateAttributeBy(dataset, chartConfig.showValues, label, chartConfig.groupBy));
-//     const backgroundColor = createColorArray(data.length, chartConfig.startColor, chartConfig.endColor);
-
-//     return {
-//       labels: labels,
-//       datasets: [
-//         {
-//           label: chartConfig.showValues,
-//           data: data,
-//           backgroundColor: backgroundColor,
-//           borderWidth: 2,
-//           borderColor: '#ffffff00',
-//           borderRadius: 8,
-//           offset: 5
-//         }
-//       ]
-//     };
-// }

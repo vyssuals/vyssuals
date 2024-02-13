@@ -10,6 +10,9 @@
   const top = (window.innerHeight / 2) - 250;
 
   let dataSource: string;
+  const dataSources = () => {
+    return Array.from(new Set($dataset.map(item => item.dataSource)));
+  }
   let chartType: string;
   let showValues: string;
   let groupBy: string;
@@ -102,7 +105,16 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     <Draggable {left} {top}>
     <div class="chart-editor">
       <h2>Chart Editor</h2>
-    <div>
+
+      <div>
+        <div class="config-option">
+          <label for="dataSource">Data Source:</label>
+          <select id="dataSource" bind:value={dataSource}>
+            {#each dataSources() as source}
+            <option value={source}>{source}</option>
+            {/each}
+        </div>
+
       <div class="config-option">
         <label for="chartType">Chart Type:</label>
         <select id="chartType" bind:value={chartType}> 
