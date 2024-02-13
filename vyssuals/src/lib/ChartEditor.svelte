@@ -203,6 +203,10 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     border-radius: 0.5em;
     background-color: var(--card-background-color);
     border-color: var(--outline-color);
+    width: 100px;
+    overflow: hidden; /* Hide overflowed content */
+    text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
+    white-space: nowrap; /* Prevent text from wrapping onto the next line */
   }
 
   .color-input {

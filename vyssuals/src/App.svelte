@@ -10,13 +10,16 @@
   import Connector from './lib/connectors/Connector.svelte';
 
   onMount(() => {
-    generateDummyData();
+    const dataSources: string[] = ['Revit-2022__836_Project-Name', 'Rhino-8__2402_DR_some-long-filename', 'Csv_brutally-long-filename-2023-02-23_randomShit'];
+    generateDummyData(dataSources[0], 50);
     // generate more dummy data every 5 seconds
-    // setInterval(() => {
-    //   generateDummyData();
-    //   console.log('Generated more dummy data');
-    // }, 5000);
-    // logDatasetContent(); // Call logDatasetContent after generateDummyData
+    setInterval(() => {
+      const randomDataSourceIndex = Math.floor(Math.random() * dataSources.length);
+      const randomCount = Math.floor(Math.random() * 100);
+      generateDummyData(dataSources[randomDataSourceIndex], randomCount);
+      console.log('Generated more dummy data');
+    }, 20000);
+    logDatasetContent(); // Call logDatasetContent after generateDummyData
 });
 
 </script>

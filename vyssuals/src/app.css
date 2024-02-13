@@ -57,3 +57,9 @@ h3 {
     --dropshadow-color: #0000001f;
   }
 }
+
+.chart-title {
+  overflow: hidden; /* Hide overflowed content */
+  text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
+  white-space: nowrap; /* Prevent text from wrapping onto the next line */
+}

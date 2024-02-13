@@ -44,6 +44,12 @@
     },
     scales: {
       x: {
+        ticks: {
+          callback: function(value: any): string {
+            let label = this.getLabelForValue(value);
+            return label.length > 8 ? `${label.slice(0, 6)}...` : label;
+          }
+        },
         grid: {
           display: true,
           drawOnChartArea: false,
@@ -64,6 +70,7 @@
 </script>
 
 
-  <h2>{formatTitle(config)}</h2>
-  <h3>{config.unitSymbol}</h3>
-  <Bar {data} {options} style="height: 80%; width: 595px"/>
+<h2 class="chart-title" style="width: 550px">{formatTitle(config)}</h2>
+<h3>{config.unitSymbol}</h3>
+<Bar {data} {options} style="height: 80%; width: 595px"/>
+
