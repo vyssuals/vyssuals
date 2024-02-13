@@ -5,7 +5,7 @@
     import html2canvas from 'html2canvas';
     import { formatTitle } from './utils/textUtils';
 
-    let gridItem: any;
+    let gridItems: any = [];
 
     const width: Record<string, string> = {
         'bar': '595px',
@@ -26,8 +26,13 @@
         showChartEditor.set(true);
     }
 
-    async function exportNodeAsPNG(node: HTMLElement, filename: string): Promise<void>  {
-        const canvas = await html2canvas(node);
+    async function exportNodeAsPNG(index: number): Promise<void>  {
+        const node = gridItems[index];
+        const filename = generateFileName(index);
+
+        const scale = 2; // Increase this to increase resolution
+        const canvas = await html2canvas(node, { scale });
+
         const dataURL = canvas.toDataURL('image/png');
         const a = document.createElement('a');
         a.href = dataURL;
@@ -50,11 +55,11 @@
 
 <div class="grid-container">
     {#each $chartConfigs as config, index (config.id)}
-    <div class="grid-item" bind:this={gridItem} style="width: {width[config.type]}">
+    <div class="grid-item" bind:this={gridItems[index]} style="width: {width[config.type]}">
         <Chart index={index} />
-        <button class="close-button" on:click={() => handleRemoveChart(index)}>&times;</button>
-        <button class="edit-button" on:click={() => handleEditChart(index)}>&#9998;</button>             
-        <button class="export-button" on:click={() => exportNodeAsPNG(gridItem, generateFileName(index))}>&#x2197;</button>
+        <button title="Close" class="close-button" on:click={() => handleRemoveChart(index)}>&times;</button>
+        <button title="Edit" class="edit-button" on:click={() => handleEditChart(index)}>&#9998;</button>             
+        <button title="Download Image" class="export-button" on:click={() => exportNodeAsPNG(index)}>&#x2197;</button>
     </div>
     {/each}
 </div>
@@ -127,7 +132,7 @@
     .export-button {
         position: absolute;
         top: 0.3em;
-        left: 2em;
+        left: 2.4em;
     }
 
     .export-button:hover {
