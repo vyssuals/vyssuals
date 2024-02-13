@@ -25,7 +25,7 @@ export function logDatasetContent() {
     console.log('Dataset:');
     dataset.subscribe(value => {
         value.forEach(item => {
-            console.log(`ID: ${item.id}, Attributes:`, item.attributes);
+            console.log(`ID: ${item.id}, Datasource: ${item.dataSource}, Timestamp: ${item.timestamp}, Attributes:`, item.attributes);
         });
     })();
 }

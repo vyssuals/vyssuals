@@ -21,10 +21,12 @@ const heights: number[] = [3.5, 4.22, 4.5, 7];
 const someLongParameterName: string[] = ['Alphaaaaaaaaaaaaaaaa', 'Betaaaaaaaaaaa', 'Gammaaaaa', 'Deltaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'Epsilonaaaa', 'Zetaaaaa'];
 
 export function generateDummyData(dataSource: string, count: number) {
+    const timestamp = new Date();
     for (let i = 1; i <= count; i++) {
         const item: DataItem = {
             id: `item_${i}`,
             dataSource,
+            timestamp,
             attributes: {
                 Area: getRandomNumber(1, 10), // Generate a random value for 'area'
                 Category: getRandomElement(categories), // Select a random category

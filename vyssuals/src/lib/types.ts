@@ -1,6 +1,7 @@
 export interface DataItem {
     id: string;
     dataSource: string;
+    timestamp: Date;
     attributes: Record<string, any>; // Dictionary of key-value pairs
 }
 
