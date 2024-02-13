@@ -15,8 +15,7 @@ export const chartConfigs: Writable<ChartConfig[]> = writable([]);
 export const showConnector: Writable<string> = writable('');
 
 // Dataset
-const initialData: DataItem[] = [];
-export const dataset: Writable<DataItem[]> = writable(initialData);
+export const dataset: Writable<DataItem[]> = writable([]);
 
 export function addDataItem(item: DataItem) {
     dataset.update(data => [...data, item]);

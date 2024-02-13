@@ -16,7 +16,7 @@
     let chartInstance: any; // Store reference to the chart instance
   
     $: {
-    switch(config.type) {
+    switch(config.chartType) {
       case 'bar':
         chartInstance = BarChart;
         break;

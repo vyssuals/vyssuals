@@ -9,11 +9,11 @@
   const left = (window.innerWidth / 2) - 135;
   const top = (window.innerHeight / 2) - 250;
 
-
+  let dataSource: string;
   let chartType: string;
-  let selectedShowValues: string;
-  let selectedGroupBy: string;
-  let selectedUnitSymbol: string;
+  let showValues: string;
+  let groupBy: string;
+  let unitSymbol: string;
   const unitSymbols = ['Count', 'm', 'm2', 'm3', 'ft', 'ft2', 'ft3'];
   let selectedStartColor: string;
   let selectedEndColor: string;
@@ -23,10 +23,11 @@
   if ($editChartIndex === -1) {
     // In this scenario, we are creating a new chart, 
     // so we set the default values to the first attribute key
-    selectedShowValues = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
-    selectedGroupBy = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
+    dataSource = $dataset[0].dataSource;
     chartType = 'bar';
-    selectedUnitSymbol = unitSymbols[0];
+    showValues = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
+    groupBy = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
+    unitSymbol = unitSymbols[0];
     selectedStartColor = $startColor;
     selectedEndColor = $endColor;
   }
@@ -34,21 +35,22 @@
   {
     // In this scenario, we are editing an existing chart,
     // so we set the default values to the values of the chart being edited
-    selectedShowValues = $chartConfigs[$editChartIndex].showValues;
-    selectedGroupBy = $chartConfigs[$editChartIndex].groupBy;
-    chartType = $chartConfigs[$editChartIndex].type;
-    selectedUnitSymbol = $chartConfigs[$editChartIndex].unitSymbol;
+    dataSource = $chartConfigs[$editChartIndex].dataSource;
+    chartType = $chartConfigs[$editChartIndex].chartType;
+    showValues = $chartConfigs[$editChartIndex].showValues;
+    groupBy = $chartConfigs[$editChartIndex].groupBy;
+    unitSymbol = $chartConfigs[$editChartIndex].unitSymbol;
     selectedStartColor = $chartConfigs[$editChartIndex].startColor;
     selectedEndColor = $chartConfigs[$editChartIndex].endColor;
   }
 
   function handleCreateChart() {
-    saveChartConfig(chartType, selectedGroupBy, selectedShowValues, selectedUnitSymbol);
+    saveChartConfig();
     toggleChartEditor();
   }
 
   function handleUpdateChart() {
-    saveChartConfig(chartType, selectedGroupBy, selectedShowValues, selectedUnitSymbol);
+    saveChartConfig();
  }
   
   function toggleChartEditor() {
@@ -61,13 +63,14 @@ export function addChartConfig(config: ChartConfig) {
 }
 
 // function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
-export function saveChartConfig(chartType: string, groupBy: string, showValues: string, unitSymbol: string): void {
+export function saveChartConfig(): void {
     const config = {
-        id: Math.random().toString(36).substr(2, 9),
-        type: chartType,
-        showValues: showValues,
-        groupBy: groupBy,
-        unitSymbol: unitSymbol,
+        id: Math.random().toString(36).slice(2, 11),
+        dataSource,
+        chartType,
+        showValues,
+        groupBy,
+        unitSymbol,
         startColor: selectedStartColor,
         endColor: selectedEndColor
     }
@@ -111,7 +114,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
       
       <div class="config-option">
         <label for="showValues">Show Values Of:</label>
-        <select id="showValues" bind:value={selectedShowValues}>
+        <select id="showValues" bind:value={showValues}>
           {#each attributeKeys as key}
           <option value={key}>{key}</option>
           {/each}
@@ -121,7 +124,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
       {#if !(chartType === 'total')}
       <div class="config-option">
         <label for="groupBy">Grouped By:</label>
-        <select id="groupBy" bind:value={selectedGroupBy}>
+        <select id="groupBy" bind:value={groupBy}>
           {#each attributeKeys as key}
           <option value={key}>{key}</option>
           {/each}
@@ -131,7 +134,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
       
       <div class="config-option">
         <label for="unitSymbol">Unit Symbol:</label>
-        <select id="unitSymbol" bind:value={selectedUnitSymbol}>
+        <select id="unitSymbol" bind:value={unitSymbol}>
           {#each unitSymbols as symbol}
           <option value={symbol}>{symbol}</option>
           {/each}

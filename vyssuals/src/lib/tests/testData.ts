@@ -20,6 +20,7 @@ export function generateDummyData() {
     for (let i = 1; i <= 10; i++) {
         const item: DataItem = {
             id: `item_${i}`,
+            dataSource: 'dummy',
             attributes: {
                 area: getRandomNumber(10, 100), // Generate a random value for 'area'
                 category: getRandomElement(categories), // Select a random category

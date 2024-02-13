@@ -1,5 +1,5 @@
 import type { ChartConfig, DataItem } from '../types';
-import { createColorArray, darkenColors } from './colorUtils';
+import { createColorArray } from './colorUtils';
 
 
 export function getUniqueAttributeKeys(dataset: DataItem[]): string[] {

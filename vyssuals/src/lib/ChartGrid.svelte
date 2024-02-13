@@ -55,7 +55,7 @@
 
 <div class="grid-container">
     {#each $chartConfigs as config, index (config.id)}
-    <div class="grid-item" bind:this={gridItems[index]} style="width: {width[config.type]}">
+    <div class="grid-item" bind:this={gridItems[index]} style="width: {width[config.chartType]}">
         <Chart index={index} />
         <button title="Close" class="close-button" on:click={() => handleRemoveChart(index)}>&times;</button>
         <button title="Edit" class="edit-button" on:click={() => handleEditChart(index)}>&#9998;</button>             

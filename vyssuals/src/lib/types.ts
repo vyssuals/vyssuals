@@ -1,5 +1,6 @@
 export interface DataItem {
     id: string;
+    dataSource: string;
     attributes: Record<string, any>; // Dictionary of key-value pairs
 }
 
@@ -17,7 +18,8 @@ export interface ChartData {
 
   export interface ChartConfig {
     id: string;
-    type: string;
+    dataSource: string;
+    chartType: string;
     showValues: string;
     groupBy: string;
     unitSymbol: string;

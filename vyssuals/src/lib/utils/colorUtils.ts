@@ -25,15 +25,3 @@ function hexToRgb(hex: string): { r: number, g: number, b: number } {
 function rgbToHex(r: number, g: number, b: number): string {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
-
-// function to make a list of colors darker by 10%
-export function darkenColors(colors: string[]): string[] {
-    return colors.map(color => {
-        const rgb = hexToRgb(color);
-        const r = Math.round(rgb.r * 0.9);
-        const g = Math.round(rgb.g * 0.9);
-        const b = Math.round(rgb.b * 0.9);
-        return rgbToHex(r, g, b);
-    });
-}
-
