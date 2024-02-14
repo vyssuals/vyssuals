@@ -2,7 +2,7 @@
     import type { ChartConfig } from "../types";
     import { chartConfigs, dataset } from "../store";
     import { titleCase } from "../utils/textUtils";
-    import { getUniqueAttributeValues, allAttributeValuesAreNumbers, sumAttributeValues } from "../utils/dataUtils";
+    import { getUniqueAttributeValues, allAttributeValuesAreNumbers, sumAttributeValues, getLastTimestamp } from "../utils/dataUtils";
 
     export let index: number;
     let config: ChartConfig;
@@ -30,12 +30,17 @@
 
     $: {
         config = $chartConfigs[index];
-        if (allAttributeValuesAreNumbers($dataset, config.showValues)) {
-            total = sumAttributeValues($dataset, config.showValues);
+        let data = $dataset.filter(item => item.dataSource === config.dataSource);
+        const lastTimestamp = getLastTimestamp(data);
+        if (lastTimestamp) {
+            data = data.filter(item => item.timestamp === lastTimestamp);
+        }
+        if (allAttributeValuesAreNumbers(data, config.showValues)) {
+            total = sumAttributeValues(data, config.showValues);
             fullFormattedNumber = formatNumber(total);
         } else {
             // count the number of unique items in the dataset
-            total = getUniqueAttributeValues($dataset, config.showValues).length;
+            total = getUniqueAttributeValues(data, config.showValues).length;
             fullFormattedNumber = total.toString();
         }
     }

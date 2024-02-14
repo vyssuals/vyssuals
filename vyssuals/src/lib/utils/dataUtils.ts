@@ -90,4 +90,12 @@ export function createChartData(dataset: DataItem[], chartConfig: ChartConfig): 
     };
 }
 
-
+export function getLastTimestamp(dataset: DataItem[]): Date {
+    let lastTimestamp = new Date(0);
+    dataset.forEach(item => {
+        if (item.timestamp > lastTimestamp) {
+            lastTimestamp = item.timestamp;
+        }
+    });
+    return lastTimestamp;
+}
