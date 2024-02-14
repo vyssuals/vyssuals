@@ -60,6 +60,7 @@ export function sumAttributeBy(dataset: DataItem[], aggregateAttribute: string, 
 // function for creating chart data, returns chart data
 export function createChartData(dataset: DataItem[], chartConfig: ChartConfig): any {
     const labels = getUniqueAttributeValues(dataset, chartConfig.groupBy);
+    labels.sort();
     
     let data;
     if (allAttributeValuesAreNumbers(dataset, chartConfig.showValues)) {
