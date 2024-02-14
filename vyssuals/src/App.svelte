@@ -1,48 +1,49 @@
 <script lang="ts">
   import AddChartButton from './lib/AddChartButton.svelte'
   import { onMount } from 'svelte';
-  import { dataset, logDatasetContent, showChartEditor, showConnector } from './lib/store';
   import { generateDummyData } from './lib/tests/testData';
+  import { dataset, logDatasetContent, showChartEditor, chartConfigs, showDataSourceEditor } from './lib/store';
   import ChartGrid from './lib/ChartGrid.svelte';
   import ChartEditor from './lib/ChartEditor.svelte';
-  import { chartConfigs } from './lib/store';
   import Welcome from './lib/Welcome.svelte';
-  import Connector from './lib/connectors/Connector.svelte';
+  import DataSourceEditor from './lib/DataSourceEditor.svelte';
+  import AddCsvButton from './lib/AddCsvButton.svelte';
+ 
 
-  onMount(() => {
-    const dataSources: string[] = ['Revit-2022__836_Project-Name', 'Rhino-8__2402_DR_some-long-filename', 'Csv_brutally-long-filename-2023-02-23_randomShit'];
-    generateDummyData(dataSources[0], 5);
-    // generate more dummy data every 5 seconds
-    setInterval(() => {
-      const randomDataSourceIndex = Math.floor(Math.random() * dataSources.length);
-      const randomCount = Math.floor(Math.random() * 100);
-      generateDummyData(dataSources[randomDataSourceIndex], randomCount);
-      console.log('Generated more dummy data');
-    }, 20000);
-    logDatasetContent(); // Call logDatasetContent after generateDummyData
-});
+//   onMount(() => {
+//     const dataSources: string[] = ['Revit-2022__836_Project-Name', 'Rhino-8__2402_DR_some-long-filename', 'Csv_brutally-long-filename-2023-02-23_randomShit'];
+//     generateDummyData(dataSources[0], 5);
+//     // generate more dummy data every 5 seconds
+//     setInterval(() => {
+//       const randomDataSourceIndex = Math.floor(Math.random() * dataSources.length);
+//       const randomCount = Math.floor(Math.random() * 100);
+//       generateDummyData(dataSources[randomDataSourceIndex], randomCount);
+//       console.log('Generated more dummy data');
+//     }, 20000);
+//     logDatasetContent(); // Call logDatasetContent after generateDummyData
+// });
 
 </script>
 
 <main>
-
-
   {#if $chartConfigs.length === 0}
     <Welcome />
     {:else}
     <ChartGrid />
-  {/if}
-
-  {#if $showConnector.length > 0}
-  <Connector />
   {/if}
   
   {#if $showChartEditor}
     <ChartEditor />
   {/if}
 
+  {#if $showDataSourceEditor}
+    <DataSourceEditor />
+  {/if}
+
   {#if $dataset.length > 0}
     <AddChartButton />
+    {:else}
+    <AddCsvButton />
   {/if}
 </main>
 

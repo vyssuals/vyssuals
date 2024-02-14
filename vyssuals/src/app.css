@@ -37,6 +37,10 @@ button {
   transition: border-color 0.25s;
 }
 
+button:hover {
+  filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
+}
+
 h2 {
   margin: 0.5em;
 }

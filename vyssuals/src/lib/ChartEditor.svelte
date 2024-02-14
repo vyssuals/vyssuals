@@ -4,6 +4,7 @@
   import { getUniqueAttributeKeys,  } from './utils/dataUtils';
   import type { ChartConfig } from './types';
   import Draggable from './Draggable.svelte';
+  import FloatingWindow from './FloatingWindow.svelte';
 
 
   const left = (window.innerWidth / 2) - 135;
@@ -49,14 +50,14 @@
 
   function handleCreateChart() {
     saveChartConfig();
-    toggleChartEditor();
+    hideChartEditor();
   }
 
   function handleUpdateChart() {
     saveChartConfig();
  }
   
-  function toggleChartEditor() {
+  function hideChartEditor() {
     showChartEditor.set(false)
     editChartIndex.set(-1);
 }
@@ -101,7 +102,9 @@ export function updateChartConfig(config: ChartConfig, index: number) {
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
   
-  <div class="chart-editor-overlay" on:click|self={toggleChartEditor}>
+  <!-- <div class="floating-window" on:click|self={toggleChartEditor}> -->
+    
+  <FloatingWindow on:click={hideChartEditor}>
     <Draggable {left} {top}>
     <div class="chart-editor">
       <h2>Chart Editor</h2>
@@ -110,9 +113,9 @@ export function updateChartConfig(config: ChartConfig, index: number) {
         <div class="config-option">
           <label for="dataSource">Data Source:</label>
           <select id="dataSource" bind:value={dataSource}>
-            {#each dataSources() as source}
+          {#each dataSources() as source}
             <option value={source}>{source}</option>
-            {/each}
+          {/each}
         </div>
 
       <div class="config-option">
@@ -127,64 +130,51 @@ export function updateChartConfig(config: ChartConfig, index: number) {
       <div class="config-option">
         <label for="showValues">Show Values Of:</label>
         <select id="showValues" bind:value={showValues}>
-          {#each attributeKeys as key}
+        {#each attributeKeys as key}
           <option value={key}>{key}</option>
-          {/each}
+        {/each}
         </select>
       </div>
       
       {#if !(chartType === 'total')}
-      <div class="config-option">
-        <label for="groupBy">Grouped By:</label>
-        <select id="groupBy" bind:value={groupBy}>
+        <div class="config-option">
+          <label for="groupBy">Grouped By:</label>
+          <select id="groupBy" bind:value={groupBy}>
           {#each attributeKeys as key}
-          <option value={key}>{key}</option>
+            <option value={key}>{key}</option>
           {/each}
-        </select>
-      </div>
+          </select>
+        </div>
       {/if}
       
       <div class="config-option">
         <label for="unitSymbol">Unit Symbol:</label>
         <select id="unitSymbol" bind:value={unitSymbol}>
-          {#each unitSymbols as symbol}
+        {#each unitSymbols as symbol}
           <option value={symbol}>{symbol}</option>
-          {/each}
-        </div>
+        {/each}
+      </div>
         
-        {#if !(chartType === 'total')}
+      {#if !(chartType === 'total')}
         <div class="config-option">
           <input class="color-input" type="color" id="startColor" bind:value={selectedStartColor} style="background-color: {selectedStartColor}" />
           <input class="color-input" type="color" id="endColor" bind:value={selectedEndColor} style="background-color: {selectedEndColor}" />
         </div>
-        {/if}
+      {/if}
     </div>
         
-        {#if $editChartIndex > -1}
+      {#if $editChartIndex > -1}
         <button on:click={handleUpdateChart}>Update Chart</button>
-        {:else}
+      {:else}
         <button on:click={handleCreateChart}>Create Chart</button>
-        {/if}
-      </div>
-    </Draggable>
+      {/if}
     </div>
+  </Draggable>
+</FloatingWindow>
+
 
 
 <style>
-.chart-editor-overlay {
-    background: rgba(0, 0, 0, 0.149);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
-  }
-
   .chart-editor {
     display: flex;
     flex-direction: column;
@@ -225,7 +215,6 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     padding: 1px;
     border-radius: 0.5em;
     width: 100%;
-    /* background-color: var(--card-background-color); */
     border: none;
     cursor: pointer;
     -webkit-appearance: none;

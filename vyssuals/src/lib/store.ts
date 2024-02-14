@@ -29,3 +29,7 @@ export function logDatasetContent() {
         });
     })();
 }
+
+
+export const dataPaths: Writable<string[]> = writable([]);
+export const showDataSourceEditor: Writable<boolean> = writable(false);

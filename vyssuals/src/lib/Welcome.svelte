@@ -1,5 +1,6 @@
 <script lang="ts">
     import { showConnector } from "./store";
+    import Connector from "./connectors/Connector.svelte";
 
     function handleClickConnector(connector: string) {
         showConnector.set(connector);
@@ -16,6 +17,9 @@
     </div>
 
 </div>
+{#if $showConnector.length > 0}
+    <Connector />
+{/if}
 
 
 <style>
@@ -42,7 +46,6 @@
 
     button:hover {
         color: #05ACFF;
-        filter: drop-shadow(0 0 0.5em var(--dropshadow-color))
     }
     .gradient-text {
         font-size: 3em;

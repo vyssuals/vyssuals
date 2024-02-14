@@ -2,7 +2,7 @@
   import RevitConnector from "./RevitConnector.svelte";
   import RhinoConnector from "./RhinoConnector.svelte";
   import { showConnector } from "../store";
-  import { onMount } from 'svelte';
+  import FloatingWindow from "../FloatingWindow.svelte";
 
 let connector: any;
 
@@ -18,49 +18,24 @@ switch($showConnector) {
 }
 
 
-function handleClickOutside(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.connector')) {
-      showConnector.set('');
-
-    }
-  }
-
-  onMount(() => {
-    setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
-    }, 100); // Add a delay of 100 milliseconds
-    
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  });
+function hideConnector() {
+  showConnector.set('');
+}
 
 </script>
 
-<div class="connector-overlay">
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<FloatingWindow on:click={hideConnector}>
   <div class="connector">
+    {#if connector}
+      <svelte:component this={connector} />
+    {/if}
+  </div>
+</FloatingWindow>
 
-{#if connector}
-  <svelte:component this={connector} />
-{/if}
-</div>
-</div>
 
 <style>
-    .connector-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
-    }
-
     .connector {
         display: flex;
         flex-direction: column;
@@ -70,5 +45,5 @@ function handleClickOutside(event: MouseEvent) {
         border-radius: 1em;
         padding: 1em;
     }
-  
+    
 </style>
