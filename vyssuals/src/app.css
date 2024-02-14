@@ -41,8 +41,14 @@ button:hover {
   filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
 }
 
+h1 {
+  font-size: 2em;
+  margin: 0em;
+}
+
 h2 {
-  margin: 0.5em;
+  font-weight: 300;
+  font-size: 1.2em;
 }
 
 h3 {

@@ -31,5 +31,5 @@ export function logDatasetContent() {
 }
 
 
-export const dataPaths: Writable<string[]> = writable([]);
+export const dataSources = writable<{ path: string; interval: number }[]>([{path: 'http://localhost:3000000000000000000', interval: 1000}, {path: 'http://localhost:6001', interval: 483}]);
 export const showDataSourceEditor: Writable<boolean> = writable(false);

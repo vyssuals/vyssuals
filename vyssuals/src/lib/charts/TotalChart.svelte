@@ -42,10 +42,10 @@
 
 </script>
 
-<h2>Total {titleCase(config.showValues)}</h2>
+<h1>Total {titleCase(config.showValues)}</h1>
 <h3>{config.unitSymbol}</h3>
 <div class="total">
-    <h1>{abbreviateNumber(total)}</h1>
+    <h1 class="total-number">{abbreviateNumber(total)}</h1>
     
 </div>
 {#if total > 999}
@@ -53,7 +53,7 @@
 {/if}
 
 <style>
-    h1 {
+    .total-number {
         font-size: 3rem;
         margin-top: 0.3em;
         margin-bottom: 0.37em;

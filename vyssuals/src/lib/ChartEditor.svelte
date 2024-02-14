@@ -106,8 +106,8 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     
   <FloatingWindow on:click={hideChartEditor}>
     <Draggable {left} {top}>
-    <div class="chart-editor">
-      <h2>Chart Editor</h2>
+    <div class="chart-editor" id="chartEditor">
+      <h1>Chart Editor</h1>
 
       <div>
         <div class="config-option">
