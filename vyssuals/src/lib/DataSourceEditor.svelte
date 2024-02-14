@@ -72,6 +72,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <FloatingWindow on:click={hideDataSourceEditor}>
     <div class="datasource-editor" id="dataSourceEditor">
+        <button title="Close" class="close-button" on:click={() => hideDataSourceEditor()}>&times;</button>
         <h1>Data Sources</h1>
         {#if $dataSources.length > 0}
             <table>
@@ -108,6 +109,7 @@
 
 <style>
     .datasource-editor {
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -166,7 +168,6 @@
 
     .symbol button {
         font-weight: 700;
-        /* background: red; */
         background-color: var(--background-color);
         width: 80px;
     }
@@ -175,23 +176,26 @@
         width: 100px;
         border: none;
         text-align: center;
-        /* padding: 12px; */
         padding: 0.6em 1.2em;
         font-size: 1em;
-
-        /* background: red; */
         background-color: var(--background-color);
         border-radius: 8px
     }
 
-    .add-file {
-        /* margin-top: 1em; */
-        background-color: var(--background-color);
+    .close-button {
+        font-weight: 700;
+        font-size: large;
+        background-color: #00000000;
         border: none;
-        color: var(--color);
         cursor: pointer;
-        width: 174px;
-        align-content: left;
+
+        position: absolute;
+        top: 0.3em;
+        right: 0.3em;
+    }
+
+    .close-button:hover {
+        filter: drop-shadow(0 0 8px #000000);
     }
 
 </style>

@@ -8,6 +8,7 @@
   import Welcome from './lib/Welcome.svelte';
   import DataSourceEditor from './lib/DataSourceEditor.svelte';
   import AddCsvButton from './lib/AddCsvButton.svelte';
+  import OpenDataSourcesButton from './lib/OpenDataSourcesButton.svelte';
  
 
 //   onMount(() => {
@@ -22,6 +23,8 @@
 //     }, 20000);
 //     logDatasetContent(); // Call logDatasetContent after generateDummyData
 // });
+
+$: {console.log('App.svelte: dataset', $dataset)}
 
 </script>
 
@@ -42,6 +45,7 @@
 
   {#if $dataset.length > 0}
     <AddChartButton />
+    <OpenDataSourcesButton />
     {:else}
     <AddCsvButton />
   {/if}

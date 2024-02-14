@@ -10,10 +10,12 @@
   const left = (window.innerWidth / 2) - 135;
   const top = (window.innerHeight / 2) - 250;
 
-  let dataSource: string;
   const dataSources = () => {
     return Array.from(new Set($dataset.map(item => item.dataSource)));
   }
+  console.log('dataSources', dataSources());  
+  let dataSource: string;
+
   let chartType: string;
   let showValues: string;
   let groupBy: string;
@@ -22,15 +24,16 @@
   let selectedStartColor: string;
   let selectedEndColor: string;
 
-  let attributeKeys = getUniqueAttributeKeys($dataset);
-
+  let attributeKeys: string[];
+  $: attributeKeys = getUniqueAttributeKeys($dataset.filter(item => item.dataSource === dataSource));
+  
   if ($editChartIndex === -1) {
     // In this scenario, we are creating a new chart, 
     // so we set the default values to the first attribute key
     dataSource = $dataset[0].dataSource;
     chartType = 'bar';
-    showValues = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
-    groupBy = attributeKeys.length > 0 ? attributeKeys[0] : 'No Data';
+    showValues = attributeKeys?.length > 0 ? attributeKeys[0] : 'No Data';
+    groupBy = attributeKeys?.length > 0 ? attributeKeys[0] : 'No Data';
     unitSymbol = unitSymbols[0];
     selectedStartColor = $startColor;
     selectedEndColor = $endColor;
