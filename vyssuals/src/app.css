@@ -27,7 +27,7 @@ body {
 
 button {
   border-radius: 8px;
-  border: 1px solid transparent;
+  border: none;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 300;
@@ -54,6 +54,13 @@ h2 {
 h3 {
   font-weight: 300;
   font-size: 0.8em;
+}
+
+label {
+  font-weight: 300;
+  font-size: 0.9em;
+  margin-right: 0.5em;
+  align-self: center;
 }
 
 @media (prefers-color-scheme: light) {

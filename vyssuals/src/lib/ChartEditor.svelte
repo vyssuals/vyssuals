@@ -179,7 +179,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 240px;
+    width: 260px;
     gap: 10px;
     background-color: var(--card-background-color);
     border-radius: 1em;
@@ -194,18 +194,12 @@ export function updateChartConfig(config: ChartConfig, index: number) {
     margin: 10px;
   }
 
-  label {
-    font-weight: 300;
-    align-self: center;
-    font-size: 0.9em;
-  }
-  
   select {
     padding: 5px;
     border-radius: 0.5em;
     background-color: var(--card-background-color);
     border-color: var(--outline-color);
-    width: 100px;
+    width: 110px;
     overflow: hidden; /* Hide overflowed content */
     text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
     white-space: nowrap; /* Prevent text from wrapping onto the next line */
