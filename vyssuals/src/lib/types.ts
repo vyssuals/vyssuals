@@ -27,3 +27,8 @@ export interface ChartData {
     startColor: string;
     endColor: string;
   }
+
+  export interface DataSource {
+    file: File;
+    interval: number;
+  }

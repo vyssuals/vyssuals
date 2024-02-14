@@ -2,13 +2,13 @@
     import Papa from "papaparse";
     import FloatingWindow from "./FloatingWindow.svelte";
     import { showDataSourceEditor, dataSources, dataset } from "./store";
-    import type { DataItem } from "./types";
+    import type { DataItem, DataSource } from "./types";
 
     let files: FileList | null = null;
 
     $: if (files) {
         // add file path to dataSources and set interval to 60 seconds
-        const newSources = Array.from(files)
+        const newSources: DataSource[] = Array.from(files)
             .map(file => {
                 const path = file.name;
                 const interval = 60;
@@ -19,8 +19,8 @@
                 return { file, interval };
             })
             .filter(Boolean); // filter out null values
-
-        $dataSources = [...$dataSources, ...newSources];
+        
+        dataSources.update((prev) => [...prev, ...newSources]);
 
         for (const item of newSources) {
             if (item) {
@@ -42,7 +42,7 @@
       console.log(`Loading file: ${file.name}`);
       const reader = new FileReader();
       reader.onload = function(e) {
-        const contents = e.target.result as string;
+        const contents = e.target?.result as string;
         const parsed = Papa.parse(contents, { header: true });
         const data: DataItem[] = parsed.data.map((row: Record<string, any>, index: number) => ({
           id: String(index),

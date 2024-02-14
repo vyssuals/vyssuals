@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
-import type {  DataItem } from './types';
+import type {  DataItem, DataSource } from './types';
 import type { ChartConfig } from './types';
 
 // Chart Configs
@@ -31,5 +31,5 @@ export function logDatasetContent() {
 }
 
 
-export const dataSources = writable<{ file: File; interval: number }[]>([]);
+export const dataSources: Writable<DataSource[]> = writable([]);
 export const showDataSourceEditor: Writable<boolean> = writable(false);
