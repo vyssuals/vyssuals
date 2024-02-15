@@ -35,10 +35,18 @@
     showDataSourceEditor.set(false);
   }
 
+function toLocalISOString(date: Date) {
+    const offset = date.getTimezoneOffset();
+    date = new Date(date.getTime() - (offset * 60 * 1000));
+    return date.toISOString().slice(0, 23).replace('T', ' ');
+}
+
+
   // Define the dummy functions
   function loadFile(file: File) {
     if (file) {
       const timestamp: Date = new Date();
+      const timestampString = toLocalISOString(timestamp);
       console.log(`Loading file: ${file.name}`);
 
       Papa.parse(file, {
@@ -53,7 +61,7 @@
               id: String(index),
               dataSource: file.name,
               timestamp: timestamp,
-              attributes: row,
+              attributes: { ...row, timestamp: timestampString },
             })
           );
           dataset.update((prev) => [...prev, ...data]);

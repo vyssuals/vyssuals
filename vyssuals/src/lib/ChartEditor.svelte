@@ -127,6 +127,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
           <option value="bar">Bar</option>
           <option value="doughnut">Doughnut</option>
           <option value="total">Total</option>
+          <option value="line">Timeline</option>
         </select>
       </div>
       
@@ -139,7 +140,7 @@ export function updateChartConfig(config: ChartConfig, index: number) {
         </select>
       </div>
       
-      {#if !(chartType === 'total')}
+      {#if !(chartType === 'total' || chartType === 'line')}
         <div class="config-option">
           <label for="groupBy">Grouped By:</label>
           <select id="groupBy" bind:value={groupBy}>
