@@ -59,7 +59,7 @@
         <Chart index={index} />
         <button title="Close" class="close-button" on:click={() => handleRemoveChart(index)}>&times;</button>
         <button title="Edit" class="edit-button" on:click={() => handleEditChart(index)}>&#9998;</button>             
-        <button title="Download Image" class="export-button" on:click={() => exportNodeAsPNG(index)}>&#x2197;</button>
+        <button title="Download Image" class="export-button" on:click={() => exportNodeAsPNG(index)}>&DownArrowBar;</button>
     </div>
     {/each}
 </div>
