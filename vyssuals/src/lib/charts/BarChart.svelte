@@ -52,7 +52,7 @@
         ticks: {
           callback: function (value: any): string {
             let label = this.getLabelForValue(value);
-            return label.length > 8 ? `${label.slice(0, 6)}...` : label;
+            return label?.length > 8 ? `${label.slice(0, 6)}...` : label;
           },
         },
         grid: {
