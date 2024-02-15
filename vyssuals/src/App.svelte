@@ -24,6 +24,10 @@
 //     logDatasetContent(); // Call logDatasetContent after generateDummyData
 // });
 
+function handleAddChart() {
+  showChartEditor.set(true);
+}
+
 
 </script>
 
@@ -43,7 +47,7 @@
   {/if}
 
   {#if $dataset.length > 0}
-    <AddChartButton />
+    <AddChartButton on:click={handleAddChart}/>
     <OpenDataSourcesButton />
     {:else}
     <AddCsvButton />

@@ -2,8 +2,14 @@
   import Papa from "papaparse";
   import type { ParseResult } from "papaparse";
   import FloatingWindow from "./FloatingWindow.svelte";
-  import { showDataSourceEditor, dataSources, dataset } from "./store";
+  import {
+    showDataSourceEditor,
+    showChartEditor,
+    dataSources,
+    dataset,
+  } from "./store";
   import type { DataItem, DataSource } from "./types";
+  import AddChartButton from "./AddChartButton.svelte";
 
   let files: FileList | null = null;
 
@@ -35,12 +41,16 @@
     showDataSourceEditor.set(false);
   }
 
-function toLocalISOString(date: Date) {
-    const offset = date.getTimezoneOffset();
-    date = new Date(date.getTime() - (offset * 60 * 1000));
-    return date.toISOString().slice(0, 23).replace('T', ' ');
-}
+  function handleAddChart() {
+    hideDataSourceEditor();
+    showChartEditor.set(true);
+  }
 
+  function toLocalISOString(date: Date) {
+    const offset = date.getTimezoneOffset();
+    date = new Date(date.getTime() - offset * 60 * 1000);
+    return date.toISOString().slice(0, 23).replace("T", " ");
+  }
 
   // Define the dummy functions
   function loadFile(file: File) {
@@ -114,7 +124,7 @@ function toLocalISOString(date: Date) {
               <td>
                 <input
                   type="number"
-                  min="0"
+                  min="5"
                   bind:value={item.interval}
                   on:input={(e) =>
                     setRefreshInterval(item.path, e.target?.value)}
@@ -138,6 +148,9 @@ function toLocalISOString(date: Date) {
       Data sources listed here will automatically refresh at the given interval
       (in seconds).
     </p>
+    {#if $dataSources.length > 0}
+      <AddChartButton on:click={handleAddChart} />
+    {/if}
   </div>
 </FloatingWindow>
 
