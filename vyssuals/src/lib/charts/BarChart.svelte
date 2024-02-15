@@ -1,30 +1,36 @@
 <script lang="ts">
-    import type { ChartConfig } from "../types";
-    import { chartConfigs, dataset } from "../store";
-    import { Bar } from 'svelte-chartjs';
-    import { formatTitle } from "../utils/textUtils";
-    import { createChartData } from "../utils/dataUtils";
-    
-    import {
-        Chart,
-        Title,
-        Tooltip,
-        Legend,
-        BarElement,
-        CategoryScale,
-        LinearScale,
-    } from 'chart.js';
+  import type { ChartConfig } from "../types";
+  import { chartConfigs, dataset } from "../store";
+  import { Bar } from "svelte-chartjs";
+  import { formatTitle } from "../utils/textUtils";
+  import { createChartData, getLastTimestamp } from "../utils/dataUtils";
 
-    export let index: number;
-    let data: any;
-    let config: ChartConfig;
-    
-    $: {
-      config = $chartConfigs[index];
-      data = createChartData($dataset, config);
+  import {
+    Chart,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+  } from "chart.js";
+  import { get } from "svelte/store";
+
+  export let index: number;
+  let data: any;
+  let config: ChartConfig;
+
+  $: {
+    config = $chartConfigs[index];
+    let filteredDataset = $dataset.filter((item) => item.dataSource === config.dataSource);
+    const timestamp = getLastTimestamp(filteredDataset);
+    if (timestamp) {
+      filteredDataset = filteredDataset.filter((item) => item.timestamp === timestamp);
     }
+    data = createChartData(filteredDataset, config);
+  }
 
-    Chart.register(
+  Chart.register(
     Title,
     Tooltip,
     Legend,
@@ -39,38 +45,34 @@
     // aspectRatio: 2,
     plugins: {
       legend: {
-        display: false
-      }
+        display: false,
+      },
     },
     scales: {
       x: {
         ticks: {
-          callback: function(value: any): string {
+          callback: function (value: any): string {
             let label = this.getLabelForValue(value);
             return label.length > 8 ? `${label.slice(0, 6)}...` : label;
-          }
+          },
         },
         grid: {
           display: true,
           drawOnChartArea: false,
           drawTicks: false,
-        }
+        },
       },
-      y: {        
+      y: {
         grid: {
           display: true,
           drawOnChartArea: false,
           drawTicks: false,
-        }
-        }
-      }
-  }
-
-
+        },
+      },
+    },
+  };
 </script>
-
 
 <h1 class="chart-title" style="width: 550px">{formatTitle(config)}</h1>
 <h3>{config.unitSymbol}</h3>
-<Bar {data} {options} style="height: 80%; width: 595px"/>
-
+<Bar {data} {options} style="height: 80%; width: 595px" />
