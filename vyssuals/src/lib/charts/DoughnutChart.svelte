@@ -43,7 +43,7 @@
             chart.data.labels.map((l: string, i: number) => ({
               datasetIndex: 0,
               index: i,
-              text: l.length > 8 ? `${l.slice(0, 6)}...` : l,
+              text: l?.length > 8 ? `${l.slice(0, 6)}...` : l,
               fillStyle: chart.data.datasets[0].backgroundColor[i],
               strokeStyle: chart.data.datasets[0].backgroundColor[i],
               hidden: false,
