@@ -1,18 +1,6 @@
 import type { ChartConfig, DataItem } from "../types";
 import { createColorArray } from "./colorUtils";
 
-export function getUniqueAttributeKeys(dataset: DataItem[]): string[] {
-  let result: string[] = [];
-  dataset.forEach((item) => {
-    Object.keys(item.attributes).forEach((key) => {
-      if (!result.includes(key)) {
-        result.push(key);
-      }
-    });
-  });
-  return result;
-}
-
 // get all unique values of a specific attribute
 export function getUniqueAttributeValues(
   dataset: DataItem[],
