@@ -18,7 +18,7 @@
     const newSources: DataSource[] = Array.from(files)
       .map((file) => {
         const path = file.name;
-        const interval = 60;
+        const interval = 420;
         if ($dataSources.some((item) => item.file.name === path)) {
           alert(`File is already a data source: ${path}`);
           return null;
@@ -85,12 +85,6 @@
   function removeItem(path: string) {
     $dataSources = $dataSources.filter((item) => item.file.name !== path);
   }
-
-  function setRefreshInterval(path: string, interval: number) {
-    $dataSources = $dataSources.map((item) =>
-      item.file.name === path ? { ...item, interval } : item
-    );
-  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -122,13 +116,7 @@
                 ></td
               >
               <td>
-                <input
-                  type="number"
-                  min="5"
-                  bind:value={item.interval}
-                  on:input={(e) =>
-                    setRefreshInterval(item.path, e.target?.value)}
-                />
+                <input type="number" min="5" bind:value={item.interval} />
               </td>
               <td class="symbol"
                 ><button on:click={() => removeItem(item.file.name)}
@@ -227,6 +215,10 @@
     font-size: 1em;
     background-color: var(--background-color);
     border-radius: 8px;
+  }
+
+  td p {
+    background-color: var(--card-background-color);
   }
 
   .close-button {

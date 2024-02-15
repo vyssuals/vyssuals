@@ -72,7 +72,7 @@ label {
     --color: #213547;
     background-color: var(--background-color);
     --background-color: #f3f2f2e2;
-    --card-background-color: #ffffffec;
+    --card-background-color: #fffffff7;
     --outline-color: #c2c2c2;
     --dropshadow-color: #0000001f;
   }
