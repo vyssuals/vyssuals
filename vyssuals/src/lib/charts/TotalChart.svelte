@@ -47,15 +47,16 @@
 
 </script>
 
-<h1>Total {titleCase(config.showValues)}</h1>
-<h3>{config.unitSymbol}</h3>
+<h1>Total</h1>
+<h2>{titleCase(config.showValues)}</h2>
 <div class="total">
     <h1 class="total-number">{abbreviateNumber(total)}</h1>
     
 </div>
 {#if total > 999}
-    <p>{fullFormattedNumber}</p>
+<p>{fullFormattedNumber}</p>
 {/if}
+<h3>{config.unitSymbol}</h3>
 
 <style>
     .total-number {
@@ -70,6 +71,8 @@
         align-items: center;
     }
 
-
+    h3 {
+        align-self: flex-end center;
+    }
 </style>
         
