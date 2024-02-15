@@ -14,7 +14,6 @@
     CategoryScale,
     LinearScale,
   } from "chart.js";
-  import { get } from "svelte/store";
 
   export let index: number;
   let data: any;
