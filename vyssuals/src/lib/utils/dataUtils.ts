@@ -116,7 +116,7 @@ export function createChartData(
       {
         label: chartConfig.showValues,
         data: data,
-        // backgroundColor: backgroundColor,
+        backgroundColor: backgroundColor,
         borderWidth: 2,
         borderColor: "#ffffff00",
         borderRadius: 8,
