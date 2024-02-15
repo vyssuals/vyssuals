@@ -117,9 +117,6 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-
-<!-- <div class="floating-window" on:click|self={toggleChartEditor}> -->
-
 <FloatingWindow on:click={hideChartEditor}>
   <Draggable {left} {top}>
     <div class="chart-editor" id="chartEditor">
