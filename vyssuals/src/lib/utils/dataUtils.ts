@@ -29,6 +29,7 @@ export function getUniqueAttributeValues(dataset: DataItem[], attribute: string)
 export function allAttributeValuesAreNumbers(dataset: DataItem[], attribute: string) {
     for (let i = 0; i < dataset.length; i++) {
         if (isNaN(Number(dataset[i].attributes[attribute]))) {
+            console.log('Not a number: ', attribute, dataset[i].attributes[attribute], 'at index', i);
             return false;
         }
     }
