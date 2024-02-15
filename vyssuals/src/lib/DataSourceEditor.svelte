@@ -1,15 +1,9 @@
 <script lang="ts">
-  import Papa from "papaparse";
-  import type { ParseResult } from "papaparse";
   import FloatingWindow from "./FloatingWindow.svelte";
-  import {
-    showDataSourceEditor,
-    showChartEditor,
-    dataSources,
-    dataset,
-  } from "./store";
-  import type { DataItem, DataSource } from "./types";
+  import { showDataSourceEditor, showChartEditor, dataSources } from "./store";
+  import type { DataSource } from "./types";
   import AddChartButton from "./AddChartButton.svelte";
+  import { loadFile } from "./DataConnector";
 
   let files: FileList | null = null;
 
@@ -18,7 +12,7 @@
     const newSources: DataSource[] = Array.from(files)
       .map((file) => {
         const path = file.name;
-        const interval = 420;
+        const interval = 0;
         if ($dataSources.some((item) => item.file.name === path)) {
           alert(`File is already a data source: ${path}`);
           return null;
@@ -44,42 +38,6 @@
   function handleAddChart() {
     hideDataSourceEditor();
     showChartEditor.set(true);
-  }
-
-  function toLocalISOString(date: Date) {
-    const offset = date.getTimezoneOffset();
-    date = new Date(date.getTime() - offset * 60 * 1000);
-    return date.toISOString().slice(0, 23).replace("T", " ");
-  }
-
-  // Define the dummy functions
-  function loadFile(file: File) {
-    if (file) {
-      const timestamp: Date = new Date();
-      const timestampString = toLocalISOString(timestamp);
-      console.log(`Loading file: ${file.name}`);
-
-      Papa.parse(file, {
-        header: true,
-        dynamicTyping: true,
-        skipEmptyLines: true,
-        complete: function (results: ParseResult<Record<string, any>>) {
-          console.log("Parsing complete:", results.data);
-
-          const data: DataItem[] = results.data.map(
-            (row: Record<string, any>, index: number) => ({
-              id: String(index),
-              dataSource: file.name,
-              timestamp: timestamp,
-              attributes: { ...row, timestamp: timestampString },
-            })
-          );
-          dataset.update((prev) => [...prev, ...data]);
-        },
-      });
-    } else {
-      console.log("No file to load");
-    }
   }
 
   function removeItem(path: string) {
@@ -116,7 +74,7 @@
                 ></td
               >
               <td>
-                <input type="number" min="5" bind:value={item.interval} />
+                <input type="number" min="0" bind:value={item.interval} />
               </td>
               <td class="symbol"
                 ><button on:click={() => removeItem(item.file.name)}
@@ -133,8 +91,8 @@
       <input type="file" id="filePicker" accept=".csv" bind:files />
     </div>
     <p>
-      Data sources listed here will automatically refresh at the given interval
-      (in seconds).
+      Data sources auto-refresh at given intervals. 0 means no auto-refresh.
+      (in seconds)
     </p>
     {#if $dataSources.length > 0}
       <AddChartButton on:click={handleAddChart} />
