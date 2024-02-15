@@ -24,7 +24,6 @@
 //     logDatasetContent(); // Call logDatasetContent after generateDummyData
 // });
 
-$: {console.log('App.svelte: dataset', $dataset)}
 
 </script>
 
@@ -64,15 +63,16 @@ $: {console.log('App.svelte: dataset', $dataset)}
     position: relative;
     display: flex;
     justify-content: center;
-    margin-top: 2em;
-
+    align-items: center;
   }
+
   a {
     text-decoration: none;
     color: #7d7d7d;
     font-style: italic;
     font-weight: 300;
   }
+
   a:hover {
     color: #05ACFF;
   }
