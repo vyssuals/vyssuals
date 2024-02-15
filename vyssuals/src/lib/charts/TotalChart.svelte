@@ -51,12 +51,14 @@
 <h2>{titleCase(config.showValues)}</h2>
 <div class="total">
     <h1 class="total-number">{abbreviateNumber(total)}</h1>
-    
 </div>
-{#if total > 999}
-<p>{fullFormattedNumber}</p>
-{/if}
 <h3>{config.unitSymbol}</h3>
+{#if total > 999}
+<details>
+    <summary>&#9776;</summary>
+    <p>{fullFormattedNumber}</p>
+</details>
+{/if}
 
 <style>
     .total-number {
@@ -73,6 +75,24 @@
 
     h3 {
         align-self: flex-end center;
+    }
+
+    details {
+        margin-top: 2em;
+        font-weight: 300;
+    }
+
+    details summary {
+        cursor: pointer;
+        list-style: none;
+    }
+
+    details summary:hover {
+        scale: 1.5;
+    }
+
+    details p {
+        font-weight: 500;
     }
 </style>
         
