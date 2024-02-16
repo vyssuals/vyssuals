@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,9 +30,11 @@ class Program
 
     static async Task TryConnectAsync(string url, string exePath, CancellationToken cancellationToken)
     {
+        var client = new WebSocketClient();
+
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (!await TryConnectToServerAsync(url))
+            if (!await client.TryConnectAsync(url))
             {
                 Console.WriteLine("Could not connect to the server. Starting the server...");
 
@@ -56,23 +57,19 @@ class Program
             else
             {
                 Console.WriteLine("Connected to the server.");
-                break; // Exit the loop once the connection is successful
+                await SendDataAsync(client, cancellationToken);
+                break;
             }
         }
     }
 
-    static async Task<bool> TryConnectToServerAsync(string url)
+    static async Task SendDataAsync(WebSocketClient client, CancellationToken cancellationToken)
     {
-        using var client = new ClientWebSocket();
-
-        try
+        while (!cancellationToken.IsCancellationRequested)
         {
-            await client.ConnectAsync(new Uri(url), CancellationToken.None);
-            return true;
-        }
-        catch (WebSocketException)
-        {
-            return false;
+            var data = DummyDataGenerator.GenerateDummyData("MyDataSource", 10);
+            await client.SendDataAsync(data);
+            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
         }
     }
 }
