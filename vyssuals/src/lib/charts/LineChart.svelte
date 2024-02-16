@@ -29,7 +29,7 @@
     config.groupBy = 'timestamp';
     data = createChartData(filteredDataset, config);
     data.datasets[0].borderColor = config.startColor;
-    data.datasets[0].tension = 0.4;
+    data.datasets[0].tension = 0.5;
     data.datasets[0].fill = true;
     data.datasets[0].pointRadius = 2;
     data.datasets[0].pointHoverRadius = 5;

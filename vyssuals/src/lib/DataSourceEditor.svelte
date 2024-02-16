@@ -1,9 +1,15 @@
 <script lang="ts">
   import FloatingWindow from "./FloatingWindow.svelte";
-  import { showDataSourceEditor, showChartEditor, dataSources } from "./store";
+  import {
+    showDataSourceEditor,
+    showChartEditor,
+    dataSources,
+    dataSourcesWebsocket,
+  } from "./store";
   import type { DataSource } from "./types";
   import AddChartButton from "./AddChartButton.svelte";
-  import { loadFile } from "./DataConnector";
+  import { loadCSVFile } from "./DataConnector";
+  import ConnectorList from "./ConnectorList.svelte";
 
   let files: FileList | null = null;
 
@@ -25,7 +31,7 @@
 
     for (const item of newSources) {
       if (item) {
-        loadFile(item.file);
+        loadCSVFile(item.file);
       }
     }
     files = null;
@@ -54,7 +60,26 @@
       class="close-button"
       on:click={() => hideDataSourceEditor()}>&times;</button
     >
-    <h1>Data Sources</h1>
+    <h1>Real-Time Connections</h1>
+    {#if $dataSourcesWebsocket.length > 0}
+    <div style="padding-bottom: 1em;">
+      {#each $dataSourcesWebsocket as item (item)}
+        <p class="file-path" style="margin: 2px;">{item}</p>
+      {/each}
+    </div>
+    {:else}
+      <p>
+        No Real-Time Connection Active.<br />
+        Start the Vyssuals plugin in your desktop application or install a connector
+        plugin:
+      </p>
+      <div style="padding: 1em;">
+        <ConnectorList />
+      </div>
+    {/if}
+    <!-- <hr style="width: 100%; margin-top: 1em;" /> -->
+
+    <h1>Other Data Sources</h1>
     {#if $dataSources.length > 0}
       <table>
         <thead>
@@ -70,7 +95,7 @@
             <tr>
               <td><p class="file-path">{item.file.name}</p></td>
               <td class="symbol"
-                ><button on:click={() => loadFile(item.file)}>&#x21BB;</button
+                ><button on:click={() => loadCSVFile(item.file)}>&#x21BB;</button
                 ></td
               >
               <td>
@@ -90,11 +115,14 @@
       <label for="filePicker">Add CSV:</label>
       <input type="file" id="filePicker" accept=".csv" bind:files />
     </div>
-    <p>
-      Data sources auto-refresh at given intervals. 0 means no auto-refresh.
-      (in seconds)
+    <p style="padding-top: 1em;">
+      Data sources auto-refresh at given intervals. 0 means no auto-refresh. (in
+      seconds)
     </p>
-    {#if $dataSources.length > 0}
+
+    {#if $dataSources.length > 0 || $dataSourcesWebsocket.length > 0}
+      <!-- <hr style="width: 100%; margin-top: 2em;"/> -->
+
       <AddChartButton on:click={handleAddChart} />
     {/if}
   </div>
@@ -117,12 +145,8 @@
 
   p {
     font-weight: 300;
-    width: 60%;
+    margin: 0;
     text-align: center;
-  }
-
-  table {
-    margin-bottom: 1em;
   }
 
   th {
