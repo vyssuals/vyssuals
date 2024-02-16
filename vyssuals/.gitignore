@@ -25,3 +25,52 @@ dist-ssr
 
 
 testData.csv
+
+
+# Ignore build output directories
+bin/
+obj/
+
+# Ignore .NET Core files
+project.lock.json
+.project.json.user
+.project.json-workspace
+nupkg/
+
+# Ignore Visual Studio Code files
+.vscode/
+
+# Ignore user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore ReSharper files
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Ignore NuGet Packages
+*.nupkg
+# NuGet Symbol Packages
+*.snupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+# except build/, which is used as an MSBuild target.
+!**/[Pp]ackages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+#!**/[Pp]ackages/repositories.config
+# NuGet v3's project.json files produces more ignoreable files
+*.nuget.props
+*.nuget.targets
+
+# Ignore Microsoft Azure Build Output
+csx/
+*.build.csdef
+
+# Ignore Gradle files
+.gradle/
+
+# Ignore JetBrains Rider files
+.idea/
+*.DotSettings.user

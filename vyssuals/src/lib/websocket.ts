@@ -10,7 +10,7 @@ export const connectWebSocket = () => {
     return;
   }
 
-  socket = new WebSocket('ws://127.0.0.1:8184');
+  socket = new WebSocket('ws://localhost:8184');
 
   socket.onclose = (event: CloseEvent) => {
     console.log("Disconnected from server");
