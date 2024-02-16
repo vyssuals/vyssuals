@@ -38,13 +38,13 @@ public class WebSocketServer
         }
     }
 
-    private async Task HandleIncomingMessagesAsync(WebSocket webSocket)
+    private async Task HandleIncomingMessagesAsync(WebSocket sender)
     {
         var buffer = new byte[1024];
 
-        while (webSocket.State == WebSocketState.Open)
+        while (sender.State == WebSocketState.Open)
         {
-            var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            var result = await sender.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
 
             if (result.MessageType == WebSocketMessageType.Text)
             {
@@ -53,7 +53,7 @@ public class WebSocketServer
 
                 foreach (var client in clients)
                 {
-                    if (client.State == WebSocketState.Open)
+                    if (client != sender && client.State == WebSocketState.Open)
                     {
                         await client.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), WebSocketMessageType.Text, result.EndOfMessage, CancellationToken.None);
                     }
@@ -61,8 +61,8 @@ public class WebSocketServer
             }
             else if (result.MessageType == WebSocketMessageType.Close)
             {
-                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
-                clients.Remove(webSocket);
+                await sender.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                clients.Remove(sender);
             }
         }
     }
