@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 public class DummyDataGenerator
 {
     private static Random random = new Random();
@@ -22,9 +19,9 @@ public class DummyDataGenerator
         return random.Next(min, max + 1);
     }
 
-    public static List<Dictionary<string, object>> GenerateDummyData(string dataSource, int count)
+    public static List<DataItem> GenerateDummyData(string dataSource, int count)
     {
-        var data = new List<Dictionary<string, object>>();
+        var data = new List<DataItem>();
 
         for (int i = 0; i < count; i++)
         {
@@ -39,12 +36,7 @@ public class DummyDataGenerator
                 { "Some Long Parameter Name That Never Keeps on Goooooooooooooooooing", GetRandomElement(someLongParameterName) }
             };
 
-            var item = new Dictionary<string, object>
-            {
-                { "id", GetRandomNumber(1, 1000000).ToString() },
-                { "dataSource", dataSource },
-                { "attributes", attributes }
-            };
+            var item = new DataItem(GetRandomNumber(1, 1000000).ToString(), dataSource, attributes);
 
             data.Add(item);
         }

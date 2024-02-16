@@ -26,19 +26,13 @@ public class WebSocketClient
         }
     }
 
-    public async Task SendDataAsync(List<Dictionary<string, object>> data)
+    public async Task SendDataAsync(List<DataItem> data)
     {
         var json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
-        var bytes = Encoding.UTF8.GetBytes(json);
+        var buffer = Encoding.UTF8.GetBytes(json);
+        var segment = new ArraySegment<byte>(buffer);
 
-        if (webSocket.State == WebSocketState.Open)
-        {
-            await webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
-            Console.WriteLine("Sent data");
-        }
-        else
-        {
-            Console.WriteLine("WebSocket is not open");
-        }
+        await webSocket.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
+        // Console.WriteLine($"Sent data: {json}");
     }
 }

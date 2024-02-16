@@ -12,9 +12,17 @@
         await Task.Delay(1000); // Wait for 1 second
 
         // Then try to connect the client
-        await client.TryConnectAsync("ws://localhost:8184");
+        if (await client.TryConnectAsync("ws://localhost:8184"))
+        {
+            // If the client is connected, start sending dummy data every 10 seconds
+            while (true)
+            {
+                var dummyData = DummyDataGenerator.GenerateDummyData("Revit-2022__836_Project-Name", 2);
+                await client.SendDataAsync(dummyData);
 
-        // Add your code here to send/receive messages, etc.
+                await Task.Delay(10000); // Wait for 10 seconds
+            }
+        }
 
         // Keep the application running until the user presses Enter
         Console.WriteLine("Press Enter to quit...");
