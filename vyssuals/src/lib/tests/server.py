@@ -42,16 +42,24 @@ def generate_dummy_data(data_source, count):
 async def server(websocket, path):
     print('Client connected')
 
-    try:
-        while True:
-            data_source = get_random_element(data_sources)
-            count = get_random_number(1, 100)
-            dummy_data = generate_dummy_data(data_source, count)
-            await websocket.send(json.dumps(dummy_data))
-            print('Sent more dummy data')
-            await asyncio.sleep(5) # sleep for 5 seconds
-    except websockets.exceptions.ConnectionClosed:
-        print('Client disconnected')
+    async def handle_message():
+        async for message in websocket:
+            print(f"Received message from client: {message}")
+
+    async def send_dummy_data():
+        try:
+            while True:
+                data_source = get_random_element(data_sources)
+                count = get_random_number(1, 100)
+                dummy_data = generate_dummy_data(data_source, count)
+                await websocket.send(json.dumps(dummy_data))
+                print('Sent more dummy data')
+                await asyncio.sleep(10) # sleep for 5 seconds
+        except websockets.exceptions.ConnectionClosed:
+            print('Client disconnected')
+
+    # Run the message handler and dummy data sender concurrently
+    await asyncio.gather(handle_message(), send_dummy_data())
 
 start_server = websockets.serve(server, 'localhost', 8184)
 
