@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import json
 import random
-from datetime import datetime
+import signal
 
 # Define possible values for the 'category' attribute
 categories = ['walls', 'doors', 'floors', 'windows', 'roofs', 'ceilings', 'stairs']
@@ -19,13 +19,11 @@ def get_random_number(min, max):
     return random.randint(min, max)
 
 def generate_dummy_data(data_source, count):
-    timestamp = datetime.now()
     data = []
     for i in range(count):
         item = {
             'id': str(get_random_number(1, 1000000)),
             'dataSource': data_source,
-            'timestamp': timestamp.isoformat(),
             'attributes': {
                 'Area': get_random_number(1, 10), # Generate a random value for 'area'
                 'Category': get_random_element(categories), # Select a random category
@@ -40,7 +38,6 @@ def generate_dummy_data(data_source, count):
         data.append(item)   
     return data
         
-
 
 async def server(websocket, path):
     print('Client connected')
@@ -58,5 +55,26 @@ async def server(websocket, path):
 
 start_server = websockets.serve(server, 'localhost', 8184)
 
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+loop = asyncio.get_event_loop()
+
+# Add a signal handler for SIGINT
+def shutdown(signal, loop):
+    print(f"Received exit signal {signal.name}...")
+    loop.stop()
+
+for signame in {'SIGINT', 'SIGTERM'}:
+    loop.add_signal_handler(
+        getattr(signal, signame),
+        shutdown,
+        getattr(signal, signame),
+        loop,
+    )
+
+try:
+    loop.run_until_complete(start_server)
+    loop.run_forever()
+except KeyboardInterrupt:
+    pass
+finally:
+    print("Closing the loop...")
+    loop.close()
