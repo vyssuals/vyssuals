@@ -4,9 +4,12 @@ using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
+using System.Collections.Generic;
 
 public class WebSocketServer
 {
+    private List<WebSocket> clients = new List<WebSocket>();
+
     public async Task RunServerAsync()
     {
         var httpListener = new HttpListener();
@@ -23,6 +26,8 @@ public class WebSocketServer
                 var webSocketContext = await context.AcceptWebSocketAsync(null);
                 var webSocket = webSocketContext.WebSocket;
 
+                clients.Add(webSocket);
+
                 _ = HandleIncomingMessagesAsync(webSocket);
             }
             else
@@ -33,7 +38,7 @@ public class WebSocketServer
         }
     }
 
-    private static async Task HandleIncomingMessagesAsync(WebSocket webSocket)
+    private async Task HandleIncomingMessagesAsync(WebSocket webSocket)
     {
         var buffer = new byte[1024];
 
@@ -45,10 +50,19 @@ public class WebSocketServer
             {
                 var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
                 Console.WriteLine($"Received message from client: {message}");
+
+                foreach (var client in clients)
+                {
+                    if (client.State == WebSocketState.Open)
+                    {
+                        await client.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), WebSocketMessageType.Text, result.EndOfMessage, CancellationToken.None);
+                    }
+                }
             }
             else if (result.MessageType == WebSocketMessageType.Close)
             {
                 await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None);
+                clients.Remove(webSocket);
             }
         }
     }
