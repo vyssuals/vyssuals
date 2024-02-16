@@ -62,6 +62,7 @@ dataSources.subscribe((sources) => {
 });
 
 export function parseWebsocketData(data: any) {
+  console.log(data)
   const timestamp: Date = new Date();
   const timestampString = toLocalISOString(timestamp);
   const parsedData: DataItem[] = JSON.parse(data);
