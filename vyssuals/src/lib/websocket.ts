@@ -71,7 +71,10 @@ export const connectWebSocket = () => {
   });
 };
 export const handleWebSocketMessage = (data: any) => {
-  // Handle the WebSocket message here
-  // console.log(data);
+  // check if data is valid JSON
+  if (data === "Vyssuals connected") {
+    console.log("Connected to server");
+    return;
+  }
   parseWebsocketData(data);
 };
