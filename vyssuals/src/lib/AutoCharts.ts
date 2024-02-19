@@ -4,69 +4,77 @@ import type {
   DataSource,
   UnitSymbol,
 } from "./types";
-import nlp from "compromise";
+import FuzzySet from 'fuzzyset.js';
 
 // Check if a word matches a list of words
 function matchWord(word: string, filterWords: string[]): boolean {
-  const doc = nlp(word);
-  return filterWords.some((filterWord) => doc.has(filterWord));
+    // Create a new FuzzySet with your filter words
+    const filterWordsSet = FuzzySet(filterWords);
+
+    // Find the best match for the word
+    const match = filterWordsSet.get(word);
+
+    // If a match was found and the score is above a certain threshold, return true
+    // Otherwise, return false
+    return !!(match && match.length > 0 && match[0][0] > 0.8);
 }
 
 export async function autoChart(
-  dataSource: DataSource,
-  amount: number,
-  startColor: string,
-  endColor: string
+    dataSource: DataSource,
+    amount: number,
+    startColor: string,
+    endColor: string
 ): Promise<ChartConfig[]> {
-  const chartConfigs: ChartConfig[] = [];
+    const chartConfigs: ChartConfig[] = [];
 
-  let showValuesHeaders;
-  let groupByHeaders;
+    let showValuesHeaders;
+    let groupByHeaders;
 
-  // List of words to filter out
-  const filterShowValuesWords = ["id", "token", "timestamp", "date", "time"];
-  const filterGroupByWords = ["id", "token", "value", "count"];
+    // List of words to filter out
+    const filterShowValuesWords = ["id", "token", "timestamp", "date", "time"];
+    const filterGroupByWords = ["id", "token", "value", "count"];
 
-  console.log("pre nlp showValuesHeaders", showValuesHeaders);
-  // Filter out columns based on NLP
-  showValuesHeaders = dataSource.headerData.filter((header) => {
-    return !filterShowValuesWords.some((filterWord) =>
-      matchWord(header.name, filterShowValuesWords)
-    );
-  });
-  console.log("post nlp showValuesHeaders", showValuesHeaders);
+    console.log("pre nlp showValuesHeaders", showValuesHeaders);
+    // Filter out columns based on NLP
+    showValuesHeaders = dataSource.headerData.filter((header) => {
+        return !filterShowValuesWords.some((filterWord) =>
+            matchWord(header.name, filterShowValuesWords)
+        );
+    });
+    console.log("post nlp showValuesHeaders", showValuesHeaders);
 
-  // Filter out columns based on NLP
-  groupByHeaders = dataSource.headerData.filter((header) => {
-    return !filterShowValuesWords.some((filterWord) =>
-      matchWord(header.name, filterShowValuesWords)
-    );
-  });
+    // Filter out columns based on NLP
+    groupByHeaders = dataSource.headerData.filter((header) => {
+        return !filterShowValuesWords.some((filterWord) =>
+            matchWord(header.name, filterShowValuesWords)
+        );
+    });
 
-  groupByHeaders = groupByHeaders.filter((header) => {
-    const minUniqueValues = 5;
-    if (header.uniqueValues === 1) {
-      return false;
-    }
-    if (header.uniqueValues > 10) {
-        return false;
-    }
-    // Include the column if it has fewer unique values than the threshold,
-    // its cardinality ratio is less than 0.2, and not all values are the same
-    return (
-      header.uniqueValues <= minUniqueValues ||
-      (header.cardinalityRatio < 0.2 )
-    );
-  });
+    groupByHeaders = groupByHeaders.filter((header) => {
+        const minUniqueValues = 5;
+        if (header.uniqueValues === 1) {
+            return false;
+        }
+        if (header.uniqueValues > 10) {
+                return false;
+        }
+        // Include the column if it has fewer unique values than the threshold,
+        // its cardinality ratio is less than 0.2, and not all values are the same
+        return (
+            header.uniqueValues <= minUniqueValues ||
+            (header.cardinalityRatio < 0.2 )
+        );
+    });
 
-  console.log("post cardinality groupByHeaders", groupByHeaders);
+    console.log("post cardinality groupByHeaders", groupByHeaders);
 
-  // Filter out columns based on NLP
-  groupByHeaders = groupByHeaders.filter((header) => {
-    return !filterGroupByWords.some((filterWord) =>
-      matchWord(header.name, filterGroupByWords)
-    );
-  });
+    // Filter out columns based on NLP
+    groupByHeaders = groupByHeaders.filter((header) => {
+        return !filterGroupByWords.some((filterWord) =>
+            matchWord(header.name, filterGroupByWords)
+        );
+    });
+
   console.log("post nlp groupByHeaders", groupByHeaders);
 
   let showValuesIndex, groupByIndex;
@@ -75,6 +83,7 @@ export async function autoChart(
   let chartType: ChartType;
 
 for (let i = 0; i < amount; i++) {
+    let unitSymbol;
     do {
         // randomly select a chart type
         chartType = chartTypes[
@@ -83,6 +92,7 @@ for (let i = 0; i < amount; i++) {
 
         showValuesIndex = Math.floor(Math.random() * showValuesHeaders.length);
         showValues = showValuesHeaders[showValuesIndex]?.name || "";
+        unitSymbol = showValuesHeaders[showValuesIndex]?.unit || "";
 
         groupByIndex = Math.floor(Math.random() * groupByHeaders.length);
         groupBy = groupByHeaders[groupByIndex]?.name || "";
@@ -102,8 +112,9 @@ for (let i = 0; i < amount; i++) {
     showValuesHeaders.splice(showValuesIndex, 1);
     groupByHeaders.splice(groupByIndex, 1);
 
-    // use showValues header type to determine unitSymbol
-    const unitSymbol: UnitSymbol = "Count";
+
+
+
 
     chartConfigs.push({
         id: Math.random().toString(36).slice(2, 11).toString(),

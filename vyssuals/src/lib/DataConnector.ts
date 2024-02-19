@@ -1,8 +1,9 @@
 import { dataset, dataSources, dataSourcesWebsocket } from "./store";
 import type { DataItem, DataSource, HeaderData, UnitSymbol } from "./types";
-import { typeToUnit } from "./types";
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
+import nlp from "compromise";
+import FuzzySet from "fuzzyset.js";
 
 export function toLocalISOString(date: Date) {
   const offset = date.getTimezoneOffset();
@@ -102,19 +103,19 @@ function getHeaderData(data: DataItem[]): HeaderData[] {
     const keys = Array.from(
       new Set(data.map((item) => Object.keys(item.attributes)).flat())
     );
+      // Create a new FuzzySet with your keywords
+  const keywords = Object.keys(keywordToUnitSymbol);
+  const fuzzySet = FuzzySet(keywords);
     for (const key of keys) {
       const values = data.map((item) => item.attributes[key]);
-      const percentClean =
-        values.filter((v) => v !== null).length / values.length;
       const type = majorityType(values);
-      const unit: UnitSymbol = typeToUnit(type);
+      const unit: UnitSymbol = determineUnitSymbol(key, fuzzySet);
       const uniqueValues = new Set(values).size;
       const cardinalityRatio = uniqueValues / data.length;
       headerData.push({
         name: key,
         unit,
         type,
-        percentClean,
         uniqueValues,
         cardinalityRatio,
       });
@@ -136,4 +137,132 @@ const majorityType = (values: any[]): string => {
   });
 
   return typeCounts["number"] > typeCounts["string"] ? "number" : "string";
+};
+
+
+function determineUnitSymbol(showValues: string, fuzzySet: FuzzySet): UnitSymbol {
+
+  // Replace underscores with spaces and split into words
+  const words = showValues.replace(/_/g, " ").split(" ");
+
+  // Find the best match for each word
+  const matches = words.map(word => fuzzySet.get(word));
+
+  // Filter out null results and sort by score
+  const sortedMatches = matches.filter(Boolean).sort((a, b) => b[0][0] - a[0][0]);
+
+  // If a match was found, use the corresponding unit symbol
+  // Otherwise, use a default unit symbol
+  return sortedMatches.length > 0 ? keywordToUnitSymbol[sortedMatches[0][0][1]] : "Unique Items";
+}
+
+// Define a mapping of keywords to unit symbols
+const keywordToUnitSymbol: { [key: string]: UnitSymbol } = {
+  "unique items of": "Unique Items",
+  "unique items": "Unique Items",
+  unique: "Unique Items",
+  category: "Unique Items",
+  count: "Count",
+  counts: "Count",
+  number: "Count",
+  dollar: "USD",
+  dollars: "USD",
+  usd: "USD",
+  meter: "m",
+  meters: "m",
+  metre: "m",
+  height: "m",
+  length: "m",
+  width: "m",
+  depth: "m",
+  "m.": "m",
+  m: "m",
+  distance: "m",
+  "square meter": "m²",
+  "square meters": "m²",
+  "square metre": "m²",
+  area: "m²",
+  "cubic meter": "m",
+  "cubic meters": "m³",
+  "cubic metre": "m³",
+  foot: "ft",
+  feet: "ft",
+  "ft.": "ft",
+  "square feet": "ft²",
+  "sq ft": "ft²",
+  "cubic foot": "ft",
+  "cubic feet": "ft³",
+  "cubic ft": "ft³",
+  inch: "in",
+  inches: "in",
+  "in.": "in",
+  in: "in",
+  mile: "mi",
+  miles: "mi",
+  "mi.": "mi",
+  mi: "mi",
+  millimeter: "mm",
+  millimeters: "mm",
+  "mm.": "mm",
+  mm: "mm",
+  centimeter: "cm",
+  centimeters: "cm",
+  "cm.": "cm",
+  cm: "cm",
+  kilometer: "km",
+  kilometers: "km",
+  "km.": "km",
+  km: "km",
+  ounce: "oz",
+  ounces: "oz",
+  "oz.": "oz",
+  oz: "oz",
+  pound: "lb",
+  pounds: "lb",
+  "lb.": "lb",
+  lb: "lb",
+  milligram: "mg",
+  milligrams: "mg",
+  "mg.": "mg",
+  mg: "mg",
+  gram: "g",
+  grams: "g",
+  "g.": "g",
+  g: "g",
+  kilogram: "kg",
+  kilograms: "kg",
+  "kg.": "kg",
+  "fluid ounce": "fl oz",
+  "fluid ounces": "fl oz",
+  "fl oz.": "fl oz",
+  quart: "qt",
+  quarts: "qt",
+  "qt.": "qt",
+  gallon: "gal",
+  gallons: "gal",
+  "gal.": "gal",
+  milliliter: "ml",
+  milliliters: "ml",
+  "ml.": "ml",
+  liter: "l",
+  liters: "l",
+  "l.": "l",
+
+  "sq meter": "m²",
+  "sq m": "m²",
+  acre: "ac",
+  acres: "ac",
+  "ac.": "ac",
+  hectare: "ha",
+  hectares: "ha",
+  "ha.": "ha",
+  "us dollar": "USD",
+  "us dollars": "USD",
+  "usd.": "USD",
+  euro: "EUR",
+  euros: "EUR",
+  "eur.": "EUR",
+  "pound sterling": "GBP",
+  "pounds sterling": "GBP",
+  "gbp.": "GBP",
 };

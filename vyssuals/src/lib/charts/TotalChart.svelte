@@ -52,7 +52,7 @@
 </script>
 
 <h1>Total</h1>
-<h2>{titleCase(config.showValues)}</h2>
+<h2 title={titleCase(config.showValues)}>{titleCase(config.showValues)}</h2>
 <div class="total">
   <h1 class="total-number">{abbreviateNumber(total)}</h1>
 </div>
@@ -75,6 +75,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  h2 {
+    overflow: hidden; /* Hide overflowed content */
+  text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
+  white-space: nowrap; /* Prevent text from wrapping onto the next line */
   }
 
   h3 {
