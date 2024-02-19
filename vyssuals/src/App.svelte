@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AddChartButton from "./lib/AddChartButton.svelte";
+  import GradientButton from "./lib/GradientButton.svelte";
   import { onMount } from "svelte";
   import { generateDummyData } from "./lib/tests/testData";
   import {
@@ -55,7 +55,7 @@
   {/if}
 
   {#if $dataset.length > 0}
-    <AddChartButton on:click={handleAddChart} />
+    <GradientButton on:click={handleAddChart} />
     <OpenDataSourcesButton />
   {:else}
     <AddCsvButton />

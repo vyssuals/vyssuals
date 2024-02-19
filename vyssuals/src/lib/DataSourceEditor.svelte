@@ -10,7 +10,7 @@
     endColor,
   } from "./store";
   import type { ChartConfig, DataSource } from "./types";
-  import AddChartButton from "./AddChartButton.svelte";
+  import GradientButton from "./GradientButton.svelte";
   import { loadCSVFile } from "./DataConnector";
   import ConnectorList from "./ConnectorList.svelte";
   import { autoChart } from "./AutoCharts";
@@ -59,14 +59,13 @@
       );
       chartConfigs.update((prev) => [...prev, ...autoChartConfig]);
     } catch (error) {
-      console.error('Error generating auto chart:', error);
+      console.error("Error generating auto chart:", error);
     }
+    hideDataSourceEditor();
   }
 
   function removeItem(path: string) {
-    $dataSources = $dataSources.filter(
-      (item) => item.name !== path
-    );
+    $dataSources = $dataSources.filter((item) => item.name !== path);
   }
 </script>
 
@@ -121,8 +120,7 @@
                 <input type="number" min="0" bind:value={item.interval} />
               </td>
               <td class="symbol"
-                ><button on:click={() => removeItem(item.name)}
-                  >&times;</button
+                ><button on:click={() => removeItem(item.name)}>&times;</button
                 ></td
               >
             </tr>
@@ -141,9 +139,10 @@
 
     {#if $dataSources.length > 0 || $dataSourcesWebsocket.length > 0}
       <!-- <hr style="width: 100%; margin-top: 2em;"/> -->
-
-      <AddChartButton on:click={handleAddChart} />
-      <button on:click={handleAutoChart}>Autochart</button>
+      <div class="chart-buttons">
+        <GradientButton on:click={handleAddChart} />
+        <GradientButton on:click={handleAutoChart} buttonText="AutoChart" />
+      </div>
     {/if}
   </div>
 </FloatingWindow>
@@ -157,6 +156,12 @@
     background-color: var(--card-background-color);
     padding: 2em;
     border-radius: 1em;
+  }
+
+  .chart-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   h1 {
