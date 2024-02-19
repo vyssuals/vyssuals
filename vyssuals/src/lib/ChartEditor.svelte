@@ -7,9 +7,11 @@
     showChartEditor,
     chartConfigs,
   } from "./store";
-  import type { ChartConfig, DataItem } from "./types";
+  import type { ChartConfig, DataItem, UnitSymbol, ChartType } from "./types";
+  import { UNIT_SYMBOLS } from './types';
   import Draggable from "./Draggable.svelte";
   import FloatingWindow from "./FloatingWindow.svelte";
+
 
   const left = window.innerWidth / 2 - 135;
   const top = window.innerHeight / 2 - 250;
@@ -20,11 +22,10 @@
   console.log("dataSources", dataSources());
   let dataSource: string;
 
-  let chartType: string;
+  let chartType: ChartType;
   let showValues: string;
   let groupBy: string;
-  let unitSymbol: string;
-  const unitSymbols = ["Count", "m", "m2", "m3", "ft", "ft2", "ft3"];
+  let unitSymbol: UnitSymbol;
   let selectedStartColor: string;
   let selectedEndColor: string;
 
@@ -42,7 +43,7 @@
   } else {
     dataSource = $dataset[0].dataSource;
     chartType = "bar";
-    unitSymbol = unitSymbols[0];
+    unitSymbol = UNIT_SYMBOLS[0];
     selectedStartColor = $startColor;
     selectedEndColor = $endColor;
   }
@@ -165,7 +166,7 @@
         <div class="config-option">
           <label for="unitSymbol">Unit Symbol:</label>
           <select id="unitSymbol" bind:value={unitSymbol}>
-            {#each unitSymbols as symbol}
+            {#each UNIT_SYMBOLS as symbol}
               <option value={symbol}>{symbol}</option>
             {/each}
           </select>

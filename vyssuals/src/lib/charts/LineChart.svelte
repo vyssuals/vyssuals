@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { ChartConfig } from "../types";
-  import { chartConfigs, dataset } from "../store";
+  import type { ChartConfig, DataSource } from "../types";
+  import { chartConfigs, dataset, dataSources } from "../store";
   import { Line } from "svelte-chartjs";
   import { formatTitle, titleCase } from "../utils/textUtils";
   import { createChartData, getLastTimestamp } from "../utils/dataUtils";
@@ -16,18 +16,25 @@
     PointElement,
     CategoryScale,
     Filler,
-  } from 'chart.js';
+  } from "chart.js";
 
   export let index: number;
   let data: any;
   let config: ChartConfig;
 
-  
   $: {
     config = $chartConfigs[index];
-    let filteredDataset = $dataset.filter((item) => item.dataSource === config.dataSource);
-    config.groupBy = 'timestamp';
-    data = createChartData(filteredDataset, config);
+    let filteredDataset = $dataset.filter(
+      (item) => item.dataSource === config.dataSource
+    );
+    config.groupBy = "timestamp";
+    let dataSource: DataSource | undefined = $dataSources.find(
+      (item) => item.name === config.dataSource
+    );
+    if (!dataSource) {
+      throw new Error(`Data source not found: ${config.dataSource}`);
+    }
+    data = createChartData(dataSource, filteredDataset, config);
     data.datasets[0].borderColor = config.startColor;
     data.datasets[0].tension = 0.5;
     data.datasets[0].fill = true;
@@ -36,8 +43,8 @@
     data.datasets[0].pointBackgroundColor = config.startColor;
 
     data.datasets[0].backgroundColor = `${config.endColor}20`;
-  
-    console.log('data', data);
+
+    console.log("data", data);
   }
 
   ChartJS.register(
@@ -85,7 +92,9 @@
   };
 </script>
 
-<h1 class="chart-title" style="width: 550px">{titleCase(config.showValues)} Timeline</h1>
+<h1 class="chart-title" style="width: 550px">
+  {titleCase(config.showValues)} Timeline
+</h1>
 <h3>{config.unitSymbol}</h3>
 
-<Line {data} {options} style="height: 80%; width: 595px"/>
+<Line {data} {options} style="height: 80%; width: 595px" />

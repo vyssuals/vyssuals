@@ -1,5 +1,6 @@
 import { dataset, dataSources, dataSourcesWebsocket } from "./store";
-import type { DataItem } from "./types";
+import type { DataItem, DataSource, HeaderData, UnitSymbol } from "./types";
+import { typeToUnit } from "./types";
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
 
@@ -9,7 +10,8 @@ export function toLocalISOString(date: Date) {
   return date.toISOString().slice(0, 23).replace("T", " ");
 }
 
-export function loadCSVFile(file: File) {
+export function loadCSVFile(dataSource: DataSource) {
+  const file = dataSource.file;
   if (file) {
     const timestamp: Date = new Date();
     const timestampString = toLocalISOString(timestamp);
@@ -27,10 +29,12 @@ export function loadCSVFile(file: File) {
             id: String(index),
             dataSource: file.name,
             timestamp: timestamp,
-            attributes: { ...row, timestamp: timestampString },
+            attributes: { count: 1, ...row, timestamp: timestampString,},
           })
         );
         dataset.update((prev) => [...prev, ...data]);
+        dataSource.lastUpdate = timestamp;
+        dataSource.headerData = getHeaderData(data);
       },
     });
   } else {
@@ -53,10 +57,10 @@ dataSources.subscribe((sources) => {
   sources.forEach((source) => {
     if (source.interval > 0) {
       const intervalId = setInterval(
-        () => loadCSVFile(source.file),
+        () => loadCSVFile(source),
         source.interval * 1000
       );
-      intervals.set(source.file.name, intervalId);
+      intervals.set(source.name, intervalId);
     }
   });
 });
@@ -90,3 +94,37 @@ export function clearWebsocketData(dataSource: string) {
     currentSources.filter((source) => source !== dataSource)
   );
 }
+
+function getHeaderData(data: DataItem[]): HeaderData[] {
+  const headerData: HeaderData[] = [];
+  if (data.length > 0) {
+    // Get the unique keys from all items
+    const keys = Array.from(
+      new Set(data.map((item) => Object.keys(item.attributes)).flat())
+    );
+    for (const key of keys) {
+      const values = data.map((item) => item.attributes[key]);
+      const percentClean =
+        values.filter((v) => v !== null).length / values.length;
+      const type = majorityType(values);
+      const unit: UnitSymbol = typeToUnit(type);
+      headerData.push({ name: key, unit, type, percentClean });
+    }
+  }
+  return headerData;
+}
+
+const majorityType = (values: any[]): string => {
+  const typeCounts: { [key: string]: number } = { 'string': 0, 'number': 0 };
+
+  values.forEach((value) => {
+    const valueType = typeof value;
+    if (valueType === 'number') {
+      typeCounts['number']++;
+    } else {
+      typeCounts['string']++;
+    }
+  });
+
+  return typeCounts['number'] > typeCounts['string'] ? 'number' : 'string';
+};

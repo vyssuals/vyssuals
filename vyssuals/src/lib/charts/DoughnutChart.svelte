@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { ChartConfig } from "../types";
+  import type { ChartConfig, DataSource } from "../types";
   import { Doughnut } from "svelte-chartjs";
   import { formatTitle } from "../utils/textUtils";
   import { createChartData, getLastTimestamp } from "../utils/dataUtils";
-  import { chartConfigs, dataset } from "../store";
+  import { chartConfigs, dataset, dataSources } from "../store";
 
   import {
     Chart as ChartJS,
@@ -29,7 +29,13 @@
         (item) => item.timestamp === timestamp
       );
     }
-    data = createChartData(filteredDataset, config);
+    let dataSource: DataSource | undefined = $dataSources.find(
+      (item) => item.name === config.dataSource
+    );
+    if (!dataSource) {
+      throw new Error(`Data source not found: ${config.dataSource}`);
+    }
+    data = createChartData(dataSource, filteredDataset, config);
   }
 
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);

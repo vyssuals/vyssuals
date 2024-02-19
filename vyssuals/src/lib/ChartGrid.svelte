@@ -50,6 +50,8 @@
 
   }
 
+  $: console.log("chartConfigs", $chartConfigs);
+
 </script>
 
 

@@ -1,4 +1,4 @@
-import type { ChartConfig, DataItem } from "../types";
+import type { ChartConfig, DataItem, DataSourceFile, DataSourceWebsocket } from "../types";
 import { createColorArray } from "./colorUtils";
 
 // get all unique values of a specific attribute
@@ -63,6 +63,7 @@ export function sumAttributeBy(
 
 // function for creating chart data, returns chart data
 export function createChartData(
+  dataSource: DataSourceFile | DataSourceWebsocket,
   dataset: DataItem[],
   chartConfig: ChartConfig
 ): any {
@@ -73,25 +74,29 @@ export function createChartData(
   labels.sort();
 
   let data;
-  if (allAttributeValuesAreNumbers(dataset, chartConfig.showValues)) {
-    data = labels.map((label) =>
-      sumAttributeBy(
-        dataset,
-        chartConfig.showValues,
-        label,
-        chartConfig.groupBy
-      )
-    );
-  } else {
-    // count unique values per label
-    data = labels.map((label) => {
-      const filteredDataset = dataset.filter(
-        (item) => item.attributes[chartConfig.groupBy] === label
-      );
-      return getUniqueAttributeValues(filteredDataset, chartConfig.showValues)
-        .length;
-    });
-  }
+    // get data type of showValues from headerData.name
+  const showValuesType = dataSource.headerData.find((header) => header.name === chartConfig.showValues)?.type || "string";
+  // if (allAttributeValuesAreNumbers(dataset, chartConfig.showValues)) {
+    if (showValuesType === "number") {
+        data = labels.map((label) =>
+          sumAttributeBy(
+            dataset,
+            chartConfig.showValues,
+            label,
+            chartConfig.groupBy
+          )
+        );
+      } else {
+        // count unique values per label
+        data = labels.map((label) => {
+          const filteredDataset = dataset.filter(
+            (item) => item.attributes[chartConfig.groupBy] === label
+          );
+          return getUniqueAttributeValues(filteredDataset, chartConfig.showValues)
+            .length;
+        });
+      }
+
   const backgroundColor = createColorArray(
     data.length,
     chartConfig.startColor,

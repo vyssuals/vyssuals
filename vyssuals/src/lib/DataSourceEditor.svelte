@@ -5,11 +5,15 @@
     showChartEditor,
     dataSources,
     dataSourcesWebsocket,
+    chartConfigs,
+    startColor,
+    endColor,
   } from "./store";
-  import type { DataSource } from "./types";
+  import type { ChartConfig, DataSource } from "./types";
   import AddChartButton from "./AddChartButton.svelte";
   import { loadCSVFile } from "./DataConnector";
   import ConnectorList from "./ConnectorList.svelte";
+  import { autoChart } from "./AutoCharts";
 
   let files: FileList | null = null;
 
@@ -17,23 +21,22 @@
     // add file path to dataSources and set interval to 60 seconds
     const newSources: DataSource[] = Array.from(files)
       .map((file) => {
-        const path = file.name;
+        const name = file.name;
         const interval = 0;
-        if ($dataSources.some((item) => item.file.name === path)) {
-          alert(`File is already a data source: ${path}`);
+        if ($dataSources.some((item) => item.name === name)) {
+          alert(`File is already a data source: ${name}`);
           return null;
         }
-        return { file, interval };
+        return { name, file, interval };
       })
       .filter(Boolean); // filter out null values
 
-    dataSources.update((prev) => [...prev, ...newSources]);
-
     for (const item of newSources) {
       if (item) {
-        loadCSVFile(item.file);
+        loadCSVFile(item);
       }
     }
+    dataSources.update((prev) => [...prev, ...newSources]);
     files = null;
   }
 
@@ -46,8 +49,20 @@
     showChartEditor.set(true);
   }
 
+  function handleAutoChart() {
+    const chartConfig: ChartConfig[] = autoChart(
+      $dataSources[$dataSources.length - 1],
+      5,
+      $startColor,
+      $endColor
+    );
+    chartConfigs.update((prev) => [...prev, ...chartConfig]);
+  }
+
   function removeItem(path: string) {
-    $dataSources = $dataSources.filter((item) => item.file.name !== path);
+    $dataSources = $dataSources.filter(
+      (item) => item.name !== path
+    );
   }
 </script>
 
@@ -62,11 +77,11 @@
     >
     <h1>Real-Time Connections</h1>
     {#if $dataSourcesWebsocket.length > 0}
-    <div style="padding-bottom: 1em;">
-      {#each $dataSourcesWebsocket as item (item)}
-        <p class="file-path" style="margin: 2px;">{item}</p>
-      {/each}
-    </div>
+      <div style="padding-bottom: 1em;">
+        {#each $dataSourcesWebsocket as item (item)}
+          <p class="file-path" style="margin: 2px;">{item}</p>
+        {/each}
+      </div>
     {:else}
       <p>
         No Real-Time Connection Active.<br />
@@ -91,18 +106,18 @@
           </tr>
         </thead>
         <tbody>
-          {#each $dataSources as item (item.file.name)}
+          {#each $dataSources as item (item.name)}
             <tr>
-              <td><p class="file-path">{item.file.name}</p></td>
+              <td><p class="file-path">{item.name}</p></td>
               <td class="symbol"
-                ><button on:click={() => loadCSVFile(item.file)}>&#x21BB;</button
+                ><button on:click={() => loadCSVFile(item)}>&#x21BB;</button
                 ></td
               >
               <td>
                 <input type="number" min="0" bind:value={item.interval} />
               </td>
               <td class="symbol"
-                ><button on:click={() => removeItem(item.file.name)}
+                ><button on:click={() => removeItem(item.name)}
                   >&times;</button
                 ></td
               >
@@ -124,6 +139,7 @@
       <!-- <hr style="width: 100%; margin-top: 2em;"/> -->
 
       <AddChartButton on:click={handleAddChart} />
+      <button on:click={handleAutoChart}>Autochart</button>
     {/if}
   </div>
 </FloatingWindow>

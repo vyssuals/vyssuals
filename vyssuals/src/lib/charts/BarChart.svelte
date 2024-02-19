@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { ChartConfig } from "../types";
-  import { chartConfigs, dataset } from "../store";
+  import type { ChartConfig, DataSource } from "../types";
+  import { chartConfigs, dataset, dataSources } from "../store";
   import { Bar } from "svelte-chartjs";
   import { formatTitle } from "../utils/textUtils";
   import { createChartData, getLastTimestamp } from "../utils/dataUtils";
@@ -21,12 +21,22 @@
 
   $: {
     config = $chartConfigs[index];
-    let filteredDataset = $dataset.filter((item) => item.dataSource === config.dataSource);
+    let filteredDataset = $dataset.filter(
+      (item) => item.dataSource === config.dataSource
+    );
     const timestamp = getLastTimestamp(filteredDataset);
     if (timestamp) {
-      filteredDataset = filteredDataset.filter((item) => item.timestamp === timestamp);
+      filteredDataset = filteredDataset.filter(
+        (item) => item.timestamp === timestamp
+      );
     }
-    data = createChartData(filteredDataset, config);
+    let dataSource: DataSource | undefined = $dataSources.find(
+      (item) => item.name === config.dataSource
+    );
+    if (!dataSource) {
+      throw new Error(`Data source not found: ${config.dataSource}`);
+    }
+    data = createChartData(dataSource, filteredDataset, config);
   }
 
   Chart.register(

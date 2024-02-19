@@ -1,0 +1,44 @@
+[
+    {
+        "name": "id",
+        "type": "string",
+        "unit": "count",
+        "cleanPercent": 0.42
+    },
+    {
+        "name": "Area",
+        "type": "number",
+        "unit": "m2",
+        "cleanPercent": 0.15
+    },
+    {
+        "name": "Category",
+        "type": "string",
+        "unit": "count",
+        "cleanPercent": 0.78
+    },
+    {
+        "name": "Level",
+        "type": "string",
+        "unit": "count",
+        "cleanPercent": 0.63
+    },
+    {
+        "name": "Fire Rating",
+        "type": "string",
+        "unit": "count",
+        "cleanPercent": 0.29
+    },
+    {
+        "name": "Height",
+        "type": "number",
+        "unit": "m",
+        "cleanPercent": 0.51
+    },
+    {
+        "name": "Some Long Parameter Name That Never Keeps on Goooooooooooooooooing",
+        "type": "string",
+        "unit": "count",
+        "cleanPercent": 0.87
+    }
+]
