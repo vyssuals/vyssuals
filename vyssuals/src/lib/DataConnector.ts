@@ -2,7 +2,6 @@ import { dataset, dataSources, dataSourcesWebsocket } from "./store";
 import type { DataItem, DataSource, HeaderData, UnitSymbol } from "./types";
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
-import nlp from "compromise";
 import FuzzySet from "fuzzyset.js";
 
 export function toLocalISOString(date: Date) {
@@ -103,9 +102,9 @@ function getHeaderData(data: DataItem[]): HeaderData[] {
     const keys = Array.from(
       new Set(data.map((item) => Object.keys(item.attributes)).flat())
     );
-      // Create a new FuzzySet with your keywords
-  const keywords = Object.keys(keywordToUnitSymbol);
-  const fuzzySet = FuzzySet(keywords);
+    // Create a new FuzzySet with your keywords
+    const keywords = Object.keys(keywordToUnitSymbol);
+    const fuzzySet = FuzzySet(keywords);
     for (const key of keys) {
       const values = data.map((item) => item.attributes[key]);
       const type = majorityType(values);
@@ -139,21 +138,26 @@ const majorityType = (values: any[]): string => {
   return typeCounts["number"] > typeCounts["string"] ? "number" : "string";
 };
 
-
-function determineUnitSymbol(showValues: string, fuzzySet: FuzzySet): UnitSymbol {
-
+function determineUnitSymbol(
+  showValues: string,
+  fuzzySet: FuzzySet
+): UnitSymbol {
   // Replace underscores with spaces and split into words
   const words = showValues.replace(/_/g, " ").split(" ");
 
   // Find the best match for each word
-  const matches = words.map(word => fuzzySet.get(word));
+  const matches = words.map((word) => fuzzySet.get(word));
 
   // Filter out null results and sort by score
-  const sortedMatches = matches.filter(Boolean).sort((a, b) => b[0][0] - a[0][0]);
+  const sortedMatches = matches
+    .filter(Boolean)
+    .sort((a, b) => b[0][0] - a[0][0]);
 
   // If a match was found, use the corresponding unit symbol
   // Otherwise, use a default unit symbol
-  return sortedMatches.length > 0 ? keywordToUnitSymbol[sortedMatches[0][0][1]] : "Unique Items";
+  return sortedMatches.length > 0
+    ? keywordToUnitSymbol[sortedMatches[0][0][1]]
+    : "Unique Items";
 }
 
 // Define a mapping of keywords to unit symbols
@@ -247,7 +251,6 @@ const keywordToUnitSymbol: { [key: string]: UnitSymbol } = {
   liter: "l",
   liters: "l",
   "l.": "l",
-
   "sq meter": "m²",
   "sq m": "m²",
   acre: "ac",
