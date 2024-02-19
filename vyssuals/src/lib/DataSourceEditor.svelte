@@ -49,14 +49,18 @@
     showChartEditor.set(true);
   }
 
-  function handleAutoChart() {
-    const chartConfig: ChartConfig[] = autoChart(
-      $dataSources[$dataSources.length - 1],
-      5,
-      $startColor,
-      $endColor
-    );
-    chartConfigs.update((prev) => [...prev, ...chartConfig]);
+  async function handleAutoChart() {
+    try {
+      const autoChartConfig: ChartConfig[] = await autoChart(
+        $dataSources[$dataSources.length - 1],
+        5,
+        $startColor,
+        $endColor
+      );
+      chartConfigs.update((prev) => [...prev, ...autoChartConfig]);
+    } catch (error) {
+      console.error('Error generating auto chart:', error);
+    }
   }
 
   function removeItem(path: string) {

@@ -52,7 +52,8 @@ export interface HeaderData {
   name: string;
   type: string;
   unit: UnitSymbol;
-  percentClean: number; 
+  percentClean: number;
+  uniqueValues: number;
 }
 
 export const typeToUnit = (type: string): UnitSymbol => {

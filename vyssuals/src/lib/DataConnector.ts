@@ -29,7 +29,7 @@ export function loadCSVFile(dataSource: DataSource) {
             id: String(index),
             dataSource: file.name,
             timestamp: timestamp,
-            attributes: { count: 1, ...row, timestamp: timestampString,},
+            attributes: { count: 1, ...row, timestamp: timestampString },
           })
         );
         dataset.update((prev) => [...prev, ...data]);
@@ -108,23 +108,32 @@ function getHeaderData(data: DataItem[]): HeaderData[] {
         values.filter((v) => v !== null).length / values.length;
       const type = majorityType(values);
       const unit: UnitSymbol = typeToUnit(type);
-      headerData.push({ name: key, unit, type, percentClean });
+      const uniqueValues = new Set(values).size;
+      const cardinalityRatio = uniqueValues / data.length;
+      headerData.push({
+        name: key,
+        unit,
+        type,
+        percentClean,
+        uniqueValues,
+        cardinalityRatio,
+      });
     }
   }
   return headerData;
 }
 
 const majorityType = (values: any[]): string => {
-  const typeCounts: { [key: string]: number } = { 'string': 0, 'number': 0 };
+  const typeCounts: { [key: string]: number } = { string: 0, number: 0 };
 
   values.forEach((value) => {
     const valueType = typeof value;
-    if (valueType === 'number') {
-      typeCounts['number']++;
+    if (valueType === "number") {
+      typeCounts["number"]++;
     } else {
-      typeCounts['string']++;
+      typeCounts["string"]++;
     }
   });
 
-  return typeCounts['number'] > typeCounts['string'] ? 'number' : 'string';
+  return typeCounts["number"] > typeCounts["string"] ? "number" : "string";
 };
