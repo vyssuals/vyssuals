@@ -55,13 +55,15 @@
   {/if}
 
   {#if $dataset.length > 0}
-  <div style="padding-top: 2em;">
+  <div style="padding-top: 2em; padding-bottom: 1em;">
     <GradientButton on:click={handleAddChart} />
-    <OpenDataSourcesButton />
   </div>
   {:else}
-    <AddCsvButton />
+  <div style="display: flex; justify-content: center; padding-top: 1em; font-weight: 300;">
+    <p>Load CSV File:</p>
+  </div>
   {/if}
+  <OpenDataSourcesButton />
 </main>
 
 <footer>
@@ -89,17 +91,5 @@
 
   a:hover {
     color: #05acff;
-  }
-
-  .websocket {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    margin: 1em;
-    padding: 1em;
-    border-radius: 1em;
-    background-color: var(--background-color);
-    color: var(--color);
-    cursor: pointer;
   }
 </style>

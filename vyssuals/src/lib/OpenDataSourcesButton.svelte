@@ -17,16 +17,17 @@
     div {
         display: flex;
         justify-content: center;
-        margin-top: 1em;
     }
 
     button {
         font-weight: 700;
-        font-size: large;
+        font-size: 2em;
         background-color: #00000000;
         border: none;
         cursor: pointer;
         transition: transform 0.3s;
+        margin: 0;
+        padding: 0;
     }
 
     button:hover {
