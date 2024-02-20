@@ -50,30 +50,6 @@
     showChartEditor.set(true);
   }
 
-  //   let previousLength = 0;
-
-  //   $: {
-  //     if ($dataSources.length > previousLength) {
-  //       // Run your function here
-  //       let userInput = prompt('Automatically create charts for this data source? Enter number:');
-  //           console.log('userInput:', userInput);
-  //           if (userInput) {
-  //             const count: number = parseInt(userInput.toString());
-  //             if (!isNaN(count)) {
-  //               console.log('count:', count);
-  //               // log data type of count
-  //               console.log('typeof count:', typeof count);
-  //               handleAutoChart(count);
-  //             }
-  //             else {
-  //               alert('Invalud input. Please enter a number.');
-  //             }
-  //           }
-  //     // console.log('Dataset has grown');
-  //   }
-  //   previousLength = $dataSources.length;
-  // }
-
   async function handleAutoChart(dataSource: DataSource) {
     try {
       const autoChartConfig: ChartConfig[] = await autoChart(
