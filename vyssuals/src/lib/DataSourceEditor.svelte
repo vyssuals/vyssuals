@@ -73,6 +73,7 @@
 
 <style lang="scss">
   .grid-container {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     gap: 1em;
@@ -80,35 +81,6 @@
     margin-top: 1em;
     overflow: auto; /* Add a scrollbar if necessary */
     max-height: 80%; /* Set a maximum height */
-  }
-
-  .grid-container {
-    position: relative;
-    /* ... your existing styles ... */
-  }
-
-  .grid-container::before,
-  .grid-container::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 20px; /* adjust this to control the height of the fade effect */
-    pointer-events: none; /* prevent the pseudo-elements from capturing click events */
-    background: linear-gradient(
-      to bottom,
-      var(--card-background-color),
-      transparent
-    );
-  }
-
-  .grid-container::after {
-    bottom: 0;
-    background: linear-gradient(
-      to top,
-      var(--card-background-color),
-      transparent
-    );
   }
 
   .grid-item {
@@ -119,11 +91,6 @@
     border-radius: 1em;
     height: 130px;
     width: 250px;
-  }
-
-  .grid-item:hover {
-    scale: 1.05;
-    transition: 100ms;
   }
 
   .datasource-editor {
