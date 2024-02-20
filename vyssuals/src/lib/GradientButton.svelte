@@ -1,5 +1,4 @@
 <script>
-  import { showChartEditor } from "./store";
   import { startColor, endColor } from "./store";
 
   export let buttonText = "Add Chart";
