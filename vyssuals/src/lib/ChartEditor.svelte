@@ -40,7 +40,7 @@
   } else {
     dataSource = $dataset[0].dataSource;
     chartType = "bar";
-    unitSymbol = UNIT_SYMBOLS[0];
+    unitSymbol = preSelectUnitSymbol();
     selectedStartColor = $startColor;
     selectedEndColor = $endColor;
   }
@@ -49,6 +49,7 @@
   $: {
     data = $dataset.filter((item) => item.dataSource === dataSource);
     showUnitSelect = showUnitSymbolSelect();
+    unitSymbol = preSelectUnitSymbol();
     attributeKeys = [
       ...new Set(data.flatMap((item) => Object.keys(item.attributes))),
     ];
@@ -74,6 +75,23 @@
     } else {
       return true;
     }
+  }
+
+  function preSelectUnitSymbol(): UnitSymbol {
+    if (showUnitSelect) {
+      // get the datasource from datasources where the name is equal to the selected datasource
+      const source = $dataSources.find((source) => source.name === dataSource);
+      if (source) {
+        // get the unit symbol from the datasource header data list where the name is equal to the selected showValues
+        const header = source.headerData.find(
+          (header) => header.name === showValues
+        );
+        if (header) {
+          return header.unit;
+        }
+      }
+    }
+    return "# Items" as UnitSymbol;
   }
 
   function handleCreateChart() {
