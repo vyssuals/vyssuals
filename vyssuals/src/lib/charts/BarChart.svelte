@@ -83,4 +83,4 @@
 
 <h1 class="chart-title" style="width: 550px">{formatTitle(config)}</h1>
 <h3>{config.unitSymbol}</h3>
-<Bar {data} {options} style="height: 80%; width: 595px" />
+<Bar {data} {options} style="height: 310px; width: 595px" />

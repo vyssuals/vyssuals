@@ -62,4 +62,4 @@
 
 <h1 class="chart-title" style="width: 350px">{formatTitle(config)}</h1>
 <h3>{config.unitSymbol}</h3>
-<Doughnut {data} {options} style="height: 80%; width: 380px" />
+<Doughnut {data} {options} style="height: 310px; width: 380px" />

@@ -96,4 +96,4 @@
 </h1>
 <h3>{config.unitSymbol}</h3>
 
-<Line {data} {options} style="height: 80%; width: 595px" />
+<Line {data} {options} style="height: 310px; width: 595px" />

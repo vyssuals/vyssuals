@@ -83,3 +83,16 @@ label {
   text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
   white-space: nowrap; /* Prevent text from wrapping onto the next line */
 }
+
+.datasource-overlay {
+  position: absolute;
+  margin: 0.3em auto;
+  overflow: hidden; /* Hide overflowed content */
+  text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
+  white-space: nowrap; /* Prevent text from wrapping onto the next line */
+  color: var(--card-background-color);
+  bottom: 0.5em;
+  left: 0;
+  right: 0;
+
+}

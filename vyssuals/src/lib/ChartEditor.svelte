@@ -153,7 +153,7 @@
         </div>
 
         <div class="config-option">
-          <label for="showValues">Show Values Of:</label>
+          <label title="This attribute goes on the X axis" for="showValues">Show Values Of:</label>
           <select id="showValues" bind:value={showValues}>
             {#each attributeKeys as key}
               <option value={key}>{key}</option>
@@ -163,7 +163,7 @@
 
         {#if !(chartType === "total" || chartType === "line")}
           <div class="config-option">
-            <label for="groupBy">Grouped By:</label>
+            <label title="This attribute goes on the Y axis" for="groupBy">Grouped By:</label>
             <select id="groupBy" bind:value={groupBy}>
               {#each attributeKeys as key}
                 <option value={key}>{key}</option>
