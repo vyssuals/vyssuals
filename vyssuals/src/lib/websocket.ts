@@ -13,7 +13,7 @@ export const connectWebSocket = () => {
   socket = new WebSocket('ws://localhost:8184');
 
   socket.onclose = (event: CloseEvent) => {
-    console.log("Disconnected from server");
+    // console.log("Disconnected from server");
 
     // Only set the timer once when the client disconnects
     if (!timerSet) {
@@ -57,7 +57,7 @@ export const connectWebSocket = () => {
 
   socket.onerror = (error: Event) => {
     let errorEvent = error as ErrorEvent;
-    console.log(`WebSocket Error: ${errorEvent.message}`);
+    // console.log(`WebSocket Error: ${errorEvent.message}`);
     // Handle the error as needed
   };
 

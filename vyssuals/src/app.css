@@ -92,7 +92,27 @@ label {
   white-space: nowrap; /* Prevent text from wrapping onto the next line */
   color: var(--card-background-color);
   bottom: 0.5em;
-  left: 0;
-  right: 0;
+  left: 0.5em;
+  right: 0.5em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
 
+.config-option {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  text-align: right;
+  gap: 5px;
+  margin: 10px;
+}
+
+.config-select {
+  padding: 5px;
+  border-radius: 0.5em;
+  background-color: var(--card-background-color);
+  border-color: var(--outline-color);
+  width: 110px;
+  overflow: hidden; /* Hide overflowed content */
+  text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
+  white-space: nowrap; /* Prevent text from wrapping onto the next line */
 }

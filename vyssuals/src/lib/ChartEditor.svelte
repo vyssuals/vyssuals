@@ -9,7 +9,6 @@
     dataSources,
   } from "./store";
   import type { ChartConfig, DataItem, UnitSymbol, ChartType } from "./types";
-  import { UNIT_SYMBOLS } from "./types";
   import Draggable from "./Draggable.svelte";
   import FloatingWindow from "./FloatingWindow.svelte";
 
@@ -24,7 +23,6 @@
   let unitSymbol: UnitSymbol;
   let selectedStartColor: string;
   let selectedEndColor: string;
-  let showUnitSelect: boolean;
 
   let attributeKeys: string[];
   let data: DataItem[];
@@ -34,13 +32,11 @@
     chartType = $chartConfigs[$editChartIndex].chartType;
     showValues = $chartConfigs[$editChartIndex].showValues;
     groupBy = $chartConfigs[$editChartIndex].groupBy;
-    unitSymbol = $chartConfigs[$editChartIndex].unitSymbol;
     selectedStartColor = $chartConfigs[$editChartIndex].startColor;
     selectedEndColor = $chartConfigs[$editChartIndex].endColor;
   } else {
     dataSource = $dataset[0].dataSource;
     chartType = "bar";
-    unitSymbol = preSelectUnitSymbol();
     selectedStartColor = $startColor;
     selectedEndColor = $endColor;
   }
@@ -48,8 +44,6 @@
   // Reactive statement for data processing
   $: {
     data = $dataset.filter((item) => item.dataSource === dataSource);
-    showUnitSelect = showUnitSymbolSelect();
-    unitSymbol = preSelectUnitSymbol();
     attributeKeys = [
       ...new Set(data.flatMap((item) => Object.keys(item.attributes))),
     ];
@@ -64,34 +58,6 @@
       showValues = "No Data";
       groupBy = "No Data";
     }
-  }
-
-  function showUnitSymbolSelect(): boolean {
-    // if the column of the selected showValues is a number, show the unit symbol select
-    if (showValues) {
-      return data.some(
-        (item) => typeof item.attributes[showValues] === "number"
-      );
-    } else {
-      return true;
-    }
-  }
-
-  function preSelectUnitSymbol(): UnitSymbol {
-    if (showUnitSelect) {
-      // get the datasource from datasources where the name is equal to the selected datasource
-      const source = $dataSources.find((source) => source.name === dataSource);
-      if (source) {
-        // get the unit symbol from the datasource header data list where the name is equal to the selected showValues
-        const header = source.headerData.find(
-          (header) => header.name === showValues
-        );
-        if (header) {
-          return header.unit;
-        }
-      }
-    }
-    return "# Items" as UnitSymbol;
   }
 
   function handleCreateChart() {
@@ -153,7 +119,7 @@
       <div>
         <div class="config-option">
           <label for="dataSource">Data Source:</label>
-          <select id="dataSource" bind:value={dataSource}>
+          <select class="config-select" id="dataSource" bind:value={dataSource}>
             {#each $dataSources as source}
               <option value={source.name}>{source.name}</option>
             {/each}
@@ -162,7 +128,7 @@
 
         <div class="config-option">
           <label for="chartType">Chart Type:</label>
-          <select id="chartType" bind:value={chartType}>
+          <select class="config-select" id="chartType" bind:value={chartType}>
             <option value="bar">Bar</option>
             <option value="doughnut">Doughnut</option>
             <option value="total">Total</option>
@@ -171,8 +137,10 @@
         </div>
 
         <div class="config-option">
-          <label title="This attribute goes on the X axis" for="showValues">Show Values Of:</label>
-          <select id="showValues" bind:value={showValues}>
+          <label title="This attribute goes on the X axis" for="showValues"
+            >Show Values Of:</label
+          >
+          <select class="config-select" id="showValues" bind:value={showValues}>
             {#each attributeKeys as key}
               <option value={key}>{key}</option>
             {/each}
@@ -181,21 +149,12 @@
 
         {#if !(chartType === "total" || chartType === "line")}
           <div class="config-option">
-            <label title="This attribute goes on the Y axis" for="groupBy">Grouped By:</label>
-            <select id="groupBy" bind:value={groupBy}>
+            <label title="This attribute goes on the Y axis" for="groupBy"
+              >Grouped By:</label
+            >
+            <select class="config-select" id="groupBy" bind:value={groupBy}>
               {#each attributeKeys as key}
                 <option value={key}>{key}</option>
-              {/each}
-            </select>
-          </div>
-        {/if}
-
-        {#if showUnitSelect}
-          <div class="config-option">
-            <label for="unitSymbol">Unit Symbol:</label>
-            <select id="unitSymbol" bind:value={unitSymbol}>
-              {#each UNIT_SYMBOLS as symbol}
-                <option value={symbol}>{symbol}</option>
               {/each}
             </select>
           </div>
@@ -240,25 +199,6 @@
     background-color: var(--card-background-color);
     border-radius: 1em;
     padding: 1em;
-  }
-
-  .config-option {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    text-align: right;
-    gap: 5px;
-    margin: 10px;
-  }
-
-  select {
-    padding: 5px;
-    border-radius: 0.5em;
-    background-color: var(--card-background-color);
-    border-color: var(--outline-color);
-    width: 110px;
-    overflow: hidden; /* Hide overflowed content */
-    text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
-    white-space: nowrap; /* Prevent text from wrapping onto the next line */
   }
 
   .color-input {

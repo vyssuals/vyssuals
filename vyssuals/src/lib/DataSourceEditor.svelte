@@ -1,162 +1,102 @@
 <script lang="ts">
   import FloatingWindow from "./FloatingWindow.svelte";
   import {
-    showDataSourceEditor,
-    showChartEditor,
+    showDataConnectionEditor,
     dataSources,
     dataSourcesWebsocket,
     chartConfigs,
-    startColor,
-    endColor,
     dataset,
+    showDataSourceEditor,
+    dataSourceToEdit,
   } from "./store";
   import type { ChartConfig, DataSource } from "./types";
-  import GradientButton from "./GradientButton.svelte";
-  import { loadCSVFile } from "./DataConnector";
-  import ConnectorList from "./ConnectorList.svelte";
-  import { autoChart } from "./AutoCharts";
+  import { UNIT_SYMBOLS } from "./types";
 
-  let files: FileList | null = null;
-
-  $: if (files) {
-    // add file path to dataSources and set interval to 60 seconds
-    const newSources: DataSource[] = Array.from(files)
-      .map((file) => {
-        const name = file.name;
-        const interval = 0;
-        if ($dataSources.some((item) => item.name === name)) {
-          alert(`File is already a data source: ${name}`);
-          return null;
-        }
-        return { name, file, interval };
-      })
-      .filter(Boolean); // filter out null values
-
-    for (const item of newSources) {
-      if (item) {
-        loadCSVFile(item);
-      }
-    }
-    dataSources.update((prev) => [...prev, ...newSources]);
-    files = null;
-  }
-
-  function hideDataSourceEditor() {
+  function hideDataSetEditor() {
     showDataSourceEditor.set(false);
-  }
-
-  function handleAddChart() {
-    hideDataSourceEditor();
-    showChartEditor.set(true);
-  }
-
-  async function handleAutoChart(dataSource: DataSource) {
-    try {
-      const autoChartConfig: ChartConfig[] = await autoChart(
-        $dataSources[$dataSources.length - 1],
-        5,
-        $startColor,
-        $endColor
-      );
-      chartConfigs.update((prev) => [...prev, ...autoChartConfig]);
-    } catch (error) {
-      console.error("Error generating auto chart:", error);
-    }
-  }
-
-  function removeItem(path: string) {
-    $chartConfigs = $chartConfigs.filter((item) => item.dataSource !== path);
-    $dataSources = $dataSources.filter((item) => item.name !== path);
-    $dataset = $dataset.filter((item) => item.dataSource !== path);
+    showDataConnectionEditor.set(true);
   }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<FloatingWindow on:click={hideDataSourceEditor}>
-  <div class="datasource-editor" id="dataSourceEditor">
+<FloatingWindow on:click={hideDataSetEditor}>
+  <div class="datasource-editor">
     <button
       title="Close"
       class="close-button"
-      on:click={() => hideDataSourceEditor()}>&times;</button
+      on:click={() => hideDataSetEditor()}>&times;</button
     >
-    <h1>Real-Time Connections</h1>
-    {#if $dataSourcesWebsocket.length > 0}
-      <div style="padding-bottom: 1em;">
-        {#each $dataSourcesWebsocket as item (item)}
-          <p class="file-path" style="margin: 2px;">{item}</p>
-        {/each}
-      </div>
-    {:else}
-      <p>
-        No Real-Time Connection Active.<br />
-        Start the Vyssuals plugin in your desktop application or install a connector
-        plugin:
-      </p>
-      <div style="padding: 1em;">
-        <ConnectorList />
-      </div>
-    {/if}
-    <!-- <hr style="width: 100%; margin-top: 1em;" /> -->
-
-    <h1>Other Data Sources</h1>
-    {#if $dataSources.length > 0}
-      <table>
-        <thead>
-          <tr>
-            <th>Auto Charts</th>
-            <th>Path</th>
-            <th title="Reload Now">Reload</th>
-            <th title="Auto-refresh Interval in Seconds">Interval</th>
-            <th>Remove</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each $dataSources as item (item.name)}
-            <tr>
-              <td
-                ><GradientButton
-                  on:click={() => {
-                    handleAutoChart(item);
-                  }}
-                  buttonText="Add Charts"
-                /></td
-              >
-              <td><p class="file-path">{item.name}</p></td>
-              <td class="symbol"
-                ><button on:click={() => loadCSVFile(item)}>&#x21BB;</button
-                ></td
-              >
-              <td>
-                <input type="number" min="0" bind:value={item.interval} />
-              </td>
-              <td class="symbol"
-                ><button on:click={() => removeItem(item.name)}>&times;</button
-                ></td
-              >
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    {/if}
-    <div>
-      <label for="filePicker">Add CSV:</label>
-      <input type="file" id="filePicker" accept=".csv" bind:files />
+    <h1>Datasource Editor</h1>
+    <h2>{$dataSources[$dataSourceToEdit].name}</h2>
+    <div class="grid-container">
+      {#each $dataSources[$dataSourceToEdit].headerData as header (header)}
+        <div class="grid-item">
+          <h3 class="chart-title">{header.name}</h3>
+          <div class="config-option">
+            <label for="dataTypes">Type:</label>
+            <select
+              class="config-select"
+              id="dataTypes"
+              bind:value={header.type}
+              on:change={() => {
+                if (header.type === 'string') {
+                  header.unitSymbol = '# Unique Items';
+                }
+              }}
+            >
+              <option value="number">Number</option>
+              <option value="string">String</option>
+            </select>
+          </div>
+          <div class="config-option">
+            <label for="unitSymbol">Unit Symbol:</label>
+            <select
+              class="config-select"
+              id="unitSymbol"
+              bind:value={header.unitSymbol}
+              disabled={header.type !== "number"}
+            >
+              {#each UNIT_SYMBOLS as symbol}
+                <option value={symbol}>{symbol}</option>
+              {/each}
+            </select>
+          </div>
+        </div>
+      {/each}
     </div>
-    <p style="padding-top: 1em;">
-      Data sources auto-refresh at given intervals. 0 means no auto-refresh. (in
-      seconds)
+    <p>
+      The 'Type' affects calculations.<br />
+      The values of 'Number' parameters will be aggregated, while 'Text' parameters
+      will show the count of unique items.<br />
+      'UnitSymbol' does not affect calculations.
     </p>
-
-    {#if $dataSources.length > 0 || $dataSourcesWebsocket.length > 0}
-      <div style="padding-top: 1em;">
-        <GradientButton on:click={handleAddChart} />
-      </div>
-    {/if}
   </div>
 </FloatingWindow>
 
 <style>
+  .grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    justify-content: center;
+    padding-top: 1em;
+  }
+  .grid-item {
+    text-align: center;
+    position: relative;
+    background-color: var(--background-color);
+    padding: 5px;
+    border-radius: 1em;
+    height: 120px;
+    width: 250px;
+  }
+
+  .grid-item:hover {
+    scale: 1.05;
+    transition: 100ms;
+  }
+
   .datasource-editor {
     position: relative;
     display: flex;
@@ -165,70 +105,26 @@
     background-color: var(--card-background-color);
     padding: 2em;
     border-radius: 1em;
+    width: 80%;
   }
 
   h1 {
     margin-bottom: 1em;
   }
 
-  p {
-    font-weight: 300;
+  h2 {
     margin: 0;
-    text-align: center;
   }
 
-  th {
+  h3 {
     font-weight: 500;
+    padding-left: 5px;
+    padding-right: 5px;
   }
 
-  .file-path {
-    overflow: hidden; /* Hide overflowed content */
-    text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
-    white-space: nowrap; /* Prevent text from wrapping onto the next line */
-    width: 300px;
+  p {
+    text-align: center;
     font-weight: 300;
-    text-align: center;
-    border-radius: 8px;
-    border: 3px solid var(--background-color);
-    padding: 0.4em 1.2em;
-    margin: 0;
-  }
-
-  input[type="file"] {
-    background: var(--background-color);
-    border-radius: 8px;
-    width: 200px;
-    padding: 15px;
-    cursor: pointer;
-  }
-
-  input[type="file"]::file-selector-button {
-    display: none;
-    /* border: none; */
-  }
-
-  input[type="file"]:hover {
-    filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
-  }
-
-  .symbol button {
-    font-weight: 700;
-    background-color: var(--background-color);
-    width: 80px;
-  }
-
-  td input {
-    width: 100px;
-    border: none;
-    text-align: center;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    background-color: var(--background-color);
-    border-radius: 8px;
-  }
-
-  td p {
-    background-color: var(--card-background-color);
   }
 
   .close-button {

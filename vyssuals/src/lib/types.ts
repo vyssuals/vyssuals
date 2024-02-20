@@ -81,7 +81,6 @@ export const UNIT_SYMBOLS: UnitSymbol[] = [
   "CHF",
   "Unknown",
 ];
-export const ColumnTypes = ["numnber", "string"];
 
 export interface ChartConfig {
   id: string;
@@ -89,7 +88,6 @@ export interface ChartConfig {
   chartType: ChartType;
   showValues: string;
   groupBy: string;
-  unitSymbol: UnitSymbol;
   startColor: string;
   endColor: string;
 }
@@ -103,13 +101,15 @@ export interface DataSource {
 }
 
 export interface DataSourceFile extends DataSource {}
-
 export interface DataSourceWebsocket extends DataSource {}
+
+export type ColumnType = "string" | "number";
+
 
 export interface HeaderData {
   name: string;
-  type: string;
-  unit: UnitSymbol;
+  type: ColumnType;
+  unitSymbol: UnitSymbol;
   uniqueValues: number;
   cardinalityRatio: number;
 }

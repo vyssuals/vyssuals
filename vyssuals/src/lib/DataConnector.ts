@@ -1,5 +1,5 @@
 import { dataset, dataSources, dataSourcesWebsocket } from "./store";
-import type { DataItem, DataSource, HeaderData, UnitSymbol } from "./types";
+import type { ColumnType, DataItem, DataSource, HeaderData, UnitSymbol } from "./types";
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
 import FuzzySet from "fuzzyset.js";
@@ -29,7 +29,7 @@ export function loadCSVFile(dataSource: DataSource) {
             id: String(index),
             dataSource: file.name,
             timestamp: timestamp,
-            attributes: { count: 1, ...row, timestamp: timestampString },
+            attributes: { Count: 1, ...row, Timestamp: timestampString },
           })
         );
         dataset.update((prev) => [...prev, ...data]);
@@ -116,7 +116,7 @@ function getHeaderData(data: DataItem[]): HeaderData[] {
       const cardinalityRatio = uniqueValues / data.length;
       headerData.push({
         name: key,
-        unit,
+        unitSymbol: unit,
         type,
         uniqueValues,
         cardinalityRatio,
@@ -126,7 +126,7 @@ function getHeaderData(data: DataItem[]): HeaderData[] {
   return headerData;
 }
 
-const majorityType = (values: any[]): string => {
+const majorityType = (values: any[]): ColumnType => {
   const typeCounts: { [key: string]: number } = { string: 0, number: 0 };
 
   values.forEach((value) => {
@@ -170,6 +170,8 @@ const keywordToUnitSymbol: { [key: string]: UnitSymbol } = {
   "unique items": "# Unique Items",
   unique: "# Unique Items",
   category: "# Unique Items",
+  id: "# Items",
+  index: "# Items",
   count: "# Items",
   counts: "# Items",
   number: "# Items",

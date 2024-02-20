@@ -92,7 +92,7 @@ for (let i = 0; i < amount; i++) {
 
         showValuesIndex = Math.floor(Math.random() * showValuesHeaders.length);
         showValues = showValuesHeaders[showValuesIndex]?.name || "";
-        unitSymbol = showValuesHeaders[showValuesIndex]?.unit || "";
+        unitSymbol = showValuesHeaders[showValuesIndex]?.unitSymbol || "";
 
         groupByIndex = Math.floor(Math.random() * groupByHeaders.length);
         groupBy = groupByHeaders[groupByIndex]?.name || "";

@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { showDataSourceEditor } from "./store";
+    import { showDataConnectionEditor } from "./store";
 
     function handleClick() {
-        showDataSourceEditor.set(true);
+        showDataConnectionEditor.set(true);
     }
 
 </script>

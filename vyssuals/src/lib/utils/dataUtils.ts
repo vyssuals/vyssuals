@@ -1,4 +1,9 @@
-import type { ChartConfig, DataItem, DataSourceFile, DataSourceWebsocket } from "../types";
+import type {
+  ChartConfig,
+  DataItem,
+  DataSourceFile,
+  DataSourceWebsocket,
+} from "../types";
 import { createColorArray } from "./colorUtils";
 
 // get all unique values of a specific attribute
@@ -35,31 +40,30 @@ export function allAttributeValuesAreNumbers(
   return true;
 }
 
-export function sumAttributeValues(dataset: DataItem[], attribute: string) {
-  let total = 0;
-  for (let i = 0; i < dataset.length; i++) {
-    total += Number(dataset[i].attributes[attribute]);
-  }
-  return total;
-}
+export const sumAttributeValues = (
+  dataset: DataItem[],
+  attribute: string
+): number =>
+  dataset.reduce(
+    (total, item) => total + (Number(item.attributes[attribute]) || 0),
+    0
+  );
 
 // aggregate values of a specific attribute,  inputs: attribute to aggregate, list of labels to aggregate by, attibute key of labels
-export function sumAttributeBy(
+export const sumAttributeBy = (
   dataset: DataItem[],
   aggregateAttribute: string,
   label: string,
   groupBy: string
-): number {
-  let result = 0;
-  dataset.forEach((item) => {
-    if (item.attributes[groupBy] === label) {
-      if (aggregateAttribute in item.attributes) {
-        result += item.attributes[aggregateAttribute];
-      }
-    }
-  });
-  return result;
-}
+): number =>
+  dataset.reduce(
+    (total, item) =>
+      item.attributes[groupBy] === label &&
+      aggregateAttribute in item.attributes
+        ? total + item.attributes[aggregateAttribute]
+        : total,
+    0
+  );
 
 // function for creating chart data, returns chart data
 export function createChartData(
@@ -74,28 +78,31 @@ export function createChartData(
   labels.sort();
 
   let data;
-    // get data type of showValues from headerData.name
-  const showValuesType = dataSource.headerData.find((header) => header.name === chartConfig.showValues)?.type || "string";
+  // get data type of showValues from headerData.name
+  const showValuesType =
+    dataSource.headerData.find(
+      (header) => header.name === chartConfig.showValues
+    )?.type || "string";
   // if (allAttributeValuesAreNumbers(dataset, chartConfig.showValues)) {
-    if (showValuesType === "number") {
-        data = labels.map((label) =>
-          sumAttributeBy(
-            dataset,
-            chartConfig.showValues,
-            label,
-            chartConfig.groupBy
-          )
-        );
-      } else {
-        // count unique values per label
-        data = labels.map((label) => {
-          const filteredDataset = dataset.filter(
-            (item) => item.attributes[chartConfig.groupBy] === label
-          );
-          return getUniqueAttributeValues(filteredDataset, chartConfig.showValues)
-            .length;
-        });
-      }
+  if (showValuesType === "number") {
+    data = labels.map((label) =>
+      sumAttributeBy(
+        dataset,
+        chartConfig.showValues,
+        label,
+        chartConfig.groupBy
+      )
+    );
+  } else {
+    // count unique values per label
+    data = labels.map((label) => {
+      const filteredDataset = dataset.filter(
+        (item) => item.attributes[chartConfig.groupBy] === label
+      );
+      return getUniqueAttributeValues(filteredDataset, chartConfig.showValues)
+        .length;
+    });
+  }
 
   const backgroundColor = createColorArray(
     data.length,

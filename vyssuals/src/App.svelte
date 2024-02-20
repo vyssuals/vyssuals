@@ -7,15 +7,16 @@
     logDatasetContent,
     showChartEditor,
     chartConfigs,
+    showDataConnectionEditor,
     showDataSourceEditor,
   } from "./lib/store";
   import ChartGrid from "./lib/ChartGrid.svelte";
   import ChartEditor from "./lib/ChartEditor.svelte";
   import Welcome from "./lib/Welcome.svelte";
-  import DataSourceEditor from "./lib/DataSourceEditor.svelte";
-  import AddCsvButton from "./lib/AddCsvButton.svelte";
+  import DataConnectionEditor from "./lib/DataConnectionEditor.svelte";
   import OpenDataSourcesButton from "./lib/OpenDataSourcesButton.svelte";
   import { connectWebSocket } from "./lib//websocket";
+  import DataSourceEditor from "./lib/DataSourceEditor.svelte";
 
   onMount(() => {
     connectWebSocket();
@@ -50,8 +51,12 @@
     <ChartEditor />
   {/if}
 
+  {#if $showDataConnectionEditor}
+    <DataConnectionEditor />
+  {/if}
+
   {#if $showDataSourceEditor}
-    <DataSourceEditor />
+  <DataSourceEditor />
   {/if}
 
   {#if $dataset.length > 0}

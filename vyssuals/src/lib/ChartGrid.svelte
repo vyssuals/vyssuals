@@ -49,7 +49,6 @@
     return `${date}_${title}_${index}.png`;
   }
 
-  $: console.log("chartConfigs", $chartConfigs);
 </script>
 
 <div class="grid-container">

@@ -17,6 +17,7 @@
   export let index: number;
   let data: any;
   let config: ChartConfig;
+  let unitSymbol: string;
 
   $: {
     config = $chartConfigs[index];
@@ -34,6 +35,9 @@
     );
     if (dataSource) {
       data = createChartData(dataSource, filteredDataset, config);
+      unitSymbol = dataSource.headerData.find(
+        (item) => item.name === config.showValues
+      )?.unitSymbol || "";
     }
   }
 
@@ -62,5 +66,5 @@
 </script>
 
 <h1 class="chart-title" style="width: 350px">{formatTitle(config)}</h1>
-<h3>{config.unitSymbol}</h3>
+<h3 title="You can edit the unit symbol in the settings of this datasource.">{unitSymbol}</h3>
 <Doughnut {data} {options} style="height: 310px; width: 380px" />

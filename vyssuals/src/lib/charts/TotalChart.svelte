@@ -1,10 +1,9 @@
 <script lang="ts">
-  import type { ChartConfig } from "../types";
-  import { chartConfigs, dataset } from "../store";
+  import type { ChartConfig, DataSource } from "../types";
+  import { chartConfigs, dataset, dataSources } from "../store";
   import { titleCase } from "../utils/textUtils";
   import {
     getUniqueAttributeValues,
-    allAttributeValuesAreNumbers,
     sumAttributeValues,
     getLastTimestamp,
   } from "../utils/dataUtils";
@@ -32,15 +31,25 @@
 
   let total: number = 0;
   let fullFormattedNumber: string = "";
+  let unitSymbol: string; 
 
   $: {
     config = $chartConfigs[index];
+    let dataSource: DataSource | undefined = $dataSources.find(
+      (item) => item.name === config.dataSource
+    );
+    if (dataSource) {
+      unitSymbol = dataSource.headerData.find(
+        (item) => item.name === config.showValues
+      )?.unitSymbol || "";
+    }
     let data = $dataset.filter((item) => item.dataSource === config.dataSource);
     const lastTimestamp = getLastTimestamp(data);
     if (lastTimestamp) {
       data = data.filter((item) => item.timestamp === lastTimestamp);
     }
-    if (allAttributeValuesAreNumbers(data, config.showValues)) {
+    let header = dataSource?.headerData.find((header) => header.name === config.showValues);
+    if (header?.type === "number") {
       total = sumAttributeValues(data, config.showValues);
       fullFormattedNumber = formatNumber(total);
     } else {
@@ -49,6 +58,8 @@
       fullFormattedNumber = total.toString();
     }
   }
+
+
 </script>
 
 <h1>Total</h1>
@@ -56,7 +67,7 @@
 <div class="total">
   <h1 class="total-number">{abbreviateNumber(total)}</h1>
 </div>
-<h3>{config.unitSymbol}</h3>
+<h3 title="You can edit the unit symbol in the settings of this datasource.">{unitSymbol}</h3>
 {#if total > 999}
   <details>
     <summary>&#9781;</summary>
