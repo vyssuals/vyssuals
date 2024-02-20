@@ -40,17 +40,44 @@
     dataSources.update((prev) => [...prev, ...newSources]);
     files = null;
   }
-
+  
+  
+  
+  
   function hideDataSourceEditor() {
     showDataSourceEditor.set(false);
   }
-
+  
   function handleAddChart() {
     hideDataSourceEditor();
     showChartEditor.set(true);
   }
+  
+//   let previousLength = 0;
+  
+//   $: {
+//     if ($dataSources.length > previousLength) {
+//       // Run your function here
+//       let userInput = prompt('Automatically create charts for this data source? Enter number:');
+//           console.log('userInput:', userInput);
+//           if (userInput) {
+//             const count: number = parseInt(userInput.toString());
+//             if (!isNaN(count)) {
+//               console.log('count:', count);
+//               // log data type of count
+//               console.log('typeof count:', typeof count);
+//               handleAutoChart(count);
+//             }
+//             else {
+//               alert('Invalud input. Please enter a number.');
+//             }
+//           }
+//     // console.log('Dataset has grown');
+//   }
+//   previousLength = $dataSources.length;
+// }
 
-  async function handleAutoChart() {
+  async function handleAutoChart(dataSource: DataSource) {
     try {
       const autoChartConfig: ChartConfig[] = await autoChart(
         $dataSources[$dataSources.length - 1],
@@ -62,7 +89,6 @@
     } catch (error) {
       console.error("Error generating auto chart:", error);
     }
-    hideDataSourceEditor();
   }
 
   function removeItem(path: string) {
@@ -105,6 +131,7 @@
       <table>
         <thead>
           <tr>
+            <th>Auto Charts</th>
             <th>Path</th>
             <th title="Reload Now">Reload</th>
             <th title="Auto-refresh Interval in Seconds">Interval</th>
@@ -114,6 +141,7 @@
         <tbody>
           {#each $dataSources as item (item.name)}
             <tr>
+              <td><GradientButton on:click={() => {handleAutoChart(item)}} buttonText="Add Charts"/></td>
               <td><p class="file-path">{item.name}</p></td>
               <td class="symbol"
                 ><button on:click={() => loadCSVFile(item)}>&#x21BB;</button
@@ -141,11 +169,9 @@
     </p>
 
     {#if $dataSources.length > 0 || $dataSourcesWebsocket.length > 0}
-      <!-- <hr style="width: 100%; margin-top: 2em;"/> -->
-      <div class="chart-buttons">
-        <GradientButton on:click={handleAddChart} />
-        <GradientButton on:click={handleAutoChart} buttonText="AutoChart" />
-      </div>
+    <div style="padding-top: 1em;">
+      <GradientButton on:click={handleAddChart}/>
+    </div>
     {/if}
   </div>
 </FloatingWindow>
@@ -159,12 +185,6 @@
     background-color: var(--card-background-color);
     padding: 2em;
     border-radius: 1em;
-  }
-
-  .chart-buttons {
-    display: flex;
-    justify-content: center;
-    width: 100%;
   }
 
   h1 {

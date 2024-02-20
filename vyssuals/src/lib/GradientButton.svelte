@@ -19,9 +19,6 @@
   }
 
   button {
-    margin-top: 2em;
-    margin-left: 1em;
-    margin-right: 1em;
     border: none;
     color: white;
   }

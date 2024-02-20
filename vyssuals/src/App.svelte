@@ -55,8 +55,10 @@
   {/if}
 
   {#if $dataset.length > 0}
+  <div style="padding-top: 2em;">
     <GradientButton on:click={handleAddChart} />
     <OpenDataSourcesButton />
+  </div>
   {:else}
     <AddCsvButton />
   {/if}
