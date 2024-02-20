@@ -130,6 +130,8 @@ const majorityType = (values: any[]): string => {
   const typeCounts: { [key: string]: number } = { string: 0, number: 0 };
 
   values.forEach((value) => {
+    if (value === "" || value === null) return; // Skip empty strings
+
     const valueType = typeof value;
     if (valueType === "number") {
       typeCounts["number"]++;
@@ -137,7 +139,6 @@ const majorityType = (values: any[]): string => {
       typeCounts["string"]++;
     }
   });
-
   return typeCounts["number"] > typeCounts["string"] ? "number" : "string";
 };
 
