@@ -31,10 +31,9 @@
     let dataSource: DataSource | undefined = $dataSources.find(
       (item) => item.name === config.dataSource
     );
-    if (!dataSource) {
-      throw new Error(`Data source not found: ${config.dataSource}`);
+    if (dataSource) {
+      data = createChartData(dataSource, filteredDataset, config);
     }
-    data = createChartData(dataSource, filteredDataset, config);
     data.datasets[0].borderColor = config.startColor;
     data.datasets[0].tension = 0.5;
     data.datasets[0].fill = true;

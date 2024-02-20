@@ -128,3 +128,8 @@ export function getLastTimestamp(dataset: DataItem[]): Date {
   });
   return lastTimestamp;
 }
+
+
+export function removeDataBySource(dataset: DataItem[], source: string): DataItem[] {
+  return dataset.filter((item) => item.dataSource !== source);
+}

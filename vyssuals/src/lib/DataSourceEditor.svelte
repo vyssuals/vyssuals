@@ -8,6 +8,7 @@
     chartConfigs,
     startColor,
     endColor,
+    dataset,
   } from "./store";
   import type { ChartConfig, DataSource } from "./types";
   import GradientButton from "./GradientButton.svelte";
@@ -65,7 +66,9 @@
   }
 
   function removeItem(path: string) {
+    $chartConfigs = $chartConfigs.filter((item) => item.dataSource !== path);
     $dataSources = $dataSources.filter((item) => item.name !== path);
+    $dataset = $dataset.filter((item) => item.dataSource !== path);
   }
 </script>
 

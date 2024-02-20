@@ -32,10 +32,9 @@
     let dataSource: DataSource | undefined = $dataSources.find(
       (item) => item.name === config.dataSource
     );
-    if (!dataSource) {
-      throw new Error(`Data source not found: ${config.dataSource}`);
+    if (dataSource) {
+      data = createChartData(dataSource, filteredDataset, config);
     }
-    data = createChartData(dataSource, filteredDataset, config);
   }
 
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);

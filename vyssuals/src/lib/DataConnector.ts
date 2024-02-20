@@ -108,7 +108,10 @@ function getHeaderData(data: DataItem[]): HeaderData[] {
     for (const key of keys) {
       const values = data.map((item) => item.attributes[key]);
       const type = majorityType(values);
-      const unit: UnitSymbol = determineUnitSymbol(key, fuzzySet);
+      let unit: UnitSymbol = "# Unique Items";
+      if (type === "number") {
+        unit = determineUnitSymbol(key, fuzzySet);
+      }
       const uniqueValues = new Set(values).size;
       const cardinalityRatio = uniqueValues / data.length;
       headerData.push({
@@ -157,15 +160,15 @@ function determineUnitSymbol(
   // Otherwise, use a default unit symbol
   return sortedMatches.length > 0
     ? keywordToUnitSymbol[sortedMatches[0][0][1]]
-    : "Unique Items";
+    : "Unknown";
 }
 
 // Define a mapping of keywords to unit symbols
 const keywordToUnitSymbol: { [key: string]: UnitSymbol } = {
-  "unique items of": "Unique Items",
-  "unique items": "Unique Items",
-  unique: "Unique Items",
-  category: "Unique Items",
+  "unique items of": "# Unique Items",
+  "unique items": "# Unique Items",
+  unique: "# Unique Items",
+  category: "# Unique Items",
   count: "Count",
   counts: "Count",
   number: "Count",

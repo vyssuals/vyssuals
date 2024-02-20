@@ -19,7 +19,8 @@ export interface ChartData {
 export type ChartType = "line" | "bar" | "doughnut" | "total";
 export const CHART_TYPES: ChartType[] = ["line", "bar", "doughnut", "total"];
 export type UnitSymbol =
-  | "Unique Items"
+  | "# Unique Items"
+  | "Unknown"
   | "Count"
   | "m"
   | "m²"
@@ -50,7 +51,8 @@ export type UnitSymbol =
   | "EUR"
   | "GBP";
 export const UNIT_SYMBOLS: UnitSymbol[] = [
-  "Unique Items",
+  "# Unique Items",
+  "Unknown",
   "Count",
   "m",
   "m²",
