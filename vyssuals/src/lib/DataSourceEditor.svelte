@@ -3,14 +3,10 @@
   import {
     showDataConnectionEditor,
     dataSources,
-    dataSourcesWebsocket,
-    chartConfigs,
-    dataset,
     showDataSourceEditor,
     dataSourceToEdit,
   } from "./store";
-  import type { ChartConfig, DataSource } from "./types";
-  import { UNIT_SYMBOLS } from "./types";
+  import { UNIT_SYMBOLS, COLUMN_TYPES } from "./types";
 
   function hideDataSetEditor() {
     showDataSourceEditor.set(false);
@@ -32,21 +28,22 @@
     <div class="grid-container">
       {#each $dataSources[$dataSourceToEdit].headerData as header (header)}
         <div class="grid-item">
-          <h3 class="chart-title">{header.name}</h3>
+          <h2 class="chart-title">{header.name}</h2>
           <div class="config-option">
-            <label for="dataTypes">Type:</label>
+            <label for="dataTypes">Data Type:</label>
             <select
               class="config-select"
               id="dataTypes"
               bind:value={header.type}
               on:change={() => {
-                if (header.type === 'string') {
-                  header.unitSymbol = '# Unique Items';
+                if (header.type === "string") {
+                  header.unitSymbol = "# Unique Items";
                 }
               }}
             >
-              <option value="number">Number</option>
-              <option value="string">String</option>
+              {#each COLUMN_TYPES as type}
+                <option value={type}>{type}</option>
+              {/each}
             </select>
           </div>
           <div class="config-option">
@@ -67,8 +64,8 @@
     </div>
     <p>
       The 'Type' affects calculations.<br />
-      The values of 'Number' parameters will be aggregated, while 'Text' parameters
-      will show the count of unique items.<br />
+      The values of 'Number' parameters will be aggregated, while 'String' (Text)
+      parameters will show the count of unique items.<br />
       'UnitSymbol' does not affect calculations.
     </p>
   </div>
@@ -98,12 +95,20 @@
     right: 0;
     height: 20px; /* adjust this to control the height of the fade effect */
     pointer-events: none; /* prevent the pseudo-elements from capturing click events */
-    background: linear-gradient(to bottom, var(--card-background-color), transparent);
+    background: linear-gradient(
+      to bottom,
+      var(--card-background-color),
+      transparent
+    );
   }
 
   .grid-container::after {
     bottom: 0;
-    background: linear-gradient(to top, var(--card-background-color), transparent);
+    background: linear-gradient(
+      to top,
+      var(--card-background-color),
+      transparent
+    );
   }
 
   .grid-item {
@@ -112,7 +117,7 @@
     background-color: var(--background-color);
     padding: 5px;
     border-radius: 1em;
-    height: 120px;
+    height: 130px;
     width: 250px;
   }
 
@@ -150,6 +155,12 @@
   p {
     text-align: center;
     font-weight: 300;
+  }
+
+  .chart-title {
+    font-weight: 500;
+    padding-top: 10px;
+    padding-bottom: 5px;
   }
 
   .close-button {

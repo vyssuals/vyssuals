@@ -49,6 +49,7 @@ export type UnitSymbol =
   | "GBP"
   | "CHF"
   | "Unknown";
+
 export const UNIT_SYMBOLS: UnitSymbol[] = [
   "# Unique Items",
   "# Items",
@@ -104,7 +105,7 @@ export interface DataSourceFile extends DataSource {}
 export interface DataSourceWebsocket extends DataSource {}
 
 export type ColumnType = "string" | "number";
-
+export const COLUMN_TYPES: ColumnType[] = ["string", "number"];
 
 export interface HeaderData {
   name: string;
