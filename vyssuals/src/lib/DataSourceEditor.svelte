@@ -40,42 +40,39 @@
     dataSources.update((prev) => [...prev, ...newSources]);
     files = null;
   }
-  
-  
-  
-  
+
   function hideDataSourceEditor() {
     showDataSourceEditor.set(false);
   }
-  
+
   function handleAddChart() {
     hideDataSourceEditor();
     showChartEditor.set(true);
   }
-  
-//   let previousLength = 0;
-  
-//   $: {
-//     if ($dataSources.length > previousLength) {
-//       // Run your function here
-//       let userInput = prompt('Automatically create charts for this data source? Enter number:');
-//           console.log('userInput:', userInput);
-//           if (userInput) {
-//             const count: number = parseInt(userInput.toString());
-//             if (!isNaN(count)) {
-//               console.log('count:', count);
-//               // log data type of count
-//               console.log('typeof count:', typeof count);
-//               handleAutoChart(count);
-//             }
-//             else {
-//               alert('Invalud input. Please enter a number.');
-//             }
-//           }
-//     // console.log('Dataset has grown');
-//   }
-//   previousLength = $dataSources.length;
-// }
+
+  //   let previousLength = 0;
+
+  //   $: {
+  //     if ($dataSources.length > previousLength) {
+  //       // Run your function here
+  //       let userInput = prompt('Automatically create charts for this data source? Enter number:');
+  //           console.log('userInput:', userInput);
+  //           if (userInput) {
+  //             const count: number = parseInt(userInput.toString());
+  //             if (!isNaN(count)) {
+  //               console.log('count:', count);
+  //               // log data type of count
+  //               console.log('typeof count:', typeof count);
+  //               handleAutoChart(count);
+  //             }
+  //             else {
+  //               alert('Invalud input. Please enter a number.');
+  //             }
+  //           }
+  //     // console.log('Dataset has grown');
+  //   }
+  //   previousLength = $dataSources.length;
+  // }
 
   async function handleAutoChart(dataSource: DataSource) {
     try {
@@ -141,7 +138,14 @@
         <tbody>
           {#each $dataSources as item (item.name)}
             <tr>
-              <td><GradientButton on:click={() => {handleAutoChart(item)}} buttonText="Add Charts"/></td>
+              <td
+                ><GradientButton
+                  on:click={() => {
+                    handleAutoChart(item);
+                  }}
+                  buttonText="Add Charts"
+                /></td
+              >
               <td><p class="file-path">{item.name}</p></td>
               <td class="symbol"
                 ><button on:click={() => loadCSVFile(item)}>&#x21BB;</button
@@ -169,9 +173,9 @@
     </p>
 
     {#if $dataSources.length > 0 || $dataSourcesWebsocket.length > 0}
-    <div style="padding-top: 1em;">
-      <GradientButton on:click={handleAddChart}/>
-    </div>
+      <div style="padding-top: 1em;">
+        <GradientButton on:click={handleAddChart} />
+      </div>
     {/if}
   </div>
 </FloatingWindow>

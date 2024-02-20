@@ -6,13 +6,12 @@
     editChartIndex,
     showChartEditor,
     chartConfigs,
-    dataSources
+    dataSources,
   } from "./store";
   import type { ChartConfig, DataItem, UnitSymbol, ChartType } from "./types";
-  import { UNIT_SYMBOLS } from './types';
+  import { UNIT_SYMBOLS } from "./types";
   import Draggable from "./Draggable.svelte";
   import FloatingWindow from "./FloatingWindow.svelte";
-
 
   const left = window.innerWidth / 2 - 135;
   const top = window.innerHeight / 2 - 250;
@@ -38,7 +37,6 @@
     unitSymbol = $chartConfigs[$editChartIndex].unitSymbol;
     selectedStartColor = $chartConfigs[$editChartIndex].startColor;
     selectedEndColor = $chartConfigs[$editChartIndex].endColor;
-    // showUnitSelect = showUnitSymbolSelect();
   } else {
     dataSource = $dataset[0].dataSource;
     chartType = "bar";
@@ -70,9 +68,10 @@
   function showUnitSymbolSelect(): boolean {
     // if the column of the selected showValues is a number, show the unit symbol select
     if (showValues) {
-      return data.some((item) => typeof item.attributes[showValues] === "number");
-    }
-    else {
+      return data.some(
+        (item) => typeof item.attributes[showValues] === "number"
+      );
+    } else {
       return true;
     }
   }
@@ -174,14 +173,14 @@
         {/if}
 
         {#if showUnitSelect}
-        <div class="config-option">
-          <label for="unitSymbol">Unit Symbol:</label>
-          <select id="unitSymbol" bind:value={unitSymbol}>
-            {#each UNIT_SYMBOLS as symbol}
-              <option value={symbol}>{symbol}</option>
-            {/each}
-          </select>
-        </div>
+          <div class="config-option">
+            <label for="unitSymbol">Unit Symbol:</label>
+            <select id="unitSymbol" bind:value={unitSymbol}>
+              {#each UNIT_SYMBOLS as symbol}
+                <option value={symbol}>{symbol}</option>
+              {/each}
+            </select>
+          </div>
         {/if}
 
         {#if !(chartType === "total")}

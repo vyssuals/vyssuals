@@ -1,16 +1,16 @@
 <script>
-  import { showChartEditor } from './store';
-  import { startColor, endColor } from './store';
+  import { showChartEditor } from "./store";
+  import { startColor, endColor } from "./store";
 
-  export let buttonText = 'Add Chart';
-
+  export let buttonText = "Add Chart";
 </script>
 
-
 <div>
-  <button style="background-image: linear-gradient(to right, {$startColor}, {$endColor})" on:click>{buttonText}</button>
+  <button
+    style="background-image: linear-gradient(to right, {$startColor}, {$endColor})"
+    on:click>{buttonText}</button
+  >
 </div>
-
 
 <style>
   div {
