@@ -20,7 +20,6 @@ export type ChartType = "line" | "bar" | "doughnut" | "total";
 export const CHART_TYPES: ChartType[] = ["line", "bar", "doughnut", "total"];
 export type UnitSymbol =
   | "# Unique Items"
-  | "Unknown"
   | "Count"
   | "m"
   | "m²"
@@ -43,16 +42,15 @@ export type UnitSymbol =
   | "gal"
   | "ml"
   | "l"
-  | "ft²"
-  | "m²"
   | "ac"
   | "ha"
   | "USD"
   | "EUR"
-  | "GBP";
+  | "GBP"
+  | "CHF"
+  | "Unknown";
 export const UNIT_SYMBOLS: UnitSymbol[] = [
   "# Unique Items",
-  "Unknown",
   "Count",
   "m",
   "m²",
@@ -75,13 +73,13 @@ export const UNIT_SYMBOLS: UnitSymbol[] = [
   "gal",
   "ml",
   "l",
-  "ft²",
-  "m²",
   "ac",
   "ha",
   "USD",
   "EUR",
   "GBP",
+  "CHF",
+  "Unknown",
 ];
 export const ColumnTypes = ["numnber", "string"];
 

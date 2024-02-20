@@ -271,4 +271,8 @@ const keywordToUnitSymbol: { [key: string]: UnitSymbol } = {
   "pound sterling": "GBP",
   "pounds sterling": "GBP",
   "gbp.": "GBP",
+  "chf.": "CHF",
+  "swiss franc": "CHF",
+  "swiss francs": "CHF",
+  "schweizer franken": "CHF",
 };

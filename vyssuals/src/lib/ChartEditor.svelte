@@ -6,6 +6,7 @@
     editChartIndex,
     showChartEditor,
     chartConfigs,
+    dataSources
   } from "./store";
   import type { ChartConfig, DataItem, UnitSymbol, ChartType } from "./types";
   import { UNIT_SYMBOLS } from './types';
@@ -16,10 +17,6 @@
   const left = window.innerWidth / 2 - 135;
   const top = window.innerHeight / 2 - 250;
 
-  const dataSources = () => {
-    return Array.from(new Set($dataset.map((item) => item.dataSource)));
-  };
-  console.log("dataSources", dataSources());
   let dataSource: string;
 
   let chartType: ChartType;
@@ -28,6 +25,7 @@
   let unitSymbol: UnitSymbol;
   let selectedStartColor: string;
   let selectedEndColor: string;
+  let showUnitSelect: boolean;
 
   let attributeKeys: string[];
   let data: DataItem[];
@@ -40,6 +38,7 @@
     unitSymbol = $chartConfigs[$editChartIndex].unitSymbol;
     selectedStartColor = $chartConfigs[$editChartIndex].startColor;
     selectedEndColor = $chartConfigs[$editChartIndex].endColor;
+    // showUnitSelect = showUnitSymbolSelect();
   } else {
     dataSource = $dataset[0].dataSource;
     chartType = "bar";
@@ -51,6 +50,7 @@
   // Reactive statement for data processing
   $: {
     data = $dataset.filter((item) => item.dataSource === dataSource);
+    showUnitSelect = showUnitSymbolSelect();
     attributeKeys = [
       ...new Set(data.flatMap((item) => Object.keys(item.attributes))),
     ];
@@ -64,6 +64,16 @@
     } else {
       showValues = "No Data";
       groupBy = "No Data";
+    }
+  }
+
+  function showUnitSymbolSelect(): boolean {
+    // if the column of the selected showValues is a number, show the unit symbol select
+    if (showValues) {
+      return data.some((item) => typeof item.attributes[showValues] === "number");
+    }
+    else {
+      return true;
     }
   }
 
@@ -127,8 +137,8 @@
         <div class="config-option">
           <label for="dataSource">Data Source:</label>
           <select id="dataSource" bind:value={dataSource}>
-            {#each dataSources() as source}
-              <option value={source}>{source}</option>
+            {#each $dataSources as source}
+              <option value={source.name}>{source.name}</option>
             {/each}
           </select>
         </div>
@@ -163,6 +173,7 @@
           </div>
         {/if}
 
+        {#if showUnitSelect}
         <div class="config-option">
           <label for="unitSymbol">Unit Symbol:</label>
           <select id="unitSymbol" bind:value={unitSymbol}>
@@ -171,6 +182,7 @@
             {/each}
           </select>
         </div>
+        {/if}
 
         {#if !(chartType === "total")}
           <div class="config-option">
