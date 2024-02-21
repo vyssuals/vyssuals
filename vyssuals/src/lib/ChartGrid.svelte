@@ -75,7 +75,7 @@
         on:click={() => exportNodeAsPNG(index)}>&DownArrowBar;</button
       >
 
-      <h3 class="datasource-overlay">{$chartConfigs[index].dataSource}</h3>
+      <h3 class="datasource-overlay">{$chartConfigs[index].dataSourceName}</h3>
     </div>
   {/each}
 </div>

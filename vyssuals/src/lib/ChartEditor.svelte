@@ -8,14 +8,14 @@
     chartConfigs,
     dataSources,
   } from "./store";
-  import type { ChartConfig, DataItem, UnitSymbol, ChartType } from "./types";
+  import type { ChartConfig, DataItem, UnitSymbol, ChartType, DataSource } from "./types";
   import Draggable from "./Draggable.svelte";
   import FloatingWindow from "./FloatingWindow.svelte";
 
   const left = window.innerWidth / 2 - 135;
   const top = window.innerHeight / 2 - 250;
 
-  let dataSource: string;
+  let dataSourceName: string;
 
   let chartType: ChartType;
   let showValues: string;
@@ -28,14 +28,14 @@
   let data: DataItem[];
 
   if ($editChartIndex > -1) {
-    dataSource = $chartConfigs[$editChartIndex].dataSource;
+    dataSourceName = $chartConfigs[$editChartIndex].dataSourceName;
     chartType = $chartConfigs[$editChartIndex].chartType;
     showValues = $chartConfigs[$editChartIndex].showValues;
     groupBy = $chartConfigs[$editChartIndex].groupBy;
     selectedStartColor = $chartConfigs[$editChartIndex].startColor;
     selectedEndColor = $chartConfigs[$editChartIndex].endColor;
   } else {
-    dataSource = $dataset[0].dataSource;
+    dataSourceName = $dataset[0].dataSourceName;
     chartType = "bar";
     selectedStartColor = $startColor;
     selectedEndColor = $endColor;
@@ -43,10 +43,16 @@
 
   // Reactive statement for data processing
   $: {
-    data = $dataset.filter((item) => item.dataSource === dataSource);
-    attributeKeys = [
-      ...new Set(data.flatMap((item) => Object.keys(item.attributes))),
-    ];
+    data = $dataset.filter((item) => item.dataSourceName === dataSourceName);
+    // attributeKeys = [
+    //   ...new Set(data.flatMap((item) => Object.keys(item.attributes))),
+    // ];
+    let dataSource: DataSource | undefined = $dataSources.find(
+      (item) => item.name === dataSourceName
+    );
+    if (dataSource) {
+      attributeKeys = dataSource.headerData.map((item) => item.name);
+    }
     if (attributeKeys.length > 0) {
       if (!showValues || !attributeKeys.includes(showValues)) {
         showValues = attributeKeys[0];
@@ -82,11 +88,10 @@
   export function saveChartConfig(): void {
     const config = {
       id: Math.random().toString(36).slice(2, 11),
-      dataSource,
+      dataSourceName: dataSourceName,
       chartType,
       showValues,
       groupBy,
-      unitSymbol,
       startColor: selectedStartColor,
       endColor: selectedEndColor,
     };
@@ -119,7 +124,7 @@
       <div>
         <div class="config-option">
           <label for="dataSource">Data Source:</label>
-          <select class="config-select" id="dataSource" bind:value={dataSource}>
+          <select class="config-select" id="dataSource" bind:value={dataSourceName}>
             {#each $dataSources as source}
               <option value={source.name}>{source.name}</option>
             {/each}

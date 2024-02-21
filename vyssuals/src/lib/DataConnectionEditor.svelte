@@ -21,7 +21,7 @@
   let files: FileList | null = null;
   $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);
   $: console.log("DataConnectionEditor says: dataset changed", $dataset);
-  
+
   $: if (files) {
       // add file path to dataSources and set interval to 60 seconds
       const newSources: DataSource[] = Array.from(files)
@@ -93,9 +93,9 @@
   }
 
   function removeItem(path: string) {
-    $chartConfigs = $chartConfigs.filter((item) => item.dataSource !== path);
+    $chartConfigs = $chartConfigs.filter((item) => item.dataSourceName !== path);
     $dataSources = $dataSources.filter((item) => item.name !== path);
-    $dataset = $dataset.filter((item) => item.dataSource !== path);
+    $dataset = $dataset.filter((item) => item.dataSourceName !== path);
   }
 </script>
 
@@ -155,7 +155,7 @@
               <td class="symbol"
                 ><input type="file" id="filePicker" accept=".csv" on:change="{(e) => handleReloadCSVFile(item, e)}" style="display: none" />
                 <button on:click="{() => {
-                  if (confirm(`Due to browser security restrictions, please select the same file again to reload it ${item.name}`)) {
+                  if (confirm(`Due to browser security restrictions, please select the same file again to reload it: ${item.name}`)) {
                       const filePicker = document.getElementById('filePicker');
                       if (filePicker) {
                         filePicker.click();

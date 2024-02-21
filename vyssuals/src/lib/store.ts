@@ -26,7 +26,7 @@ export function logDatasetContent() {
   dataset.subscribe((value) => {
     value.forEach((item) => {
       console.log(
-        `ID: ${item.id}, Datasource: ${item.dataSource}, Timestamp: ${item.timestamp}, Attributes:`,
+        `ID: ${item.id}, Datasource: ${item.dataSourceName}, Timestamp: ${item.timestamp}, Attributes:`,
         item.attributes
       );
     });

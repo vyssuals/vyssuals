@@ -26,7 +26,7 @@ export function generateDummyData(dataSource: string, count: number) {
     for (let i = 1; i <= count; i++) {
         const item: DataItem = {
             id: `${getRandomNumber(1, 1000000)}`,
-            dataSource,
+            dataSourceName: dataSource,
             timestamp,
             attributes: {
                 Area: getRandomNumber(1, 10), // Generate a random value for 'area'

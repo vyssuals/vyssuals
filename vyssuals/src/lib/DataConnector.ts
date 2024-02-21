@@ -35,7 +35,7 @@ export function loadCSVFile(dataSource: DataSource) {
 
             return {
               id: String(index),
-              dataSource: file.name,
+              dataSourceName: file.name,
               timestamp: timestamp,
               attributes: { Count: 1, ...row, Timestamp: timestampString },
             };
@@ -62,7 +62,7 @@ export function parseWebsocketData(data: any) {
   dataset.update((currentData) => [...currentData, ...parsedData]);
 
   if (parsedData?.length > 0) {
-    const newDataSource = parsedData[0].dataSource;
+    const newDataSource = parsedData[0].dataSourceName;
     dataSourcesWebsocket.update((currentSources) => {
       if (!currentSources.includes(newDataSource)) {
         return [...currentSources, newDataSource];
@@ -74,7 +74,7 @@ export function parseWebsocketData(data: any) {
 
 export function clearWebsocketData(dataSource: string) {
   dataset.update((currentData) =>
-    currentData.filter((item) => item.dataSource !== dataSource)
+    currentData.filter((item) => item.dataSourceName !== dataSource)
   );
   dataSourcesWebsocket.update((currentSources) =>
     currentSources.filter((source) => source !== dataSource)

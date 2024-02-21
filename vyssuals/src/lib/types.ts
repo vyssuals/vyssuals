@@ -1,6 +1,6 @@
 export interface DataItem {
   id: string;
-  dataSource: string;
+  dataSourceName: string;
   timestamp: Date;
   attributes: Record<string, any>; // Dictionary of key-value pairs
 }
@@ -85,7 +85,7 @@ export const UNIT_SYMBOLS: UnitSymbol[] = [
 
 export interface ChartConfig {
   id: string;
-  dataSource: string;
+  dataSourceName: string;
   chartType: ChartType;
   showValues: string;
   groupBy: string;

@@ -36,14 +36,14 @@
   $: {
     config = $chartConfigs[index];
     let dataSource: DataSource | undefined = $dataSources.find(
-      (item) => item.name === config.dataSource
+      (item) => item.name === config.dataSourceName
     );
     if (dataSource) {
       unitSymbol = dataSource.headerData.find(
         (item) => item.name === config.showValues
       )?.unitSymbol || "";
     }
-    let data = $dataset.filter((item) => item.dataSource === config.dataSource);
+    let data = $dataset.filter((item) => item.dataSourceName === config.dataSourceName);
     const lastTimestamp = getLastTimestamp(data);
     if (lastTimestamp) {
       data = data.filter((item) => item.timestamp === lastTimestamp);

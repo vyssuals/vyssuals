@@ -22,7 +22,7 @@
   $: {
     config = $chartConfigs[index];
     let filteredDataset = $dataset.filter(
-      (item) => item.dataSource === config.dataSource
+      (item) => item.dataSourceName === config.dataSourceName
     );
     const timestamp = getLastTimestamp(filteredDataset);
     if (timestamp) {
@@ -31,7 +31,7 @@
       );
     }
     let dataSource: DataSource | undefined = $dataSources.find(
-      (item) => item.name === config.dataSource
+      (item) => item.name === config.dataSourceName
     );
     if (dataSource) {
       data = createChartData(dataSource, filteredDataset, config);

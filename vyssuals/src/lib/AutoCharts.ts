@@ -98,7 +98,7 @@ export async function autoChart(
 
     chartConfigs.push({
       id: Math.random().toString(36).slice(2, 11).toString(),
-      dataSource: dataSource.name,
+      dataSourceName: dataSource.name,
       chartType,
       showValues,
       groupBy,
@@ -107,5 +107,9 @@ export async function autoChart(
     });
   }
 //   console.log("chartConfigs", chartConfigs);
+// notify user if no charts were generated
+  if (chartConfigs.length === 0) {
+    alert("Sorry, could not interpret dataset, no charts were generated.");
+  }
   return chartConfigs;
 }
