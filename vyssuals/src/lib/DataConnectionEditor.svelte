@@ -19,6 +19,8 @@
   import { autoChart } from "./AutoCharts";
 
   let files: FileList | null = null;
+  $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);
+  $: console.log("DataConnectionEditor says: dataset changed", $dataset);
 
   $: if (files) {
     // add file path to dataSources and set interval to 60 seconds
@@ -55,7 +57,7 @@
   async function handleAutoChart(dataSource: DataSource) {
     try {
       const autoChartConfig: ChartConfig[] = await autoChart(
-        $dataSources[$dataSources.length - 1],
+        dataSource,
         5,
         $startColor,
         $endColor
@@ -64,6 +66,19 @@
     } catch (error) {
       console.error("Error generating auto chart:", error);
     }
+  }
+
+  function handleReloadCSVFile(dataSource: DataSource, file: File) {
+    // check if file is the same as the one already loaded
+    if (dataSource.file?.name === file.name) {
+      dataSource.file = file;
+      loadCSVFile(dataSource);
+      document.getElementById('filePicker').value = null;
+      return;
+    } else {
+      alert("Please select the same file to reload it.");
+    }
+
   }
 
   function handleEditButton(index: number) {
@@ -116,7 +131,6 @@
             <th>Path</th>
             <th>Settings</th>
             <th>Reload</th>
-            <th>Auto-Refresh (s)</th>
             <th>Remove</th>
           </tr>
         </thead>
@@ -134,12 +148,13 @@
               <td><p class="file-path">{item.name}</p></td>
               <td class="symbol"><button style="font-size: 25px; padding: 0.15em" on:click={() => handleEditButton(index)}>&#9881;</button></td>
               <td class="symbol"
-                ><button on:click={() => loadCSVFile(item)}>&#x21BB;</button
-                ></td
+                ><input type="file" id="filePicker" accept=".csv" on:change="{(e) => handleReloadCSVFile(item, e.target.files[0])}" style="display: none" />
+                <button on:click="{() => {
+                  if (confirm(`Due to browser security restrictions, please select the same file again to reload it ${item.name}`)) {
+                      document.getElementById('filePicker').click();
+                  }
+              }}">&#x21BB;</button></td
               >
-              <td>
-                <input type="number" min="0" bind:value={item.interval} />
-              </td>
               <td class="symbol"
                 ><button on:click={() => removeItem(item.name)}>&times;</button
                 ></td

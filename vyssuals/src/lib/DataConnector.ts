@@ -34,7 +34,10 @@ export function loadCSVFile(dataSource: DataSource) {
         );
         dataset.update((prev) => [...prev, ...data]);
         dataSource.lastUpdate = timestamp;
-        dataSource.headerData = getHeaderData(data);
+          dataSource.headerData = getHeaderData(data);
+
+          // applyHeaderData(dataSource, getHeaderData(data));
+
       },
     });
   } else {
@@ -95,6 +98,30 @@ export function clearWebsocketData(dataSource: string) {
   );
 }
 
+function applyHeaderData(dataSource: DataSource, headerData: HeaderData[]) {
+  const newHeaderData: HeaderData[] = [];
+
+  for (const newHeader of headerData) {
+    let existingHeader = dataSource.headerData?.find(header => header.name === newHeader.name);
+    if (existingHeader) {
+      // Preserve the existing type and unitSymbol
+      const { type, unitSymbol } = existingHeader;
+      // Override the header with the new data
+      Object.assign(existingHeader, newHeader);
+      // Restore the original type and unitSymbol
+      existingHeader.type = type;
+      existingHeader.unitSymbol = unitSymbol;
+    } else {
+      // If the header does not exist, add it
+      existingHeader = newHeader;
+    }
+    newHeaderData.push(existingHeader);
+  }
+
+  // Assign the new header data to dataSource.headerData
+  dataSource.headerData = newHeaderData;
+}
+
 function getHeaderData(data: DataItem[]): HeaderData[] {
   const headerData: HeaderData[] = [];
   if (data.length > 0) {
@@ -152,16 +179,28 @@ function determineUnitSymbol(
   // Find the best match for each word
   const matches = words.map((word) => fuzzySet.get(word));
 
-  // Filter out null results and sort by score
-  const sortedMatches = matches
-    .filter(Boolean)
-    .sort((a, b) => b[0][0] - a[0][0]);
+  // Filter out null results
+  const validMatches = matches.filter((match): match is [number, string][] => match !== null && match !== undefined);
 
-  // If a match was found, use the corresponding unit symbol
-  // Otherwise, use a default unit symbol
-  return sortedMatches.length > 0
-    ? keywordToUnitSymbol[sortedMatches[0][0][1]]
-    : "Unknown";
+  // If there are no valid matches, return "Unknown"
+  if (validMatches.length === 0) {
+    return "Unknown";
+  }
+
+  // Sort matches by score
+  const sortedMatches = validMatches.sort((a, b) => {
+    // Since we've filtered out null and undefined, we can safely access the properties
+    const scoreA = a[0][0];
+    const scoreB = b[0][0];
+
+    return scoreB - scoreA;
+  });
+
+  // Use the unit symbol of the best match
+  const bestMatch = sortedMatches[0];
+  const unitSymbol = keywordToUnitSymbol[bestMatch[0][1]];
+
+  return unitSymbol;
 }
 
 // Define a mapping of keywords to unit symbols

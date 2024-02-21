@@ -1,18 +1,19 @@
 import csv
 import random
 
-# Define the number of rows and columns
-num_rows = 10
-num_cols = 50
+# Prompt for the number of columns
+n = int(input("Enter the number of columns: "))
 
-# Define the column headers
-headers = [f'Column{i+1}' for i in range(num_cols)]
+# Generate column headers
+headers = [f'Column{i+1}' for i in range(n)]
 
-# Generate the data for each row
-rows = [[random.randint(1, 100) for _ in range(num_cols)] for _ in range(num_rows)]
+# Generate some rows of random data
+rows = [[random.randint(0, 100) for _ in range(n)] for _ in range(10)]
 
 # Write the data to a CSV file
-with open('dataset.csv', 'w', newline='') as f:
+with open('output.csv', 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(headers)
     writer.writerows(rows)
+
+print("CSV file has been generated.")
