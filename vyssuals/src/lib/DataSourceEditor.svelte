@@ -71,7 +71,7 @@
   </div>
 </FloatingWindow>
 
-<style lang="scss">
+<style>
   .grid-container {
     position: relative;
     display: flex;

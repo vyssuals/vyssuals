@@ -21,29 +21,29 @@
   let files: FileList | null = null;
   $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);
   $: console.log("DataConnectionEditor says: dataset changed", $dataset);
-
+  
   $: if (files) {
-    // add file path to dataSources and set interval to 60 seconds
-    const newSources: DataSource[] = Array.from(files)
-      .map((file) => {
-        const name = file.name;
-        const interval = 0;
-        if ($dataSources.some((item) => item.name === name)) {
-          alert(`File is already a data source: ${name}`);
-          return null;
-        }
-        return { name, file, interval };
-      })
-      .filter(Boolean); // filter out null values
+      // add file path to dataSources and set interval to 60 seconds
+      const newSources: DataSource[] = Array.from(files)
+        .map((file) => {
+          const name = file.name;
+          const interval = 0;
+          if ($dataSources.some((item) => item.name === name)) {
+            alert(`File is already a data source: ${name}`);
+            return null;
+          }
+          return { name, file, interval };
+        })
+        .filter(item => item !== null) as DataSource[]; // filter out null values and cast the result to DataSource[]
 
-    for (const item of newSources) {
-      if (item) {
-        loadCSVFile(item);
+      for (const item of newSources) {
+        if (item) {
+          loadCSVFile(item);
+        }
       }
+      dataSources.update((prev) => [...prev, ...newSources]);
+      files = null;
     }
-    dataSources.update((prev) => [...prev, ...newSources]);
-    files = null;
-  }
 
   function hideDataSourceEditor() {
     showDataConnectionEditor.set(false);
@@ -68,17 +68,22 @@
     }
   }
 
-  function handleReloadCSVFile(dataSource: DataSource, file: File) {
+  function handleReloadCSVFile(dataSource: DataSource, e: Event) {
     // check if file is the same as the one already loaded
-    if (dataSource.file?.name === file.name) {
-      dataSource.file = file;
-      loadCSVFile(dataSource);
-      document.getElementById('filePicker').value = null;
-      return;
-    } else {
-      alert("Please select the same file to reload it.");
+    if (e.target instanceof HTMLInputElement && e.target.files && e.target.files.length > 0) {
+      const file: File = e.target.files[0];
+      if (dataSource.file?.name === file.name) {
+        dataSource.file = file;
+        loadCSVFile(dataSource);
+        const filePicker = document.getElementById('filePicker');
+        if (filePicker) {
+          (filePicker as HTMLInputElement).value = "";
+        }
+        return;
+      } else {
+        alert("Ooops, clicked on the wrong file? Please select the same file to reload it.");
+      }
     }
-
   }
 
   function handleEditButton(index: number) {
@@ -148,7 +153,7 @@
               <td><p class="file-path">{item.name}</p></td>
               <td class="symbol"><button style="font-size: 25px; padding: 0.15em" on:click={() => handleEditButton(index)}>&#9881;</button></td>
               <td class="symbol"
-                ><input type="file" id="filePicker" accept=".csv" on:change="{(e) => handleReloadCSVFile(item, e.target.files[0])}" style="display: none" />
+                ><input type="file" id="filePicker" accept=".csv" on:change="{(e) => handleReloadCSVFile(item, e)}" style="display: none" />
                 <button on:click="{() => {
                   if (confirm(`Due to browser security restrictions, please select the same file again to reload it ${item.name}`)) {
                       const filePicker = document.getElementById('filePicker');

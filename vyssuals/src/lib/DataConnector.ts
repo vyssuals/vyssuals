@@ -28,15 +28,18 @@ export function loadCSVFile(dataSource: DataSource) {
       dynamicTyping: true,
       skipEmptyLines: true,
       complete: function (results: ParseResult<Record<string, any>>) {
-        console.log("Parsing complete:", results.data);
-
         const data: DataItem[] = results.data.map(
-          (row: Record<string, any>, index: number) => ({
-            id: String(index),
-            dataSource: file.name,
-            timestamp: timestamp,
-            attributes: { Count: 1, ...row, Timestamp: timestampString },
-          })
+          (row: Record<string, any>, index: number) => {
+            // Remove the property with the empty or null key
+            delete row[""];
+
+            return {
+              id: String(index),
+              dataSource: file.name,
+              timestamp: timestamp,
+              attributes: { Count: 1, ...row, Timestamp: timestampString },
+            };
+          }
         );
         dataset.update((prev) => [...prev, ...data]);
         dataSource.lastUpdate = timestamp;
