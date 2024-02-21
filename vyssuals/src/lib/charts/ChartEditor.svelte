@@ -131,7 +131,7 @@
             <option value="bar">Bar</option>
             <option value="doughnut">Doughnut</option>
             <option value="total">Total</option>
-            <option value="line">Timeline</option>
+            <!-- <option value="line">Timeline</option> -->
           </select>
         </div>
 
