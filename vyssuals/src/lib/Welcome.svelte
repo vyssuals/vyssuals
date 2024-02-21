@@ -22,6 +22,7 @@
     font-size: 1.5em;
     font-weight: 300;
     margin: 0.3em;
+    text-align: center;
   }
 
   .gradient-text {
