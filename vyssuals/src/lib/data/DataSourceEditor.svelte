@@ -1,12 +1,12 @@
 <script lang="ts">
-  import FloatingWindow from "./FloatingWindow.svelte";
+  import FloatingWindow from "../wrapper/FloatingWindow.svelte";
   import {
     showDataConnectionEditor,
     dataSources,
     showDataSourceEditor,
     dataSourceToEdit,
-  } from "./store";
-  import { UNIT_SYMBOLS, COLUMN_TYPES } from "./types";
+  } from "../store";
+  import { UNIT_SYMBOLS, COLUMN_TYPES } from "../types";
 
   function hideDataSetEditor() {
     showDataSourceEditor.set(false);
@@ -111,12 +111,6 @@
 
   h2 {
     margin: 0;
-  }
-
-  h3 {
-    font-weight: 500;
-    padding-left: 5px;
-    padding-right: 5px;
   }
 
   p {

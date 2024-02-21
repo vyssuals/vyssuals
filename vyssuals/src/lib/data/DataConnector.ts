@@ -1,11 +1,11 @@
-import { dataset, dataSources, dataSourcesWebsocket } from "./store";
+import { dataset, dataSourcesWebsocket } from "../store";
 import type {
   ColumnType,
   DataItem,
   DataSource,
   HeaderData,
   UnitSymbol,
-} from "./types";
+} from "../types";
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
 import FuzzySet from "fuzzyset.js";

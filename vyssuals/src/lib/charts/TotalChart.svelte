@@ -6,7 +6,7 @@
     getUniqueAttributeValues,
     sumAttributeValues,
     getLastTimestamp,
-  } from "../utils/dataUtils";
+  } from "../data/dataUtils";
 
   export let index: number;
   let config: ChartConfig;

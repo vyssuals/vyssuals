@@ -3,7 +3,7 @@
   import { chartConfigs, dataset, dataSources } from "../store";
   import { Bar } from "svelte-chartjs";
   import { formatTitle } from "../utils/textUtils";
-  import { createChartData, getLastTimestamp } from "../utils/dataUtils";
+  import { createChartData, getLastTimestamp } from "../data/dataUtils";
 
   import {
     Chart,

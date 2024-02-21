@@ -4,7 +4,7 @@ import type {
   DataSourceFile,
   DataSourceWebsocket,
 } from "../types";
-import { createColorArray } from "./colorUtils";
+import { createColorArray } from "../utils/colorUtils";
 
 // get all unique values of a specific attribute
 export function getUniqueAttributeValues(

@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { chartConfigs, editChartIndex } from "./store";
-  import Chart from "./charts/Chart.svelte";
-  import { showChartEditor } from "./store";
+  import { chartConfigs, editChartIndex, showChartEditor } from "../store";
+  import Chart from "./Chart.svelte";
   import html2canvas from "html2canvas";
-  import { formatTitle } from "./utils/textUtils";
+  import { formatTitle } from "../utils/textUtils";
 
   let gridItems: any = [];
 

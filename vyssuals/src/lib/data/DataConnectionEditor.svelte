@@ -1,5 +1,5 @@
 <script lang="ts">
-  import FloatingWindow from "./FloatingWindow.svelte";
+  import FloatingWindow from "../wrapper/FloatingWindow.svelte";
   import {
     showDataConnectionEditor,
     showChartEditor,
@@ -11,12 +11,12 @@
     dataset,
     showDataSourceEditor,
     dataSourceToEdit,
-  } from "./store";
-  import type { ChartConfig, DataSource } from "./types";
-  import GradientButton from "./GradientButton.svelte";
+  } from "../store";
+  import type { ChartConfig, DataSource } from "../types";
+  import GradientButton from "../buttons/GradientButton.svelte";
   import { loadCSVFile } from "./DataConnector";
-  import ConnectorList from "./ConnectorList.svelte";
-  import { autoChart } from "./AutoCharts";
+  import ConnectorList from "../connectors/ConnectorList.svelte";
+  import { autoChart } from "../charts/AutoCharts";
 
   let files: FileList | null = null;
   $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);

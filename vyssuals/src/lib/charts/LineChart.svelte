@@ -3,8 +3,7 @@
   import { chartConfigs, dataset, dataSources } from "../store";
   import { Line } from "svelte-chartjs";
   import { formatTitle, titleCase } from "../utils/textUtils";
-  import { createChartData, getLastTimestamp } from "../utils/dataUtils";
-  import { onMount, afterUpdate } from "svelte";
+  import { createChartData, getLastTimestamp } from "../data/dataUtils";
 
   import {
     Chart as ChartJS,
@@ -21,6 +20,7 @@
   export let index: number;
   let data: any;
   let config: ChartConfig;
+  let unitSymbol: string;
 
   $: {
     config = $chartConfigs[index];
@@ -33,6 +33,9 @@
     );
     if (dataSource) {
       data = createChartData(dataSource, filteredDataset, config);
+      unitSymbol = dataSource.headerData.find(
+        (item) => item.name === config.showValues
+      )?.unitSymbol || "";
     }
     data.datasets[0].borderColor = config.startColor;
     data.datasets[0].tension = 0.5;
@@ -94,6 +97,6 @@
 <h1 class="chart-title" style="width: 550px">
   {titleCase(config.showValues)} Timeline
 </h1>
-<h3>{config.unitSymbol}</h3>
+<h3>{unitSymbol}</h3>
 
 <Line {data} {options} style="height: 310px; width: 595px" />

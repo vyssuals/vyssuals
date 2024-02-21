@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ConnectorList from "./ConnectorList.svelte";
+  import ConnectorList from "./connectors/ConnectorList.svelte";
 </script>
 
 <div class="welcome">

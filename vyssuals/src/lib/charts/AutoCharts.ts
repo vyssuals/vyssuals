@@ -1,4 +1,4 @@
-import type { ChartConfig, ChartType, DataSource } from "./types";
+import type { ChartConfig, ChartType, DataSource } from "../types";
 import FuzzySet from "fuzzyset.js";
 
 // Check if a word matches a list of words

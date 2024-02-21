@@ -1,5 +1,5 @@
 <script lang="ts">
-  import GradientButton from "./lib/GradientButton.svelte";
+  import GradientButton from "./lib/buttons/GradientButton.svelte";
   import { onMount } from "svelte";
   import { generateDummyData } from "./lib/tests/testData";
   import {
@@ -10,13 +10,13 @@
     showDataConnectionEditor,
     showDataSourceEditor,
   } from "./lib/store";
-  import ChartGrid from "./lib/ChartGrid.svelte";
-  import ChartEditor from "./lib/ChartEditor.svelte";
+  import ChartGrid from "./lib/charts/ChartGrid.svelte";
+  import ChartEditor from "./lib/charts/ChartEditor.svelte";
   import Welcome from "./lib/Welcome.svelte";
-  import DataConnectionEditor from "./lib/DataConnectionEditor.svelte";
-  import OpenDataSourcesButton from "./lib/OpenDataSourcesButton.svelte";
-  import { connectWebSocket } from "./lib//websocket";
-  import DataSourceEditor from "./lib/DataSourceEditor.svelte";
+  import DataConnectionEditor from "./lib/data/DataConnectionEditor.svelte";
+  import OpenDataSourcesButton from "./lib/buttons/OpenDataSourcesButton.svelte";
+  import { connectWebSocket } from "./lib/data/websocket";
+  import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
 
   onMount(() => {
     connectWebSocket();

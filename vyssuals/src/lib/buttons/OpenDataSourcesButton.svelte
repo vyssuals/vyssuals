@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { showDataConnectionEditor } from "./store";
+    import { showDataConnectionEditor } from "../store";
 
     function handleClick() {
         showDataConnectionEditor.set(true);

@@ -1,5 +1,5 @@
 <script>
-  import { startColor, endColor } from "./store";
+  import { startColor, endColor } from "../store";
 
   export let buttonText = "Add Chart";
 </script>

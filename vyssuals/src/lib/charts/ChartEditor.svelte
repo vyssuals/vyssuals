@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { dataset } from "./store";
+  import { dataset } from "../store";
   import {
     startColor,
     endColor,
@@ -7,10 +7,10 @@
     showChartEditor,
     chartConfigs,
     dataSources,
-  } from "./store";
-  import type { ChartConfig, DataItem, UnitSymbol, ChartType, DataSource } from "./types";
-  import Draggable from "./Draggable.svelte";
-  import FloatingWindow from "./FloatingWindow.svelte";
+  } from "../store";
+  import type { ChartConfig, ChartType, DataSource } from "../types";
+  import Draggable from "../wrapper/Draggable.svelte";
+  import FloatingWindow from "../wrapper/FloatingWindow.svelte";
 
   const left = window.innerWidth / 2 - 135;
   const top = window.innerHeight / 2 - 250;
@@ -20,12 +20,10 @@
   let chartType: ChartType;
   let showValues: string;
   let groupBy: string;
-  let unitSymbol: UnitSymbol;
   let selectedStartColor: string;
   let selectedEndColor: string;
 
   let attributeKeys: string[];
-  let data: DataItem[];
 
   if ($editChartIndex > -1) {
     dataSourceName = $chartConfigs[$editChartIndex].dataSourceName;
@@ -43,10 +41,6 @@
 
   // Reactive statement for data processing
   $: {
-    data = $dataset.filter((item) => item.dataSourceName === dataSourceName);
-    // attributeKeys = [
-    //   ...new Set(data.flatMap((item) => Object.keys(item.attributes))),
-    // ];
     let dataSource: DataSource | undefined = $dataSources.find(
       (item) => item.name === dataSourceName
     );

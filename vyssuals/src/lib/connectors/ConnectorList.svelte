@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { showConnector } from "./store";
-  import Connector from "./connectors/Connector.svelte";
+  import { showConnector } from "../store";
+  import Connector from "./Connector.svelte";
 
   function handleClickConnector(connector: string) {
     showConnector.set(connector);

@@ -2,7 +2,7 @@
   import type { ChartConfig, DataSource } from "../types";
   import { Doughnut } from "svelte-chartjs";
   import { formatTitle } from "../utils/textUtils";
-  import { createChartData, getLastTimestamp } from "../utils/dataUtils";
+  import { createChartData, getLastTimestamp } from "../data/dataUtils";
   import { chartConfigs, dataset, dataSources } from "../store";
 
   import {
