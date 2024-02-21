@@ -19,8 +19,8 @@
   import { autoChart } from "../charts/AutoCharts";
 
   let files: FileList | null = null;
-  $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);
-  $: console.log("DataConnectionEditor says: dataset changed", $dataset);
+  // $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);
+  // $: console.log("DataConnectionEditor says: dataset changed", $dataset);
 
   $: if (files) {
       // add file path to dataSources and set interval to 60 seconds
