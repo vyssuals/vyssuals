@@ -1,5 +1,11 @@
 import { dataset, dataSources, dataSourcesWebsocket } from "./store";
-import type { ColumnType, DataItem, DataSource, HeaderData, UnitSymbol } from "./types";
+import type {
+  ColumnType,
+  DataItem,
+  DataSource,
+  HeaderData,
+  UnitSymbol,
+} from "./types";
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
 import FuzzySet from "fuzzyset.js";
@@ -34,39 +40,13 @@ export function loadCSVFile(dataSource: DataSource) {
         );
         dataset.update((prev) => [...prev, ...data]);
         dataSource.lastUpdate = timestamp;
-          dataSource.headerData = getHeaderData(data);
-
-          // applyHeaderData(dataSource, getHeaderData(data));
-
+        applyHeaderData(dataSource, getHeaderData(data));
       },
     });
   } else {
     console.log("No file to load");
   }
 }
-
-// Store intervals in a Map, using file name as key
-const intervals = new Map<string, NodeJS.Timeout>();
-
-// React to changes in the dataSources store
-dataSources.subscribe((sources) => {
-  // Clear all intervals
-  intervals.forEach((interval, file) => {
-    clearInterval(interval);
-    intervals.delete(file);
-  });
-
-  // Set new intervals
-  sources.forEach((source) => {
-    if (source.interval > 0) {
-      const intervalId = setInterval(
-        () => loadCSVFile(source),
-        source.interval * 1000
-      );
-      intervals.set(source.name, intervalId);
-    }
-  });
-});
 
 export function parseWebsocketData(data: any) {
   const timestamp: Date = new Date();
@@ -102,7 +82,9 @@ function applyHeaderData(dataSource: DataSource, headerData: HeaderData[]) {
   const newHeaderData: HeaderData[] = [];
 
   for (const newHeader of headerData) {
-    let existingHeader = dataSource.headerData?.find(header => header.name === newHeader.name);
+    let existingHeader = dataSource.headerData?.find(
+      (header) => header.name === newHeader.name
+    );
     if (existingHeader) {
       // Preserve the existing type and unitSymbol
       const { type, unitSymbol } = existingHeader;
@@ -180,7 +162,10 @@ function determineUnitSymbol(
   const matches = words.map((word) => fuzzySet.get(word));
 
   // Filter out null results
-  const validMatches = matches.filter((match): match is [number, string][] => match !== null && match !== undefined);
+  const validMatches = matches.filter(
+    (match): match is [number, string][] =>
+      match !== null && match !== undefined
+  );
 
   // If there are no valid matches, return "Unknown"
   if (validMatches.length === 0) {

@@ -151,7 +151,10 @@
                 ><input type="file" id="filePicker" accept=".csv" on:change="{(e) => handleReloadCSVFile(item, e.target.files[0])}" style="display: none" />
                 <button on:click="{() => {
                   if (confirm(`Due to browser security restrictions, please select the same file again to reload it ${item.name}`)) {
-                      document.getElementById('filePicker').click();
+                      const filePicker = document.getElementById('filePicker');
+                      if (filePicker) {
+                        filePicker.click();
+                      }
                   }
               }}">&#x21BB;</button></td
               >
