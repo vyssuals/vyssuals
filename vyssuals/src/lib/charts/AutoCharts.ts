@@ -36,6 +36,12 @@ export async function autoChart(
       matchWord(header.name, filterShowValuesWords)
     );
   });
+
+// filter out columns that are not type number
+  showValuesHeaders = showValuesHeaders.filter((header) => {
+    return header.type === "number";
+  });
+
   //   console.log("post nlp showValuesHeaders", showValuesHeaders);
   //   console.log("pre nlp groupByHeaders", dataSource.headerData);
   // Filter out columns based on NLP
@@ -93,7 +99,6 @@ export async function autoChart(
     }
 
     // Remove used headers
-    showValuesHeaders.splice(showValuesIndex, 1);
     groupByHeaders.splice(groupByIndex, 1);
 
     chartConfigs.push({
