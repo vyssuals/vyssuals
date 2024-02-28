@@ -93,6 +93,9 @@ export interface ChartConfig {
   endColor: string;
 }
 
+export type ColumnType = "string" | "number";
+export const COLUMN_TYPES: ColumnType[] = ["string", "number"];
+
 export interface DataSource {
   lastUpdate: Date;
   headerData: HeaderData[];
@@ -101,16 +104,27 @@ export interface DataSource {
   name: string;
 }
 
-export interface DataSourceFile extends DataSource {}
-export interface DataSourceWebsocket extends DataSource {}
-
-export type ColumnType = "string" | "number";
-export const COLUMN_TYPES: ColumnType[] = ["string", "number"];
-
 export interface HeaderData {
   name: string;
   type: ColumnType;
   unitSymbol: UnitSymbol;
   uniqueValues: number;
   cardinalityRatio: number;
+}
+
+export interface WebSocketMessage {
+  type: string;
+  timestamp: string;
+  version: string;
+  sender: string;
+  senderVersion: string;
+  senderName: string;
+  payload?: Payload; // The '?' makes this property optional
+}
+
+type Payload = DataPayload; // No need for DisconnectPayload anymore
+
+export interface DataPayload {
+  data: DataItem[];
+  metadata: HeaderData[];
 }

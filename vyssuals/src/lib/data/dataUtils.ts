@@ -1,8 +1,7 @@
 import type {
   ChartConfig,
   DataItem,
-  DataSourceFile,
-  DataSourceWebsocket,
+  DataSource,
 } from "../types";
 import { createColorArray } from "../utils/colorUtils";
 
@@ -67,7 +66,7 @@ export const sumAttributeBy = (
 
 // function for creating chart data, returns chart data
 export function createChartData(
-  dataSource: DataSourceFile | DataSourceWebsocket,
+  dataSource: DataSource,
   dataset: DataItem[],
   chartConfig: ChartConfig
 ): any {

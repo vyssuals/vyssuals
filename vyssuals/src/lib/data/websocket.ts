@@ -1,4 +1,5 @@
-import { parseWebsocketData } from "./DataConnector";
+import { parseWebsocketDataPayload, clearWebsocketData, makeWebSocketDataSourceName } from "./DataConnector";
+import type { WebSocketMessage } from "../types";
 
 export let socket: WebSocket | null = null;
 let clearDataTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -10,7 +11,7 @@ export const connectWebSocket = () => {
     return;
   }
 
-  socket = new WebSocket('ws://localhost:8184');
+  socket = new WebSocket("ws://localhost:8184");
 
   socket.onclose = (event: CloseEvent) => {
     // console.log("Disconnected from server");
@@ -49,10 +50,9 @@ export const connectWebSocket = () => {
     dataCleared = false;
   };
 
-
   socket.onmessage = (event) => {
     console.log("Message received from server");
-    handleWebSocketMessage(event.data);
+    processMessage(event.data);
   };
 
   socket.onerror = (error: Event) => {
@@ -70,11 +70,24 @@ export const connectWebSocket = () => {
     }
   });
 };
-export const handleWebSocketMessage = (data: any) => {
-  // check if data is valid JSON
-  if (data === "Vyssuals connected") {
-    console.log("Connected to server");
-    return;
+
+export const processMessage = (message: string) => {
+  const parsedMessage: WebSocketMessage = JSON.parse(message);
+  if (parsedMessage.type) {
+    const dataSourceName = makeWebSocketDataSourceName(parsedMessage);
+    switch (parsedMessage.type) {
+      case "data":
+        // Make sure the payload is of type DataPayload
+        if (parsedMessage.payload && 'data' in parsedMessage.payload) {
+          parseWebsocketDataPayload(parsedMessage.payload, dataSourceName);
+        }
+        break;
+      case "disconnect":
+        clearWebsocketData(dataSourceName);
+        break;
+      default:
+        console.log("Unknown message type");
+    }
   }
-  parseWebsocketData(data);
 };
+

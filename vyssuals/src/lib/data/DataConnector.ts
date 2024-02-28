@@ -5,6 +5,8 @@ import type {
   DataSource,
   HeaderData,
   UnitSymbol,
+  WebSocketMessage,
+  DataPayload,
 } from "../types";
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
@@ -51,25 +53,29 @@ export function loadCSVFile(dataSource: DataSource) {
   }
 }
 
-export function parseWebsocketData(data: any) {
+export function parseWebsocketDataPayload(
+  payload: DataPayload,
+  dataSourceName: string
+) {
+  if (!payload.data || payload.data.length === 0) {
+    return;
+  }
+
   const timestamp: Date = new Date();
   const timestampString = toLocalISOString(timestamp);
-  const parsedData: DataItem[] = JSON.parse(data);
-  parsedData.forEach((item: DataItem) => {
+
+  payload.data.forEach((item: DataItem) => {
     item.timestamp = timestamp;
     item.attributes.timestamp = timestampString;
+    item.dataSourceName = dataSourceName;
   });
-  dataset.update((currentData) => [...currentData, ...parsedData]);
 
-  if (parsedData?.length > 0) {
-    const newDataSource = parsedData[0].dataSourceName;
-    dataSourcesWebsocket.update((currentSources) => {
-      if (!currentSources.includes(newDataSource)) {
-        return [...currentSources, newDataSource];
-      }
-      return currentSources;
-    });
-  }
+  dataset.update((currentData) => [...currentData, ...payload.data]);
+
+  const headerData = payload.metadata;
+  const dataSource = dataSourcesWebsocket.find(
+    (source) => source === dataSourceName
+  );
 }
 
 export function clearWebsocketData(dataSource: string) {
@@ -79,6 +85,10 @@ export function clearWebsocketData(dataSource: string) {
   dataSourcesWebsocket.update((currentSources) =>
     currentSources.filter((source) => source !== dataSource)
   );
+}
+
+export function makeWebSocketDataSourceName(message: WebSocketMessage): string {
+  return `${message.sender}__${message.senderVersion}__${message.senderName}`;
 }
 
 function applyHeaderData(dataSource: DataSource, headerData: HeaderData[]) {
