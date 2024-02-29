@@ -83,6 +83,7 @@ export function parseWebsocketDataPayload(
   dataset.update((currentData) => [...currentData, ...payload.data]);
 
   const newHeaderData = payload.metadata;
+  console.log("New header data:", newHeaderData);
   newHeaderData.forEach((header) => {
     const columnValues = payload.data.map(
       (item) => item.attributes[header.name]
