@@ -1,4 +1,4 @@
-import { dataset, dataSourcesWebsocket } from "../store";
+import { dataset, dataSources } from "../store";
 import type {
   ColumnType,
   DataItem,
@@ -11,6 +11,7 @@ import type {
 import Papa from "papaparse";
 import type { ParseResult } from "papaparse";
 import FuzzySet from "fuzzyset.js";
+import type { Data } from "ws";
 
 export function toLocalISOString(date: Date) {
   const offset = date.getTimezoneOffset();
@@ -18,39 +19,48 @@ export function toLocalISOString(date: Date) {
   return date.toISOString().slice(0, 23).replace("T", " ");
 }
 
-export function loadCSVFile(dataSource: DataSource) {
-  const file = dataSource.file;
-  if (file) {
+export function loadCSVFile(
+  dataSource: DataSource
+): Promise<{ dataSource: DataSource; data: DataItem[] }> {
+  return new Promise((resolve, reject) => {
+    const file = dataSource.file;
+    if (!file) {
+      throw new Error("No file to load");
+    }
+    console.log(`Loading file: ${file.name}`);
+
     const timestamp: Date = new Date();
     const timestampString = toLocalISOString(timestamp);
-    console.log(`Loading file: ${file.name}`);
+    dataSource.lastUpdate = timestamp;
+    let data: DataItem[] = [];
 
     Papa.parse(file, {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
       complete: function (results: ParseResult<Record<string, any>>) {
-        const data: DataItem[] = results.data.map(
-          (row: Record<string, any>, index: number) => {
-            // Remove the property with the empty or null key
-            delete row[""];
+        data = results.data.map((row: Record<string, any>, index: number) => {
+          // Remove the property with the empty or null key
+          delete row[""];
 
-            return {
-              id: String(index),
-              dataSourceName: file.name,
-              timestamp: timestamp,
-              attributes: { Count: 1, ...row, Timestamp: timestampString },
-            };
-          }
+          return {
+            id: String(index),
+            dataSourceName: file.name,
+            timestamp: timestamp,
+            attributes: { Count: 1, ...row, Timestamp: timestampString },
+          };
+        });
+        dataSource.headerData = softApplyHeaderData(
+          dataSource.headerData,
+          makeHeaderData(data)
         );
-        dataset.update((prev) => [...prev, ...data]);
-        dataSource.lastUpdate = timestamp;
-        applyHeaderData(dataSource, getHeaderData(data));
+        resolve({ dataSource, data });
+      },
+      error: function (err) {
+        reject(err);
       },
     });
-  } else {
-    console.log("No file to load");
-  }
+  });
 }
 
 export function parseWebsocketDataPayload(
@@ -72,18 +82,43 @@ export function parseWebsocketDataPayload(
 
   dataset.update((currentData) => [...currentData, ...payload.data]);
 
-  const headerData = payload.metadata;
-  const dataSource = dataSourcesWebsocket.find(
-    (source) => source === dataSourceName
-  );
+  const newHeaderData = payload.metadata;
+  newHeaderData.forEach((header) => {
+    const columnValues = payload.data.map(
+      (item) => item.attributes[header.name]
+    );
+    completeHeaderData(header, columnValues);
+  });
+
+  dataSources.update((currentSources) => {
+    let index = currentSources.findIndex(
+      (source) => source.name === dataSourceName
+    );
+    if (index !== -1) {
+      currentSources[index].lastUpdate = timestamp;
+      currentSources[index].headerData = softApplyHeaderData(
+        currentSources[index].headerData,
+        newHeaderData
+      );
+    } else {
+      // Create a new data source and add it to currentSources
+      currentSources.push({
+        type: "websocket",
+        name: dataSourceName,
+        lastUpdate: timestamp,
+        headerData: newHeaderData,
+      });
+    }
+    return currentSources;
+  });
 }
 
-export function clearWebsocketData(dataSource: string) {
+export function clearWebsocketData(dataSourceName: string) {
   dataset.update((currentData) =>
-    currentData.filter((item) => item.dataSourceName !== dataSource)
+    currentData.filter((x) => x.dataSourceName !== dataSourceName)
   );
-  dataSourcesWebsocket.update((currentSources) =>
-    currentSources.filter((source) => source !== dataSource)
+  dataSources.update((currentSources) =>
+    currentSources.filter((x) => x.name !== dataSourceName)
   );
 }
 
@@ -91,11 +126,36 @@ export function makeWebSocketDataSourceName(message: WebSocketMessage): string {
   return `${message.sender}__${message.senderVersion}__${message.senderName}`;
 }
 
-function applyHeaderData(dataSource: DataSource, headerData: HeaderData[]) {
-  const newHeaderData: HeaderData[] = [];
+function completeHeaderData(
+  header: HeaderData,
+  columnValues: any[]
+): HeaderData {
+  if (!header.type) {
+    header.type = majorityType(columnValues);
+  }
+  if (header.type === "number" && !header.unitSymbol) {
+    header.unitSymbol = determineUnitSymbol(
+      header.name,
+      FuzzySet(columnValues)
+    );
+  }
+  if (!header.uniqueValues) {
+    header.uniqueValues = new Set(columnValues).size;
+  }
+  if (!header.cardinalityRatio) {
+    header.cardinalityRatio = header.uniqueValues / columnValues.length;
+  }
+  return header;
+}
 
-  for (const newHeader of headerData) {
-    let existingHeader = dataSource.headerData?.find(
+function softApplyHeaderData(
+  existingHeaderData: HeaderData[],
+  newHeaderData: HeaderData[]
+): HeaderData[] {
+  const updatedHeaderData: HeaderData[] = [];
+
+  for (const newHeader of newHeaderData) {
+    let existingHeader = existingHeaderData.find(
       (header) => header.name === newHeader.name
     );
     if (existingHeader) {
@@ -110,14 +170,13 @@ function applyHeaderData(dataSource: DataSource, headerData: HeaderData[]) {
       // If the header does not exist, add it
       existingHeader = newHeader;
     }
-    newHeaderData.push(existingHeader);
+    updatedHeaderData.push(existingHeader);
   }
 
-  // Assign the new header data to dataSource.headerData
-  dataSource.headerData = newHeaderData;
+  return updatedHeaderData;
 }
 
-function getHeaderData(data: DataItem[]): HeaderData[] {
+function makeHeaderData(data: DataItem[]): HeaderData[] {
   const headerData: HeaderData[] = [];
   if (data.length > 0) {
     // Get the unique keys from all items

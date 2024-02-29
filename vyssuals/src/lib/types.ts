@@ -99,9 +99,9 @@ export const COLUMN_TYPES: ColumnType[] = ["string", "number"];
 export interface DataSource {
   lastUpdate: Date;
   headerData: HeaderData[];
-  interval: number; // will have no effect on websocket data sources, should be 0 for consistency
   file?: File;
   name: string;
+  type: "file" | "websocket";
 }
 
 export interface HeaderData {

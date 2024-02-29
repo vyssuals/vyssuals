@@ -4,7 +4,6 @@
     showDataConnectionEditor,
     showChartEditor,
     dataSources,
-    dataSourcesWebsocket,
     chartConfigs,
     startColor,
     endColor,
@@ -12,39 +11,43 @@
     showDataSourceEditor,
     dataSourceToEdit,
   } from "../store";
-  import type { ChartConfig, DataSource } from "../types";
+  import type { ChartConfig, DataSource, HeaderData } from "../types";
   import GradientButton from "../buttons/GradientButton.svelte";
   import { loadCSVFile } from "./DataConnector";
   import ConnectorList from "../connectors/ConnectorList.svelte";
   import { autoChart } from "../charts/AutoCharts";
 
   let files: FileList | null = null;
-  // $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);
-  // $: console.log("DataConnectionEditor says: dataset changed", $dataset);
+  $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);
+  $: console.log("DataConnectionEditor says: dataset changed", $dataset);
 
   $: if (files) {
-      // add file path to dataSources and set interval to 60 seconds
-      const newSources: DataSource[] = Array.from(files)
-        .map((file) => {
-          const name = file.name;
-          const interval = 0;
-          if ($dataSources.some((item) => item.name === name)) {
-            alert(`File is already a data source: ${name}`);
-            return null;
+    const file = files?.[0];
+    if (file) {
+      const name = file.name;
+      if ($dataSources.some((item) => item.name === name)) {
+        alert(`File is already a data source: ${name}`);
+      } else {
+        const newSource: DataSource = {
+          name,
+          file,
+          type: 'file',
+          lastUpdate: new Date(),
+          headerData: [] as HeaderData[],
+        };
+        (async () => {
+          try {
+            const result = await loadCSVFile(newSource);
+            $dataSources = [...$dataSources, result.dataSource];
+            $dataset = [...$dataset, ...result.data];
+          } catch (error) {
+            console.error("Error loading CSV file:", error);
           }
-          return { name, file, interval };
-        })
-        .filter(item => item !== null) as DataSource[]; // filter out null values and cast the result to DataSource[]
-
-      for (const item of newSources) {
-        if (item) {
-          loadCSVFile(item);
-        }
+        })();
       }
-      dataSources.update((prev) => [...prev, ...newSources]);
-      files = null;
     }
-
+    files = null;
+  }
   function hideDataSourceEditor() {
     showDataConnectionEditor.set(false);
   }
@@ -109,9 +112,9 @@
       on:click={() => hideDataSourceEditor()}>&times;</button
     >
     <h1>Real-Time Connections</h1>
-    {#if $dataSourcesWebsocket.length > 0}
+    {#if $dataSources.length > 0}
       <div style="padding-bottom: 1em;">
-        {#each $dataSourcesWebsocket as item (item)}
+        {#each $dataSources.filter((x) => x.type == "websocket") as item (item)}
           <p class="file-path" style="margin: 2px;">{item}</p>
         {/each}
       </div>
@@ -140,7 +143,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each $dataSources as item, index (item.name)}
+          {#each $dataSources.filter((x) => x.type == "file") as item, index (item.name)}
             <tr>
               <td
                 ><GradientButton
@@ -151,17 +154,34 @@
                 /></td
               >
               <td><p class="file-path">{item.name}</p></td>
-              <td class="symbol"><button style="font-size: 25px; padding: 0.15em" on:click={() => handleEditButton(index)}>&#9881;</button></td>
               <td class="symbol"
-                ><input type="file" id="filePicker" accept=".csv" on:change="{(e) => handleReloadCSVFile(item, e)}" style="display: none" />
-                <button on:click="{() => {
-                  if (confirm(`Due to browser security restrictions, please select the same file again to reload it: ${item.name}`)) {
-                      const filePicker = document.getElementById('filePicker');
+                ><button
+                  style="font-size: 25px; padding: 0.15em"
+                  on:click={() => handleEditButton(index)}>&#9881;</button
+                ></td
+              >
+              <td class="symbol"
+                ><input
+                  type="file"
+                  id="filePicker"
+                  accept=".csv"
+                  on:change={(e) => handleReloadCSVFile(item, e)}
+                  style="display: none"
+                />
+                <button
+                  on:click={() => {
+                    if (
+                      confirm(
+                        `Due to browser security restrictions, please select the same file again to reload it: ${item.name}`
+                      )
+                    ) {
+                      const filePicker = document.getElementById("filePicker");
                       if (filePicker) {
                         filePicker.click();
                       }
-                  }
-              }}">&#x21BB;</button></td
+                    }
+                  }}>&#x21BB;</button
+                ></td
               >
               <td class="symbol"
                 ><button on:click={() => removeItem(item.name)}>&times;</button
@@ -177,7 +197,7 @@
       <input type="file" id="filePicker" accept=".csv" bind:files />
     </div>
 
-    {#if $dataSources.length > 0 || $dataSourcesWebsocket.length > 0}
+    {#if $dataSources.length > 0}
       <div style="padding-top: 1em;">
         <GradientButton on:click={handleAddChart} />
       </div>

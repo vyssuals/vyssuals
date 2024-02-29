@@ -33,7 +33,7 @@ export function logDatasetContent() {
   })();
 }
 
-export const dataSourcesWebsocket: Writable<string[]> = writable([]);
+// export const dataSourcesWebsocket: Writable<string[]> = writable([]);
 export const dataSources: Writable<DataSource[]> = writable([]);
 export const showDataConnectionEditor: Writable<boolean> = writable(false);
 
