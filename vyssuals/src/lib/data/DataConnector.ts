@@ -137,7 +137,7 @@ function completeHeaderData(
   if (header.type === "number" && !header.unitSymbol) {
     header.unitSymbol = determineUnitSymbol(
       header.name,
-      FuzzySet(columnValues)
+      FuzzySet(Object.keys(keywordToUnitSymbol))
     );
   } else if (!header.unitSymbol) header.unitSymbol = "# Unique Items";
 
@@ -148,7 +148,7 @@ function completeHeaderData(
   if (!header.cardinalityRatio) {
     header.cardinalityRatio = header.uniqueValues / columnValues.length;
   }
-  
+
   return header;
 }
 
@@ -187,9 +187,7 @@ function makeHeaderData(data: DataItem[]): HeaderData[] {
     const keys = Array.from(
       new Set(data.map((item) => Object.keys(item.attributes)).flat())
     );
-    // Create a new FuzzySet with your keywords
-    const keywords = Object.keys(keywordToUnitSymbol);
-    const fuzzySet = FuzzySet(keywords);
+    const fuzzySet = FuzzySet(Object.keys(keywordToUnitSymbol));
     for (const key of keys) {
       const values = data.map((item) => item.attributes[key]);
       const type = majorityType(values);
