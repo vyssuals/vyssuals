@@ -134,18 +134,22 @@ function completeHeaderData(
   if (!header.type) {
     header.type = majorityType(columnValues);
   }
+
   if (header.type === "number" && !header.unitSymbol) {
     header.unitSymbol = determineUnitSymbol(
       header.name,
       FuzzySet(columnValues)
     );
-  }
+  } else if (!header.unitSymbol) header.unitSymbol = "# Unique Items";
+
   if (!header.uniqueValues) {
     header.uniqueValues = new Set(columnValues).size;
   }
+
   if (!header.cardinalityRatio) {
     header.cardinalityRatio = header.uniqueValues / columnValues.length;
   }
+  
   return header;
 }
 
