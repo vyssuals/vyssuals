@@ -70,6 +70,7 @@ export function parseWebsocketDataPayload(
   if (!payload.data || payload.data.length === 0) {
     return;
   }
+  console.log("Data payload:", payload);
 
   const timestamp: Date = new Date();
   const timestampString = toLocalISOString(timestamp);
@@ -83,12 +84,12 @@ export function parseWebsocketDataPayload(
   dataset.update((currentData) => [...currentData, ...payload.data]);
 
   const newHeaderData = payload.metadata;
-  console.log("New header data:", newHeaderData);
   newHeaderData.forEach((header) => {
     const columnValues = payload.data.map(
       (item) => item.attributes[header.name]
     );
-    completeHeaderData(header, columnValues);
+    console.log(`Column values (${header.name}):`, columnValues);
+    // completeHeaderData(header, columnValues);
   });
 
   dataSources.update((currentSources) => {
