@@ -18,9 +18,9 @@
   import { connectWebSocket } from "./lib/data/websocket";
   import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
 
-  // onMount(() => {
-  //   connectWebSocket();
-  // });
+  onMount(() => {
+    connectWebSocket();
+  });
 
   //   onMount(() => {
   //     const dataSources: string[] = ['Revit-2022__836_Project-Name', 'Rhino-8__2402_DR_some-long-filename', 'Csv_brutally-long-filename-2023-02-23_randomShit'];
