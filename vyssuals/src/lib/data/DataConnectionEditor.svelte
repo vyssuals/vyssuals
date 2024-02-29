@@ -112,10 +112,10 @@
       on:click={() => hideDataSourceEditor()}>&times;</button
     >
     <h1>Real-Time Connections</h1>
-    {#if $dataSources.length > 0}
+    {#if $dataSources.filter((x) => x.type == "websocket").length > 0}
       <div style="padding-bottom: 1em;">
         {#each $dataSources.filter((x) => x.type == "websocket") as item (item)}
-          <p class="file-path" style="margin: 2px;">{item}</p>
+          <p class="file-path" style="margin: 2px;">{item.name}</p>
         {/each}
       </div>
     {:else}
@@ -131,7 +131,7 @@
     <!-- <hr style="width: 100%; margin-top: 1em;" /> -->
 
     <h1>CSV Connections</h1>
-    {#if $dataSources.length > 0}
+    {#if $dataSources.filter((x) => x.type == "file").length > 0}
       <table>
         <thead>
           <tr>

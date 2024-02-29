@@ -70,8 +70,6 @@ export function parseWebsocketDataPayload(
   if (!payload.data || payload.data.length === 0) {
     return;
   }
-  console.log("Data payload:", payload);
-
   const timestamp: Date = new Date();
   const timestampString = toLocalISOString(timestamp);
 
@@ -85,33 +83,35 @@ export function parseWebsocketDataPayload(
 
   const newHeaderData = payload.metadata;
   newHeaderData.forEach((header) => {
-    const columnValues = payload.data.map(
-      (item) => item.attributes[header.name]
-    );
-    console.log(`Column values (${header.name}):`, columnValues);
-    // completeHeaderData(header, columnValues);
+    const columnValues = payload.data
+      .map((item) => item.attributes[header.name])
+      .filter((value) => value !== undefined && value !== null && value !== '');
+    header = completeHeaderData(header, columnValues);
   });
 
   dataSources.update((currentSources) => {
     let index = currentSources.findIndex(
       (source) => source.name === dataSourceName
     );
+    let newSources = [...currentSources]; // create a new array
     if (index !== -1) {
-      currentSources[index].lastUpdate = timestamp;
-      currentSources[index].headerData = softApplyHeaderData(
-        currentSources[index].headerData,
+      let updatedSource = { ...currentSources[index] }; // create a new object
+      updatedSource.lastUpdate = timestamp;
+      updatedSource.headerData = softApplyHeaderData(
+        updatedSource.headerData,
         newHeaderData
       );
+      newSources[index] = updatedSource; // update the new array
     } else {
-      // Create a new data source and add it to currentSources
-      currentSources.push({
+      // Create a new data source and add it to newSources
+      newSources.push({
         type: "websocket",
         name: dataSourceName,
         lastUpdate: timestamp,
         headerData: newHeaderData,
       });
     }
-    return currentSources;
+    return newSources; // return the new array
   });
 }
 
