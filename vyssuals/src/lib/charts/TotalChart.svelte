@@ -13,6 +13,7 @@
 
   // function for formatting large numbers with ` , e.g. 1`000`000
   function formatNumber(num: number) {
+    num = Math.round(num, 2);
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
   }
 
