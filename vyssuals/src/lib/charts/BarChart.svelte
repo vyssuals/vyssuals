@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ChartConfig, DataSource } from "../types";
-  import { chartConfigs, dataset, dataSources } from "../store";
+  import { chartConfigs, dataStore } from "../store";
   import { Bar } from "svelte-chartjs";
   import { formatTitle } from "../utils/textUtils";
   import { createChartData, getLastTimestamp } from "../data/dataUtils";
@@ -16,30 +16,35 @@
   } from "chart.js";
 
   export let index: number;
+  let dataSource: DataSource;
   let data: any;
   let config: ChartConfig;
   let unitSymbol: string;
 
   $: {
     config = $chartConfigs[index];
-    let filteredDataset = $dataset.filter(
-      (item) => item.dataSourceName === config.dataSourceName
-    );
-    const timestamp = getLastTimestamp(filteredDataset);
-    if (timestamp) {
-      filteredDataset = filteredDataset.filter(
-        (item) => item.timestamp === timestamp
-      );
-    }
-    let dataSource: DataSource | undefined = $dataSources.find(
-      (item) => item.name === config.dataSourceName
-    );
-    if (dataSource) {
-      data = createChartData(dataSource, filteredDataset, config);
-      unitSymbol = dataSource.headerData.find(
-        (item) => item.name === config.showValues
-      )?.unitSymbol || "";
-    }
+    dataSource = $dataStore.dataSources[config.dataSourceName];
+
+    data = createChartData(dataSource, config);
+    unitSymbol = dataSource.metadata[config.showValues]?.unitSymbol || "";
+    // let filteredDataset = $dataset.filter(
+    //   (item) => item.dataSourceName === config.dataSourceName
+    // );
+    // const timestamp = getLastTimestamp(filteredDataset);
+    // if (timestamp) {
+    //   filteredDataset = filteredDataset.filter(
+    //     (item) => item.timestamp === timestamp
+    //   );
+    // }
+    // let dataSource: DataSource | undefined = $dataSources.find(
+    //   (item) => item.name === config.dataSourceName
+    // );
+    // if (dataSource) {
+    //   data = createChartData(dataSource, filteredDataset, config);
+    //   unitSymbol = dataSource.headerData.find(
+    //     (item) => item.name === config.showValues
+    //   )?.unitSymbol || "";
+    // }
   }
 
   Chart.register(

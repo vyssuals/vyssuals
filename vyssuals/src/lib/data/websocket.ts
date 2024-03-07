@@ -1,4 +1,4 @@
-import { parseWebsocketDataPayload, clearWebsocketData, makeWebSocketDataSourceName } from "./DataConnector";
+import { processWebSocketMessage, deleteDataSource } from "./updateDataUtils";
 import type { WebSocketMessage } from "../types";
 
 export let socket: WebSocket | null = null;
@@ -74,17 +74,14 @@ export const connectWebSocket = () => {
 export const processMessage = (message: string) => {
   const parsedMessage: WebSocketMessage = JSON.parse(message);
   if (parsedMessage.type) {
-    const dataSourceName = makeWebSocketDataSourceName(parsedMessage);
     switch (parsedMessage.type) {
       case "data":
         // Make sure the payload is of type DataPayload
-        if (parsedMessage.payload && 'data' in parsedMessage.payload) {
-          parseWebsocketDataPayload(parsedMessage.payload, dataSourceName);
-        }
+        processWebSocketMessage(parsedMessage);
         break;
       case "disconnect":
-        clearWebsocketData(dataSourceName);
-        break;
+        deleteDataSource(parsedMessage.senderName);
+      break;
       default:
         console.log("Unknown message type");
     }

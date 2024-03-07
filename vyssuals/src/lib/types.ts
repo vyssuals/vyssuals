@@ -141,7 +141,8 @@ export interface HeaderData {
 
 export interface Attributes {
   timestamp: string;
-  [key: string]: string; // Key is the Column Name, Value is the Column Value
+  count: 1;
+  [key: string]: string | number; // Key is the Column Name, Value is the Column Value
 }
 
 export interface Item {

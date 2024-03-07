@@ -77,6 +77,7 @@ function createNewItem(messageItem: MessageItem): Item {
 function updateItemVersions(item: Item, messageItem: MessageItem, timestamp: string) {
   item.versions[timestamp] = {
     timestamp,
+    count: 1,
     ...messageItem.attributes
   };
 }

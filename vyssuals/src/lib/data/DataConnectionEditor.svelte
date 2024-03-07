@@ -3,51 +3,60 @@
   import {
     showDataConnectionEditor,
     showChartEditor,
-    dataSources,
     chartConfigs,
     startColor,
     endColor,
-    dataset,
     showDataSourceEditor,
     dataSourceToEdit,
+    dataStore,
   } from "../store";
   import type { ChartConfig, DataSource, HeaderData } from "../types";
   import GradientButton from "../buttons/GradientButton.svelte";
   import { loadCSVFile } from "./DataConnector";
   import ConnectorList from "../connectors/ConnectorList.svelte";
-  import { autoChart } from "../charts/AutoCharts";
+  // import { autoChart } from "../charts/AutoCharts";
+  import { getWebSocketDataSources, getFileDataSources } from "./getDataUtils";
+  import { deleteDataSource } from "./updateDataUtils";
 
   let files: FileList | null = null;
-  $: console.log("DataConnectionEditor says: dataSources changed", $dataSources);
-  $: console.log("DataConnectionEditor says: dataset changed", $dataset);
+  $: console.log("DataConnectionEditor says: dataStore", $dataStore);
 
-  $: if (files) {
-    const file = files?.[0];
-    if (file) {
-      const name = file.name;
-      if ($dataSources.some((item) => item.name === name)) {
-        alert(`File is already a data source: ${name}`);
-      } else {
-        const newSource: DataSource = {
-          name,
-          file,
-          type: 'file',
-          lastUpdate: new Date(),
-          headerData: [] as HeaderData[],
-        };
-        (async () => {
-          try {
-            const result = await loadCSVFile(newSource);
-            $dataSources = [...$dataSources, result.dataSource];
-            $dataset = [...$dataset, ...result.data];
-          } catch (error) {
-            console.error("Error loading CSV file:", error);
-          }
-        })();
-      }
-    }
-    files = null;
-  }
+  // $: if (files) {
+  //   const file = files?.[0];
+  //   if (file) {
+  //     const name = file.name;
+  //     if ($dataSources.some((item) => item.name === name)) {
+  //       alert(`File is already a data source: ${name}`);
+  //     } else {
+  //       const newSource: DataSource = {
+  //         name,
+  //         file,
+  //         type: 'file',
+  //         lastUpdate: new Date(),
+  //         headerData: [] as HeaderData[],
+  //       };
+  //       (async () => {
+  //         try {
+  //           const result = await loadCSVFile(newSource);
+  //           $dataSources = [...$dataSources, result.dataSource];
+  //           $dataset = [...$dataset, ...result.data];
+  //         } catch (error) {
+  //           console.error("Error loading CSV file:", error);
+  //         }
+  //       })();
+  //     }
+  //   }
+  //   files = null;
+  // }
+
+  let wsDataSourceNames: string[] = [];
+  let fileDataSourceNames: string[] = [];
+  let dataSourceCount: number = 0;
+
+  $: wsDataSourceNames = getWebSocketDataSources($dataStore);
+  $: fileDataSourceNames = getFileDataSources($dataStore);
+  $: dataSourceCount = wsDataSourceNames.length + fileDataSourceNames.length;
+
   function hideDataSourceEditor() {
     showDataConnectionEditor.set(false);
   }
@@ -58,35 +67,38 @@
   }
 
   async function handleAutoChart(dataSource: DataSource) {
-    try {
-      const autoChartConfig: ChartConfig[] = await autoChart(
-        dataSource,
-        5,
-        $startColor,
-        $endColor
-      );
-      chartConfigs.update((prev) => [...prev, ...autoChartConfig]);
-    } catch (error) {
-      console.error("Error generating auto chart:", error);
-    }
+    // try {
+    //   const autoChartConfig: ChartConfig[] = await autoChart(
+    //     dataSource,
+    //     5,
+    //     $startColor,
+    //     $endColor
+    //   );
+    //   chartConfigs.update((prev) => [...prev, ...autoChartConfig]);
+    // } catch (error) {
+    //   console.error("Error generating auto chart:", error);
+    // }
+    console.log('fix me please! (handleAutoChart)')
   }
 
-  function handleReloadCSVFile(dataSource: DataSource, e: Event) {
+  function handleReloadCSVFile(dataSourceName: string, e: Event) {
     // check if file is the same as the one already loaded
-    if (e.target instanceof HTMLInputElement && e.target.files && e.target.files.length > 0) {
-      const file: File = e.target.files[0];
-      if (dataSource.file?.name === file.name) {
-        dataSource.file = file;
-        loadCSVFile(dataSource);
-        const filePicker = document.getElementById('filePicker');
-        if (filePicker) {
-          (filePicker as HTMLInputElement).value = "";
-        }
-        return;
-      } else {
-        alert("Ooops, clicked on the wrong file? Please select the same file to reload it.");
-      }
-    }
+    // if (e.target instanceof HTMLInputElement && e.target.files && e.target.files.length > 0) {
+    //   const file: File = e.target.files[0];
+    //   if (dataSource.file?.name === file.name) {
+    //     dataSource.file = file;
+    //     loadCSVFile(dataSource);
+    //     const filePicker = document.getElementById('filePicker');
+    //     if (filePicker) {
+    //       (filePicker as HTMLInputElement).value = "";
+    //     }
+    //     return;
+    //   } else {
+    //     alert("Ooops, clicked on the wrong file? Please select the same file to reload it.");
+    //   }
+    // }
+
+    console.log("handleReloadCSVFile", dataSourceName);
   }
 
   function handleEditButton(index: number) {
@@ -95,10 +107,9 @@
     showDataSourceEditor.set(true);
   }
 
-  function removeItem(path: string) {
-    $chartConfigs = $chartConfigs.filter((item) => item.dataSourceName !== path);
-    $dataSources = $dataSources.filter((item) => item.name !== path);
-    $dataset = $dataset.filter((item) => item.dataSourceName !== path);
+  function handleRemoveItem(dataSourceName: string) {
+    $chartConfigs = $chartConfigs.filter((item) => item.dataSourceName !== dataSourceName);
+    deleteDataSource(dataSourceName);
   }
 </script>
 
@@ -112,10 +123,10 @@
       on:click={() => hideDataSourceEditor()}>&times;</button
     >
     <h1>Real-Time Connections</h1>
-    {#if $dataSources.filter((x) => x.type == "websocket").length > 0}
+    {#if wsDataSourceNames.length > 0}
       <div style="padding-bottom: 1em;">
-        {#each $dataSources.filter((x) => x.type == "websocket") as item (item)}
-          <p class="file-path" style="margin: 2px;">{item.name}</p>
+        {#each wsDataSourceNames as item (item)}
+          <p class="file-path" style="margin: 2px;">{item}</p>
         {/each}
       </div>
     {:else}
@@ -131,7 +142,7 @@
     <!-- <hr style="width: 100%; margin-top: 1em;" /> -->
 
     <h1>CSV Connections</h1>
-    {#if $dataSources.filter((x) => x.type == "file").length > 0}
+    {#if fileDataSourceNames.length > 0}
       <table>
         <thead>
           <tr>
@@ -143,17 +154,18 @@
           </tr>
         </thead>
         <tbody>
-          {#each $dataSources.filter((x) => x.type == "file") as item, index (item.name)}
+          {#each fileDataSourceNames as item, index (item)}
             <tr>
               <td
                 ><GradientButton
                   on:click={() => {
-                    handleAutoChart(item);
+                    // handleAutoChart(item);
+                    console.log('please implement meeee (auto chart)!')
                   }}
                   buttonText="Add Charts"
                 /></td
               >
-              <td><p class="file-path">{item.name}</p></td>
+              <td><p class="file-path">{item}</p></td>
               <td class="symbol"
                 ><button
                   style="font-size: 25px; padding: 0.15em"
@@ -172,7 +184,7 @@
                   on:click={() => {
                     if (
                       confirm(
-                        `Due to browser security restrictions, please select the same file again to reload it: ${item.name}`
+                        `Due to browser security restrictions, please select the same file again to reload it: ${item}`
                       )
                     ) {
                       const filePicker = document.getElementById("filePicker");
@@ -184,7 +196,7 @@
                 ></td
               >
               <td class="symbol"
-                ><button on:click={() => removeItem(item.name)}>&times;</button
+                ><button on:click={() => handleRemoveItem(item)}>&times;</button
                 ></td
               >
             </tr>
@@ -197,7 +209,7 @@
       <input type="file" id="filePicker" accept=".csv" bind:files />
     </div>
 
-    {#if $dataSources.length > 0}
+    {#if dataSourceCount > 0}
       <div style="padding-top: 1em;">
         <GradientButton on:click={handleAddChart} />
       </div>

@@ -63,7 +63,9 @@ describe('updateDataUtils', () => {
     expect(state.dataSources['file-name1'].data['item1'].versions['1633111200000']).to.deep.equal({
       timestamp: '1633111200000',
       attribute1: 'value1',
-      attribute2: 'value2'
+      attribute2: 'value2',
+        count: 1
+
     });
     expect(state.dataSources['file-name1'].metadata).to.have.property('attribute1');
   });
@@ -78,6 +80,7 @@ it('processWebSocketMessage with existing data', () => {
                     versions: {
                         '1633111100000': {
                             timestamp: '1633111100000',
+                            count: 1,
                             attribute1: 'initialValue1',
                             attribute2: 'initialValue2'
                         }
@@ -109,7 +112,8 @@ it('processWebSocketMessage with existing data', () => {
     expect(state.dataSources['file-name1'].data['item1'].versions['1633111200000']).to.deep.equal({
         timestamp: '1633111200000',
         attribute1: 'value1',
-        attribute2: 'value2'
+        attribute2: 'value2',
+        count: 1
     });
 
     // Check that the existing data has not been removed
@@ -117,7 +121,8 @@ it('processWebSocketMessage with existing data', () => {
     expect(state.dataSources['file-name1'].data['item0'].versions['1633111100000']).to.deep.equal({
         timestamp: '1633111100000',
         attribute1: 'initialValue1',
-        attribute2: 'initialValue2'
+        attribute2: 'initialValue2',
+        count: 1
     });
 });
 
