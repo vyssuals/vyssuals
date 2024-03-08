@@ -1,10 +1,9 @@
 <script lang="ts">
   import GradientButton from "./lib/buttons/GradientButton.svelte";
   import { onMount } from "svelte";
-  import { generateDummyData } from "./lib/tests/testData";
+  // import { generateDummyData } from "./lib/tests/testData";
   import {
-    dataset,
-    logDatasetContent,
+    dataStore,
     showChartEditor,
     chartConfigs,
     showDataConnectionEditor,
@@ -17,6 +16,7 @@
   import OpenDataSourcesButton from "./lib/buttons/OpenDataSourcesButton.svelte";
   import { connectWebSocket } from "./lib/data/websocket";
   import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
+  import { getDataSourceList } from "./lib/data/getDataUtils";
 
   onMount(() => {
     connectWebSocket();
@@ -59,7 +59,7 @@
   <DataSourceEditor />
   {/if}
 
-  {#if $dataset.length > 0}
+  {#if getDataSourceList($dataStore).length > 0}
   <div style="padding-top: 2em; padding-bottom: 1em;">
     <GradientButton on:click={handleAddChart} />
   </div>

@@ -2,8 +2,8 @@
   import type { ChartConfig, DataSource } from "../types";
   import { Doughnut } from "svelte-chartjs";
   import { formatTitle } from "../utils/textUtils";
-  import { createChartData, getLastTimestamp } from "../data/dataUtils";
-  import { chartConfigs, dataset, dataSources } from "../store";
+  import { createChartData } from "../data/dataUtils";
+  import { chartConfigs, dataStore} from "../store";
 
   import {
     Chart as ChartJS,
@@ -16,29 +16,35 @@
 
   export let index: number;
   let data: any;
+  let dataSource: DataSource;
   let config: ChartConfig;
   let unitSymbol: string;
 
   $: {
     config = $chartConfigs[index];
-    let filteredDataset = $dataset.filter(
-      (item) => item.dataSourceName === config.dataSourceName
-    );
-    const timestamp = getLastTimestamp(filteredDataset);
-    if (timestamp) {
-      filteredDataset = filteredDataset.filter(
-        (item) => item.timestamp === timestamp
-      );
-    }
-    let dataSource: DataSource | undefined = $dataSources.find(
-      (item) => item.name === config.dataSourceName
-    );
-    if (dataSource) {
-      data = createChartData(dataSource, filteredDataset, config);
-      unitSymbol = dataSource.headerData.find(
-        (item) => item.name === config.showValues
-      )?.unitSymbol || "";
-    }
+    dataSource = $dataStore.dataSources[config.dataSourceName];
+
+    data = createChartData(dataSource, config);
+    unitSymbol = dataSource.metadata[config.showValues]?.unitSymbol || "";
+    // config = $chartConfigs[index];
+    // let filteredDataset = $dataset.filter(
+    //   (item) => item.dataSourceName === config.dataSourceName
+    // );
+    // const timestamp = getLastTimestamp(filteredDataset);
+    // if (timestamp) {
+    //   filteredDataset = filteredDataset.filter(
+    //     (item) => item.timestamp === timestamp
+    //   );
+    // }
+    // let dataSource: DataSource | undefined = $dataSources.find(
+    //   (item) => item.name === config.dataSourceName
+    // );
+    // if (dataSource) {
+    //   data = createChartData(dataSource, filteredDataset, config);
+    //   unitSymbol = dataSource.headerData.find(
+    //     (item) => item.name === config.showValues
+    //   )?.unitSymbol || "";
+    // }
   }
 
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);

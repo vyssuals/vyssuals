@@ -1,4 +1,4 @@
-import type { Attributes, DataSource, Store } from '../types';
+import type { Attributes, DataSource, HeaderData, Store } from '../types';
 
 export function getWebSocketDataSources(draft: Store): string[] {
     return Object.values(draft.dataSources).filter(dataSource => dataSource.type === 'websocket').map(dataSource => dataSource.name);
@@ -32,4 +32,19 @@ export function getUniqueValuesForKeyAtLatestUpdate(dataSource: DataSource, key:
   );
 }
 
+export function getUniqueAttributeKeys(dataSource: DataSource): string[] {
+  return Array.from(
+    new Set(
+      Object.values(dataSource.data)
+        .flatMap(item => Object.keys(item.versions[dataSource.lastUpdate]))
+    )
+  );
+}
 
+export function getDataSourceList(draft: Store): DataSource[] {
+  return Object.values(draft.dataSources);
+}
+
+export function getDataSourceHeaderDataList(dataSource: DataSource): HeaderData[] {
+  return Object.values(dataSource.metadata);
+}

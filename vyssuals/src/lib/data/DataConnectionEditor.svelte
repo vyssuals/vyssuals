@@ -12,7 +12,7 @@
   } from "../store";
   import type { ChartConfig, DataSource, HeaderData } from "../types";
   import GradientButton from "../buttons/GradientButton.svelte";
-  import { loadCSVFile } from "./DataConnector";
+  // import { loadCSVFile } from "./DataConnector";
   import ConnectorList from "../connectors/ConnectorList.svelte";
   // import { autoChart } from "../charts/AutoCharts";
   import { getWebSocketDataSources, getFileDataSources } from "./getDataUtils";

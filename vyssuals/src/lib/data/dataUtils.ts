@@ -46,14 +46,14 @@ import { getUniqueValuesForKeyAtLatestUpdate, getItemAttributesAtLatestUpdate } 
 //   return true;
 // }
 
-// export const sumAttributeValues = (
-//   dataset: DataItem[],
-//   attribute: string
-// ): number =>
-//   dataset.reduce(
-//     (total, item) => total + (Number(item.attributes[attribute]) || 0),
-//     0
-//   );
+export const sumAttributeValues = (
+  attributes: Attributes[],
+  attribute: string
+): number =>
+  attributes.reduce(
+    (total, item) => total + (Number(item[attribute]) || 0),
+    0
+  );
 
 // aggregate values of a specific attribute,  inputs: attribute to aggregate, list of labels to aggregate by, attibute key of labels
 export const sumAttributeBy = (

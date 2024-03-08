@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { dataset } from "../store";
+  import { getUniqueAttributeKeys, getDataSourceList } from "../data/getDataUtils";
+  import { dataStore } from "../store";
   import {
     startColor,
     endColor,
     editChartIndex,
     showChartEditor,
     chartConfigs,
-    dataSources,
   } from "../store";
   import type { ChartConfig, ChartType, DataSource } from "../types";
   import Draggable from "../wrapper/Draggable.svelte";
@@ -33,7 +33,7 @@
     selectedStartColor = $chartConfigs[$editChartIndex].startColor;
     selectedEndColor = $chartConfigs[$editChartIndex].endColor;
   } else {
-    dataSourceName = $dataset[0].dataSourceName;
+    dataSourceName = $dataStore.dataSources[0].name;
     chartType = "bar";
     selectedStartColor = $startColor;
     selectedEndColor = $endColor;
@@ -41,12 +41,8 @@
 
   // Reactive statement for data processing
   $: {
-    let dataSource: DataSource | undefined = $dataSources.find(
-      (item) => item.name === dataSourceName
-    );
-    if (dataSource) {
-      attributeKeys = dataSource.headerData.map((item) => item.name);
-    }
+    let dataSource: DataSource = $dataStore.dataSources[dataSourceName]
+    attributeKeys = getUniqueAttributeKeys(dataSource);
     if (attributeKeys.length > 0) {
       if (!showValues || !attributeKeys.includes(showValues)) {
         showValues = attributeKeys[0];
@@ -119,7 +115,7 @@
         <div class="config-option">
           <label for="dataSource">Data Source:</label>
           <select class="config-select" id="dataSource" bind:value={dataSourceName}>
-            {#each $dataSources as source}
+            {#each getDataSourceList($dataStore) as source}
               <option value={source.name}>{source.name}</option>
             {/each}
           </select>

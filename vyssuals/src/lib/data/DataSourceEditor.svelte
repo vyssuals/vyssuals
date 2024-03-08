@@ -2,11 +2,12 @@
   import FloatingWindow from "../wrapper/FloatingWindow.svelte";
   import {
     showDataConnectionEditor,
-    dataSources,
     showDataSourceEditor,
     dataSourceToEdit,
+    dataStore,
   } from "../store";
   import { UNIT_SYMBOLS, COLUMN_TYPES } from "../types";
+  import { getDataSourceHeaderDataList } from "./getDataUtils";
 
   function hideDataSetEditor() {
     showDataSourceEditor.set(false);
@@ -24,9 +25,9 @@
       on:click={() => hideDataSetEditor()}>&times;</button
     >
     <h1>Datasource Editor</h1>
-    <h2>{$dataSources[$dataSourceToEdit].name}</h2>
+    <h2>{$dataStore.dataSources[$dataSourceToEdit].name}</h2>
     <div class="grid-container">
-      {#each $dataSources[$dataSourceToEdit].headerData as header (header)}
+      {#each getDataSourceHeaderDataList($dataStore.dataSources[$dataSourceToEdit] )as header (header)}
         <div class="grid-item">
           <h2 class="chart-title">{header.name}</h2>
           <div class="config-option">

@@ -1,19 +1,18 @@
 <script lang="ts">
   import type { ChartConfig, DataSource } from "../types";
-  import { chartConfigs, dataset, dataSources } from "../store";
+  import { chartConfigs, dataStore } from "../store";
   import { titleCase } from "../utils/textUtils";
   import {
-    getUniqueAttributeValues,
     sumAttributeValues,
-    getLastTimestamp,
   } from "../data/dataUtils";
+  import { getItemAttributesAtLatestUpdate, getUniqueValuesForKeyAtLatestUpdate } from "../data/getDataUtils";
 
   export let index: number;
   let config: ChartConfig;
 
   // function for formatting large numbers with ` , e.g. 1`000`000
   function formatNumber(num: number) {
-    num = Math.round(num, 2);
+    num = Math.round(num * 100) / 100;
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
   }
 
@@ -33,29 +32,27 @@
   let total: number = 0;
   let fullFormattedNumber: string = "";
   let unitSymbol: string; 
+  let dataSource: DataSource;
 
   $: {
     config = $chartConfigs[index];
-    let dataSource: DataSource | undefined = $dataSources.find(
-      (item) => item.name === config.dataSourceName
-    );
-    if (dataSource) {
-      unitSymbol = dataSource.headerData.find(
-        (item) => item.name === config.showValues
-      )?.unitSymbol || "";
-    }
-    let data = $dataset.filter((item) => item.dataSourceName === config.dataSourceName);
-    const lastTimestamp = getLastTimestamp(data);
-    if (lastTimestamp) {
-      data = data.filter((item) => item.timestamp === lastTimestamp);
-    }
-    let header = dataSource?.headerData.find((header) => header.name === config.showValues);
-    if (header?.type === "number") {
-      total = sumAttributeValues(data, config.showValues);
+    dataSource = $dataStore.dataSources[config.dataSourceName];
+
+    unitSymbol = dataSource.metadata[config.showValues]?.unitSymbol || "";
+    let dataType = dataSource.metadata[config.showValues]?.type || "";
+
+    // let data = $dataset.filter((item) => item.dataSourceName === config.dataSourceName);
+    // const lastTimestamp = getLastTimestamp(data);
+    // if (lastTimestamp) {
+    //   data = data.filter((item) => item.timestamp === lastTimestamp);
+    // }
+
+    if (dataType === "number") {
+      total = sumAttributeValues(getItemAttributesAtLatestUpdate(dataSource), config.showValues);
       fullFormattedNumber = formatNumber(total);
     } else {
       // count the number of unique items in the dataset
-      total = getUniqueAttributeValues(data, config.showValues).length;
+      total = getUniqueValuesForKeyAtLatestUpdate(dataSource, config.showValues).length;
       fullFormattedNumber = total.toString();
     }
   }

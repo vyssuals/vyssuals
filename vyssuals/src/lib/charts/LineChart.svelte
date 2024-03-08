@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import type { ChartConfig, DataSource } from "../types";
   import { chartConfigs, dataset, dataSources } from "../store";
   import { Line } from "svelte-chartjs";
@@ -99,4 +99,4 @@
 </h1>
 <h3>{unitSymbol}</h3>
 
-<Line {data} {options} style="height: 310px; width: 595px" />
+<Line {data} {options} style="height: 310px; width: 595px" /> -->
