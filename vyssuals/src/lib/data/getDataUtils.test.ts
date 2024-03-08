@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getWebSocketDataSources, getFileDataSources, getItemAttributesByTimestamp, getItemAttributesAtLatestUpdate, getUniqueValuesForKeyAtLatestUpdate } from './getDataUtils';
+import { getWebSocketDataSources, getFileDataSources, getLatestAttributes, getUniqueValuesForKeyAtLatestUpdate } from './getDataUtils';
 import type { Store, DataSource } from '../types';
 
 describe('Data Utils', () => {
@@ -77,23 +77,9 @@ describe('Data Utils', () => {
         });
     });
 
-    describe('getItemAttributesByTimestamp', () => {
-        it('should return an empty array for a non-existent timestamp', () => {
-            const result = getItemAttributesByTimestamp(mockDataSource, 'nonExistentTimestamp');
-            expect(result).to.be.an('array').that.is.empty;
-        });
-
-        it('should return an array of Attributes for an existing timestamp', () => {
-            const result = getItemAttributesByTimestamp(mockDataSource, '2022-01-01T00:00:00Z');
-            expect(result).to.be.an('array').that.is.not.empty;
-            expect(result[0]).to.have.property('attribute1');
-            expect(result[0]).to.have.property('attribute2');
-        });
-    });
-
-    describe('getItemAttributesAtLatestUpdate', () => {
+    describe('getLatestAttributes', () => {
         it('should return an array of Attributes for the latest update', () => {
-            const result = getItemAttributesAtLatestUpdate(mockDataSource);
+            const result = getLatestAttributes(mockDataSource);
             expect(result).to.be.an('array').that.is.not.empty;
             expect(result[0]).to.have.property('attribute1');
             expect(result[0]).to.have.property('attribute2');

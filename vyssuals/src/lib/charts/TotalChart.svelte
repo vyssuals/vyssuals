@@ -5,7 +5,7 @@
   import {
     sumAttributeValues,
   } from "../data/dataUtils";
-  import { getItemAttributesAtLatestUpdate, getUniqueValuesForKeyAtLatestUpdate } from "../data/getDataUtils";
+  import { getLatestAttributes, getUniqueValuesForKeyAtLatestUpdate } from "../data/getDataUtils";
 
   export let index: number;
   let config: ChartConfig;
@@ -48,7 +48,7 @@
     // }
 
     if (dataType === "number") {
-      total = sumAttributeValues(getItemAttributesAtLatestUpdate(dataSource), config.showValues);
+      total = sumAttributeValues(getLatestAttributes(dataSource), config.showValues);
       fullFormattedNumber = formatNumber(total);
     } else {
       // count the number of unique items in the dataset

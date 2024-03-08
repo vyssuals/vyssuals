@@ -10,7 +10,7 @@ import type {
 } from "../types";
 import { createColorArray } from "../utils/colorUtils";
 import { dataStore } from "../store";
-import { getUniqueValuesForKeyAtLatestUpdate, getItemAttributesAtLatestUpdate } from "./getDataUtils";
+import { getUniqueValuesForKeyAtLatestUpdate, getLatestAttributes } from "./getDataUtils";
 
 // get all unique values of a specific attribute
 // export function getUniqueAttributeValues(
@@ -81,7 +81,7 @@ export function createChartData(
   if (dataSource.metadata[chartConfig.showValues].type === "number") {
     data = labels.map((label) =>
       sumAttributeBy(
-        getItemAttributesAtLatestUpdate(dataSource),
+        getLatestAttributes(dataSource),
         chartConfig.showValues,
         label,
         chartConfig.groupBy
