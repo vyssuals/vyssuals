@@ -3,9 +3,7 @@
   import { onMount } from "svelte";
   // import { generateDummyData } from "./lib/tests/testData";
   import {
-    dataStore,
     showChartEditor,
-    chartConfigs,
     showDataConnectionEditor,
     showDataSourceEditor,
   } from "./lib/store";
@@ -16,7 +14,9 @@
   import OpenDataSourcesButton from "./lib/buttons/OpenDataSourcesButton.svelte";
   import { connectWebSocket } from "./lib/data/websocket";
   import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
-  import { getDataSourceList } from "./lib/data/getDataUtils";
+  import { db } from "./lib/data/db";
+  import type { Observable } from "dexie";
+  import type { ChartConfig, DataSource } from "./lib/types";
 
   onMount(() => {
     connectWebSocket();
@@ -38,13 +38,20 @@
   function handleAddChart() {
     showChartEditor.set(true);
   }
+
+  let chartConfigs: Observable<ChartConfig[]>;
+  let dataSources: Observable<DataSource[]>;
+
+  $: chartConfigs = db.getChartConfigs();
+  $: dataSources = db.getDataSources();
+
 </script>
 
 <main>
-  {#if $chartConfigs.length === 0}
-    <Welcome />
-  {:else}
+  {#if $chartConfigs && $chartConfigs.length > 0}
     <ChartGrid />
+  {:else}
+    <Welcome />
   {/if}
 
   {#if $showChartEditor}
@@ -59,7 +66,7 @@
   <DataSourceEditor />
   {/if}
 
-  {#if getDataSourceList($dataStore).length > 0}
+  {#if $dataSources && $dataSources.length > 0}
   <div style="padding-top: 2em; padding-bottom: 1em;">
     <GradientButton on:click={handleAddChart} />
   </div>

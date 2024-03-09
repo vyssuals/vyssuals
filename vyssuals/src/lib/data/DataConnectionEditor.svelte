@@ -3,23 +3,20 @@
   import {
     showDataConnectionEditor,
     showChartEditor,
-    chartConfigs,
     startColor,
     endColor,
     showDataSourceEditor,
     dataSourceToEdit,
-    dataStore,
   } from "../store";
-  import type { ChartConfig, DataSource, HeaderData } from "../types";
+  import type { ChartConfig, DataSource, Header } from "../types";
   import GradientButton from "../buttons/GradientButton.svelte";
   // import { loadCSVFile } from "./DataConnector";
   import ConnectorList from "../connectors/ConnectorList.svelte";
   // import { autoChart } from "../charts/AutoCharts";
-  import { getWebSocketDataSources, getFileDataSources } from "./getDataUtils";
-  import { deleteDataSource } from "./updateDataUtils";
+  import { db } from "../data/db";
+  import { liveQuery, type Observable } from "dexie";
 
   let files: FileList | null = null;
-  $: console.log("DataConnectionEditor says: dataStore", $dataStore);
 
   // $: if (files) {
   //   const file = files?.[0];
@@ -33,7 +30,7 @@
   //         file,
   //         type: 'file',
   //         lastUpdate: new Date(),
-  //         headerData: [] as HeaderData[],
+  //         header: [] as Header[],
   //       };
   //       (async () => {
   //         try {
@@ -49,14 +46,16 @@
   //   files = null;
   // }
 
-  let wsDataSourceNames: string[] = [];
-  let fileDataSourceNames: string[] = [];
-  let dataSourceCount: number = 0;
+ 
 
-  $: wsDataSourceNames = getWebSocketDataSources($dataStore);
-  $: fileDataSourceNames = getFileDataSources($dataStore);
-  $: dataSourceCount = wsDataSourceNames.length + fileDataSourceNames.length;
+  let wsDataSources: Observable<DataSource[]>;
+  let fileDataSources: Observable<DataSource[]>;
+  let chartConfigs: Observable<ChartConfig[]>;
 
+  $: wsDataSources = db.getDataSourceByType("websocket");
+  $: fileDataSources = db.getDataSourceByType("file");
+  $: chartConfigs = db.getChartConfigs();
+      
   function hideDataSourceEditor() {
     showDataConnectionEditor.set(false);
   }
@@ -101,15 +100,14 @@
     console.log("handleReloadCSVFile", dataSourceName);
   }
 
-  function handleEditButton(index: number) {
-    dataSourceToEdit.set(index);
+  function handleEditButton(name: string) {
+    dataSourceToEdit.set(name);
     showDataConnectionEditor.set(false);
     showDataSourceEditor.set(true);
   }
 
   function handleRemoveItem(dataSourceName: string) {
-    $chartConfigs = $chartConfigs.filter((item) => item.dataSourceName !== dataSourceName);
-    deleteDataSource(dataSourceName);
+    db.deleteDataSource(dataSourceName);
   }
 </script>
 
@@ -123,10 +121,10 @@
       on:click={() => hideDataSourceEditor()}>&times;</button
     >
     <h1>Real-Time Connections</h1>
-    {#if wsDataSourceNames.length > 0}
+    {#if $wsDataSources }
       <div style="padding-bottom: 1em;">
-        {#each wsDataSourceNames as item (item)}
-          <p class="file-path" style="margin: 2px;">{item}</p>
+        {#each $wsDataSources as item (item)}
+          <p class="file-path" style="margin: 2px;">{item.name}</p>
         {/each}
       </div>
     {:else}
@@ -142,7 +140,7 @@
     <!-- <hr style="width: 100%; margin-top: 1em;" /> -->
 
     <h1>CSV Connections</h1>
-    {#if fileDataSourceNames.length > 0}
+    {#if $fileDataSources}
       <table>
         <thead>
           <tr>
@@ -154,7 +152,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each fileDataSourceNames as item, index (item)}
+          {#each $fileDataSources as item (item)}
             <tr>
               <td
                 ><GradientButton
@@ -165,11 +163,11 @@
                   buttonText="Add Charts"
                 /></td
               >
-              <td><p class="file-path">{item}</p></td>
+              <td><p class="file-path">{item.name}</p></td>
               <td class="symbol"
                 ><button
                   style="font-size: 25px; padding: 0.15em"
-                  on:click={() => handleEditButton(index)}>&#9881;</button
+                  on:click={() => handleEditButton(item.name)}>&#9881;</button
                 ></td
               >
               <td class="symbol"
@@ -177,7 +175,7 @@
                   type="file"
                   id="filePicker"
                   accept=".csv"
-                  on:change={(e) => handleReloadCSVFile(item, e)}
+                  on:change={(e) => handleReloadCSVFile(item.name, e)}
                   style="display: none"
                 />
                 <button
@@ -196,7 +194,7 @@
                 ></td
               >
               <td class="symbol"
-                ><button on:click={() => handleRemoveItem(item)}>&times;</button
+                ><button on:click={() => handleRemoveItem(item.name)}>&times;</button
                 ></td
               >
             </tr>
@@ -209,7 +207,7 @@
       <input type="file" id="filePicker" accept=".csv" bind:files />
     </div>
 
-    {#if dataSourceCount > 0}
+    {#if $fileDataSources || $wsDataSources}
       <div style="padding-top: 1em;">
         <GradientButton on:click={handleAddChart} />
       </div>

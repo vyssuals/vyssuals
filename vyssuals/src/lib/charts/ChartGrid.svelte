@@ -1,10 +1,15 @@
 <script lang="ts">
-  import { chartConfigs, editChartIndex, showChartEditor } from "../store";
+  import { editChartIndex, showChartEditor } from "../store";
   import Chart from "./Chart.svelte";
   import html2canvas from "html2canvas";
   import { formatTitle } from "../utils/textUtils";
+  import { db } from "../data/db";
+  import type { ChartConfig } from "../types";
+  import type { Observable } from "dexie";
 
   let gridItems: any = [];
+  let chartConfigs: Observable<ChartConfig[]>;
+  $: chartConfigs = db.getChartConfigs(); 
 
   const width: Record<string, string> = {
     bar: "595px",
@@ -12,12 +17,8 @@
     total: "165px",
   };
 
-  function handleRemoveChart(index: number) {
-    chartConfigs.update((configs) => {
-      // Create a new array excluding the chart configuration at the given index
-      const newConfigs = configs.filter((_, i) => i !== index);
-      return newConfigs;
-    });
+  function handleRemoveChart(chart: ChartConfig) {
+    db.chartConfigs.delete(chart.id);
   }
 
   function handleEditChart(index: number) {
@@ -57,11 +58,11 @@
       bind:this={gridItems[index]}
       style="width: {width[config.chartType]}"
     >
-      <Chart {index} />
+      <Chart index={index.toString()} />
       <button
         title="Close"
         class="close-button"
-        on:click={() => handleRemoveChart(index)}>&times;</button
+        on:click={() => handleRemoveChart(config)}>&times;</button
       >
       <button
         title="Edit"

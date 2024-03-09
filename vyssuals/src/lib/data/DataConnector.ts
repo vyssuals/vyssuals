@@ -3,7 +3,7 @@
 //   ColumnType,
 //   DataItem,
 //   DataSource,
-//   HeaderData,
+//   Header,
 //   UnitSymbol,
 //   WebSocketMessage,
 //   DataPayload,
@@ -50,9 +50,9 @@
 //             attributes: { Count: 1, ...row, Timestamp: timestampString },
 //           };
 //         });
-//         dataSource.headerData = softApplyHeaderData(
-//           dataSource.headerData,
-//           makeHeaderData(data)
+//         dataSource.header = softApplyHeader(
+//           dataSource.header,
+//           makeHeader(data)
 //         );
 //         resolve({ dataSource, data });
 //       },
@@ -64,14 +64,14 @@
 // }
 
 
-// function softApplyHeaderData(
-//   existingHeaderData: HeaderData[],
-//   newHeaderData: HeaderData[]
-// ): HeaderData[] {
-//   const updatedHeaderData: HeaderData[] = [];
+// function softApplyHeader(
+//   existingHeader: Header[],
+//   newHeader: Header[]
+// ): Header[] {
+//   const updatedHeader: Header[] = [];
 
-//   for (const newHeader of newHeaderData) {
-//     let existingHeader = existingHeaderData.find(
+//   for (const newHeader of newHeader) {
+//     let existingHeader = existingHeader.find(
 //       (header) => header.name === newHeader.name
 //     );
 //     if (existingHeader) {
@@ -86,14 +86,14 @@
 //       // If the header does not exist, add it
 //       existingHeader = newHeader;
 //     }
-//     updatedHeaderData.push(existingHeader);
+//     updatedHeader.push(existingHeader);
 //   }
 
-//   return updatedHeaderData;
+//   return updatedHeader;
 // }
 
-// function makeHeaderData(data: DataItem[]): HeaderData[] {
-//   const headerData: HeaderData[] = [];
+// function makeHeader(data: DataItem[]): Header[] {
+//   const header: Header[] = [];
 //   if (data.length > 0) {
 //     // Get the unique keys from all items
 //     const keys = Array.from(
@@ -109,7 +109,7 @@
 //       }
 //       const uniqueValues = new Set(values).size;
 //       const cardinalityRatio = uniqueValues / data.length;
-//       headerData.push({
+//       header.push({
 //         name: key,
 //         unitSymbol: unit,
 //         type,
@@ -118,7 +118,7 @@
 //       });
 //     }
 //   }
-//   return headerData;
+//   return header;
 // }
 
 // const majorityType = (values: any[]): ColumnType => {

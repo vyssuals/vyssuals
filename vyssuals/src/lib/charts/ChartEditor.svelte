@@ -1,19 +1,21 @@
 <script lang="ts">
-  import { getUniqueAttributeKeys, getDataSourceList } from "../data/getDataUtils";
-  import { dataStore } from "../store";
   import {
     startColor,
     endColor,
     editChartIndex,
     showChartEditor,
-    chartConfigs,
   } from "../store";
   import type { ChartConfig, ChartType, DataSource } from "../types";
   import Draggable from "../wrapper/Draggable.svelte";
   import FloatingWindow from "../wrapper/FloatingWindow.svelte";
+  import type { Observable, IndexableType } from "dexie";
+  import { db } from "../data/db";
 
   const left = window.innerWidth / 2 - 135;
   const top = window.innerHeight / 2 - 250;
+
+  let chartConfigs: Observable<ChartConfig[]>;
+  let dataSources: Observable<DataSource[]>;
 
   let dataSourceName: string;
 
@@ -23,7 +25,7 @@
   let selectedStartColor: string;
   let selectedEndColor: string;
 
-  let attributeKeys: string[];
+  let attributeKeys: Observable<IndexableType[]>;
 
   if ($editChartIndex > -1) {
     dataSourceName = $chartConfigs[$editChartIndex].dataSourceName;
@@ -33,7 +35,7 @@
     selectedStartColor = $chartConfigs[$editChartIndex].startColor;
     selectedEndColor = $chartConfigs[$editChartIndex].endColor;
   } else {
-    dataSourceName = $dataStore.dataSources[0].name;
+    dataSourceName = $dataSources[0].name;
     chartType = "bar";
     selectedStartColor = $startColor;
     selectedEndColor = $endColor;
@@ -41,14 +43,16 @@
 
   // Reactive statement for data processing
   $: {
-    let dataSource: DataSource = $dataStore.dataSources[dataSourceName]
-    attributeKeys = getUniqueAttributeKeys(dataSource);
-    if (attributeKeys.length > 0) {
-      if (!showValues || !attributeKeys.includes(showValues)) {
-        showValues = attributeKeys[0];
+    dataSources = db.getDataSources();
+    chartConfigs = db.getChartConfigs();
+    attributeKeys = db.getKeys(dataSourceName);
+
+    if ($attributeKeys.length > 0) {
+      if (!showValues || !$attributeKeys.includes(showValues)) {
+        showValues = $attributeKeys[0].toString();
       }
-      if (!groupBy || !attributeKeys.includes(groupBy)) {
-        groupBy = attributeKeys[0];
+      if (!groupBy || !$attributeKeys.includes(groupBy)) {
+        groupBy = $attributeKeys[0].toString();
       }
     } else {
       showValues = "No Data";
@@ -70,9 +74,7 @@
     editChartIndex.set(-1);
   }
 
-  export function addChartConfig(config: ChartConfig) {
-    chartConfigs.update((data) => [...data, config]);
-  }
+  
 
   // function for creating a chartConfig based on two inputs: groupBy and showValues. the data to used is the dataset store.
   export function saveChartConfig(): void {
@@ -85,23 +87,11 @@
       startColor: selectedStartColor,
       endColor: selectedEndColor,
     };
-    editChartIndex.subscribe((index) => {
-      if (index > -1) {
-        updateChartConfig(config, index);
-      } else {
-        addChartConfig(config);
-      }
-    })();
+    db.chartConfigs.put(config);
     startColor.set(selectedStartColor);
     endColor.set(selectedEndColor);
   }
 
-  export function updateChartConfig(config: ChartConfig, index: number) {
-    chartConfigs.update((data) => {
-      data[index] = config;
-      return data;
-    });
-  }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -115,7 +105,7 @@
         <div class="config-option">
           <label for="dataSource">Data Source:</label>
           <select class="config-select" id="dataSource" bind:value={dataSourceName}>
-            {#each getDataSourceList($dataStore) as source}
+            {#each $dataSources as source}
               <option value={source.name}>{source.name}</option>
             {/each}
           </select>
@@ -136,7 +126,7 @@
             >Show Values Of:</label
           >
           <select class="config-select" id="showValues" bind:value={showValues}>
-            {#each attributeKeys as key}
+            {#each $attributeKeys as key}
               <option value={key}>{key}</option>
             {/each}
           </select>
@@ -148,7 +138,7 @@
               >Grouped By:</label
             >
             <select class="config-select" id="groupBy" bind:value={groupBy}>
-              {#each attributeKeys as key}
+              {#each $attributeKeys as key}
                 <option value={key}>{key}</option>
               {/each}
             </select>

@@ -1,10 +1,8 @@
 <script lang="ts">
-  import type { ChartConfig, DataSource } from "../types";
+  import type { ChartData, ChartConfig } from "../types";
   import { Doughnut } from "svelte-chartjs";
   import { formatTitle } from "../utils/textUtils";
-  import { createChartData } from "../data/dataUtils";
-  import { chartConfigs, dataStore} from "../store";
-
+  import { basicChartStore } from './basicChartStore';
   import {
     Chart as ChartJS,
     Title,
@@ -12,44 +10,21 @@
     Legend,
     ArcElement,
     CategoryScale,
+    type ChartOptions,
   } from "chart.js";
 
-  export let index: number;
-  let data: any;
-  let dataSource: DataSource;
-  let config: ChartConfig;
-  let unitSymbol: string;
+  export let index: string;
+  let title: string;
+  let state: ChartData | undefined;
 
-  $: {
-    config = $chartConfigs[index];
-    dataSource = $dataStore.dataSources[config.dataSourceName];
+  basicChartStore.subscribe((value: Record<string, ChartData | undefined>) => { state = value[index]; });
 
-    data = createChartData(dataSource, config);
-    unitSymbol = dataSource.metadata[config.showValues]?.unitSymbol || "";
-    // config = $chartConfigs[index];
-    // let filteredDataset = $dataset.filter(
-    //   (item) => item.dataSourceName === config.dataSourceName
-    // );
-    // const timestamp = getLastTimestamp(filteredDataset);
-    // if (timestamp) {
-    //   filteredDataset = filteredDataset.filter(
-    //     (item) => item.timestamp === timestamp
-    //   );
-    // }
-    // let dataSource: DataSource | undefined = $dataSources.find(
-    //   (item) => item.name === config.dataSourceName
-    // );
-    // if (dataSource) {
-    //   data = createChartData(dataSource, filteredDataset, config);
-    //   unitSymbol = dataSource.headerData.find(
-    //     (item) => item.name === config.showValues
-    //   )?.unitSymbol || "";
-    // }
-  }
+  $: index && basicChartStore.fetch(index);
+  $: state && state.config && (title = formatTitle(state.config as ChartConfig));
 
   ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
-  let options = {
+  let options: ChartOptions<"doughnut"> = {
     responsive: false,
     plugins: {
       legend: {
@@ -63,14 +38,19 @@
             strokeStyle: chart.data.datasets[0].backgroundColor[i],
             hidden: false,
             fontColor: "#666666",
-            })),
+          })),
         },
         position: "bottom",
+        onClick: (e, legendItem, legend) => {
+          // Implement your onClick logic here
+        },
       },
     },
   };
 </script>
 
-<h1 class="chart-title" style="width: 350px">{formatTitle(config)}</h1>
-<h3 title="You can edit the unit symbol in the settings of this datasource.">{unitSymbol}</h3>
-<Doughnut {data} {options} style="height: 310px; width: 380px" />
+<h1 class="chart-title" style="width: 350px">{title}</h1>
+{#if state}
+  <h3 title="You can edit the unit symbol in the settings of this datasource.">{state.unitSymbol}</h3>
+  <Doughnut data={state.data} {options} style="height: 310px; width: 380px" />
+{/if}

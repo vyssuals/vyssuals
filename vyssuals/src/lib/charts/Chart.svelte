@@ -1,23 +1,21 @@
 <!-- Chart.svelte -->
 <script lang="ts">
-  import { chartConfigs } from "../store";
   import { type ChartConfig } from "../types";
   import BarChart from "./BarChart.svelte";
   import DoughnutChart from "./DoughnutChart.svelte";
   import TotalChart from "./TotalChart.svelte";
   import LineChart from "./LineChart.svelte";
+  import { db } from "../data/db";
 
-  export let index: number;
-  let config: ChartConfig;
+  export let index: string;
+  let config: ChartConfig | undefined;
 
-  $: {
-    config = $chartConfigs[index];
-  }
+  $: db.chartConfigs.get(index).then((chartConfig) => (config = chartConfig));
 
   let chartInstance: any; // Store reference to the chart instance
 
   $: {
-    switch (config.chartType) {
+    switch (config && config.chartType) {
       case "bar":
         chartInstance = BarChart;
         break;

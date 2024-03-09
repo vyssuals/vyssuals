@@ -29,9 +29,9 @@
 //   const filterShowValuesWords = ["id", "token", "timestamp", "date", "time"];
 //   const filterGroupByWords = ["id", "token", "value", "count"];
 
-//   //   console.log("pre nlp showValuesHeaders", dataSource.headerData);
+//   //   console.log("pre nlp showValuesHeaders", dataSource.header);
 //   // Filter out columns based on NLP
-//   showValuesHeaders = dataSource.headerData.filter((header) => {
+//   showValuesHeaders = dataSource.header.filter((header) => {
 //     return !filterShowValuesWords.some((filterWord) =>
 //       matchWord(header.name, filterShowValuesWords)
 //     );
@@ -43,9 +43,9 @@
 //   });
 
 //   //   console.log("post nlp showValuesHeaders", showValuesHeaders);
-//   //   console.log("pre nlp groupByHeaders", dataSource.headerData);
+//   //   console.log("pre nlp groupByHeaders", dataSource.header);
 //   // Filter out columns based on NLP
-//   groupByHeaders = dataSource.headerData.filter((header) => {
+//   groupByHeaders = dataSource.header.filter((header) => {
 //     return !filterGroupByWords.some((filterWord) =>
 //       matchWord(header.name, filterGroupByWords)
 //     );

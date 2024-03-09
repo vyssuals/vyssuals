@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
 // import type { DataItem, DataSource } from "./types";
-import type { ChartConfig, Store } from "./types";
+import type { ChartConfig,  } from "./types";
 import { produce } from "immer";
 
 // Chart Configs
@@ -11,9 +11,14 @@ export const editChartIndex: Writable<number> = writable(-1);
 export const startColor: Writable<string> = writable("#DC0999");
 export const endColor: Writable<string> = writable("#05ACFF");
 
-export const chartConfigs: Writable<ChartConfig[]> = writable([]);
-
 export const showConnector: Writable<string> = writable("");
+
+export const showDataConnectionEditor: Writable<boolean> = writable(false);
+
+export const showDataSourceEditor: Writable<boolean> = writable(false);
+export const dataSourceToEdit: Writable<string> = writable("");
+
+// export const chartConfigs: Writable<ChartConfig[]> = writable([]);
 
 // Dataset
 // export const dataset: Writable<DataItem[]> = writable([]);
@@ -36,24 +41,20 @@ export const showConnector: Writable<string> = writable("");
 
 // export const dataSourcesWebsocket: Writable<string[]> = writable([]);
 // export const dataSources: Writable<DataSource[]> = writable([]);
-export const showDataConnectionEditor: Writable<boolean> = writable(false);
-
-export const showDataSourceEditor: Writable<boolean> = writable(false);
-export const dataSourceToEdit: Writable<number> = writable(0);
 
 
-const initialState: Store = {
-  dataSources: {}
-};
+// const initialState: Store = {
+//   dataSources: {}
+// };
 
-function createImmerStore(initialState: Store) {
-  const { subscribe, set, update } = writable(initialState);
+// function createImmerStore(initialState: Store) {
+//   const { subscribe, set, update } = writable(initialState);
 
-  return {
-    subscribe,
-    set,
-    update: (fn: (draft: Store) => void) => update(state => produce(state, fn))
-  };
-}
+//   return {
+//     subscribe,
+//     set,
+//     update: (fn: (draft: Store) => void) => update(state => produce(state, fn))
+//   };
+// }
 
-export const dataStore = createImmerStore(initialState);
+// export const dataStore = createImmerStore(initialState);

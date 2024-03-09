@@ -3,7 +3,7 @@
   import { chartConfigs, dataset, dataSources } from "../store";
   import { Line } from "svelte-chartjs";
   import { formatTitle, titleCase } from "../utils/textUtils";
-  import { createChartData, getLastTimestamp } from "../data/dataUtils";
+  import { getChartData, getLastTimestamp } from "../data/dataUtils";
 
   import {
     Chart as ChartJS,
@@ -32,8 +32,8 @@
       (item) => item.name === config.dataSourceName
     );
     if (dataSource) {
-      data = createChartData(dataSource, filteredDataset, config);
-      unitSymbol = dataSource.headerData.find(
+      data = getChartData(dataSource, filteredDataset, config);
+      unitSymbol = dataSource.header.find(
         (item) => item.name === config.showValues
       )?.unitSymbol || "";
     }
