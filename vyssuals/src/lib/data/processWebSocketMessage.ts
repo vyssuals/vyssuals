@@ -24,15 +24,14 @@ function processDataMessage(message: WebSocketMessage): void {
     if (message.type === "data") {
         if (!message.senderName) return;
         if (message.payload) {
-            console.log("valid data message");
             if (message.payload.data) {
                 db.get(message.senderName).addItems(message.payload.data);
             }
             if (message.payload.metadata) {
                 db.get(message.senderName).addMetadata(message.payload.metadata);
             }
-            if (message.payload.visibleItems) {
-                db.get(message.senderName).addUpdate(message.payload.visibleItems);
+            if (message.payload.update) {
+                db.get(message.senderName).addUpdate(message.payload.update);
             }
         }
     }
