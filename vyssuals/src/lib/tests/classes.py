@@ -15,21 +15,21 @@ class Update:
         self.timestamp = timestamp
         self.type = type
         self.name = name
-        self.visible_item_ids = visible_item_ids
+        self.visibleItemIds = visible_item_ids
 
 class Header:
     def __init__(self, name: str, type: str, unit_symbol: str, unique_values: Optional[int] = None, cardinality_ratio: Optional[float] = None):
         self.name = name
         self.type = type
-        self.unit_symbol = unit_symbol
-        self.unique_values = unique_values
-        self.cardinality_ratio = cardinality_ratio
+        self.unitSymbol = unit_symbol
+        self.uniqueValues = unique_values
+        self.cardinalityRatio = cardinality_ratio
 
 class DataPayload:
     def __init__(self, data: Optional[List[Item]] = None, metadata: Optional[List[Header]] = None, visible_items: Optional[Update] = None):
         self.data = data
         self.metadata = metadata
-        self.visible_items = visible_items
+        self.visibleItems = visible_items
 
 class WebSocketMessage:
     def __init__(self, type: str, timestamp: str, version: str, sender: str, sender_version: str, sender_name: str, payload: Optional[DataPayload] = None):
@@ -37,8 +37,8 @@ class WebSocketMessage:
         self.timestamp = timestamp
         self.version = version
         self.sender = sender
-        self.sender_version = sender_version
-        self.sender_name = sender_name
+        self.senderVersion = sender_version
+        self.senderName = sender_name
         self.payload = payload
 
 class ComplexEncoder(json.JSONEncoder):
