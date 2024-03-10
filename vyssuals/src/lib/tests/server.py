@@ -25,16 +25,14 @@ def generate_dummy_data(data_source, count):
     for i in range(count):
         versions = Versions(
             timestamp=str(datetime.now()),
-            values=[
-                get_random_number(1, 10), # Generate a random value for 'area'
-                get_random_element(categories), # Select a random category
-                get_random_element(levels), # Select a random level
-                # Generate a random value for 'fireRating' if the category is 'walls' or 'floors
-                get_random_element(fire_rating) if 'walls' in categories or 'floors' in categories else None,
-                # Generate a random value for 'height' if the category is 'walls'
-                get_random_element(heights) if 'walls' in categories else None,
-                get_random_element(some_long_parameter_name), # Select a random value for 'someLongParameterName
-            ]
+            attributes={
+            'area': get_random_number(1, 10), # Generate a random value for 'area'
+            'category': get_random_element(categories), # Select a random category
+            'level': get_random_element(levels), # Select a random level
+            'fireRating': get_random_element(fire_rating) if 'walls' in categories or 'floors' in categories else None, # Generate a random value for 'fireRating' if the category is 'walls' or 'floors'
+            'height': get_random_element(heights) if 'walls' in categories else None, # Generate a random value for 'height' if the category is 'walls'
+            'someLongParameterName': get_random_element(some_long_parameter_name), # Select a random value for 'someLongParameterName'
+            }
         )
         item = Item(id=str(get_random_number(1, 1000000)), versions=versions)
         data.append(item)
