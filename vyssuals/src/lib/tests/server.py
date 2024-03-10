@@ -3,7 +3,7 @@ import websockets
 import json
 import random
 import signal
-from classes import WebSocketMessage, DataPayload, Item, Versions, ComplexEncoder
+from classes import WebSocketMessage, DataPayload, Item, Version, ComplexEncoder, Update, Header
 from datetime import datetime
 
 # Define possible values for the 'category' attribute
@@ -22,8 +22,33 @@ def get_random_number(min, max):
 
 def generate_dummy_data(data_source, count):
     data = []
+    update = Update(timestamp=str(datetime.now()), type='update', name='example Name', visible_item_ids=[])
+
+
+    areaHeader = Header(name='area', type='number', unit_symbol='m2', unique_values=100, cardinality_ratio=0.5)
+    categoryHeader = Header(name='category', type='string', unit_symbol='', unique_values=7, cardinality_ratio=0.7)
+    levelHeader = Header(name='level', type='string', unit_symbol='', unique_values=3, cardinality_ratio=0.3)
+    fireRatingHeader = Header(name='fireRating', type='string', unit_symbol='', unique_values=6, cardinality_ratio=0.6)
+    heightHeader = Header(name='height', type='number', unit_symbol='m', unique_values=4, cardinality_ratio=0.4)
+    someLongParameterNameHeader = Header(name='someLongParameterName', type='string', unit_symbol='', unique_values=6, cardinality_ratio=0.6)
+
+    metadata = [areaHeader, categoryHeader, levelHeader, fireRatingHeader, heightHeader, someLongParameterNameHeader]
+    # remove some headers randomly
+    if random.choice([True, False]):
+        metadata.remove(areaHeader)
+    if random.choice([True, False]):
+        metadata.remove(categoryHeader)
+    if random.choice([True, False]):
+        metadata.remove(levelHeader)
+    if random.choice([True, False]):
+        metadata.remove(fireRatingHeader)
+    if random.choice([True, False]):
+        metadata.remove(heightHeader)
+    if random.choice([True, False]):
+        metadata.remove(someLongParameterNameHeader)
+
     for i in range(count):
-        versions = Versions(
+        version = Version(
             timestamp=str(datetime.now()),
             attributes={
             'area': get_random_number(1, 10), # Generate a random value for 'area'
@@ -34,10 +59,13 @@ def generate_dummy_data(data_source, count):
             'someLongParameterName': get_random_element(some_long_parameter_name), # Select a random value for 'someLongParameterName'
             }
         )
-        item = Item(id=str(get_random_number(1, 1000000)), versions=versions)
+        item = Item(id=str(get_random_number(1, 1000000)), versions=version)
         data.append(item)
+        # sometimes add id to updates
+        if random.choice([True, False]):
+            update.visibleItemIds.append(item.id)
 
-    payload = DataPayload(data=data)
+    payload = DataPayload(data=data, update=update, metadata=metadata)
     message = WebSocketMessage(
         type='data',
         timestamp=str(datetime.now()),
@@ -61,12 +89,13 @@ async def server(websocket, path):
     async def send_dummy_data():
         try:
             while True:
+                input("Press enter to send new data...")  # Wait for user input
                 data_source = get_random_element(data_sources)
                 count = get_random_number(1, 100)
                 dummy_data = generate_dummy_data(data_source, count)
                 await websocket.send(json.dumps(dummy_data, cls=ComplexEncoder))
                 print('Sent more dummy data')
-                await asyncio.sleep(10) # sleep for 5 seconds
+                await asyncio.sleep(10)  # sleep for 10 seconds
         except websockets.exceptions.ConnectionClosed:
             print('Client disconnected')
 
