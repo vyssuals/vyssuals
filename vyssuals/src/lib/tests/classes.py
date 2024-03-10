@@ -6,7 +6,7 @@ class Item:
         self.id = id
         self.versions = versions
 
-class Versions:
+class Version:
     def __init__(self, timestamp: str, attributes):
         setattr(self, timestamp, attributes)
 
@@ -26,10 +26,10 @@ class Header:
         self.cardinalityRatio = cardinality_ratio
 
 class DataPayload:
-    def __init__(self, data: Optional[List[Item]] = None, metadata: Optional[List[Header]] = None, visible_items: Optional[Update] = None):
+    def __init__(self, data: Optional[List[Item]] = None, metadata: Optional[List[Header]] = None, update: Optional[Update] = None):
         self.data = data
         self.metadata = metadata
-        self.visibleItems = visible_items
+        self.update = update
 
 class WebSocketMessage:
     def __init__(self, type: str, timestamp: str, version: str, sender: str, sender_version: str, sender_name: str, payload: Optional[DataPayload] = None):
