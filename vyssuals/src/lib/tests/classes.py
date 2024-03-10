@@ -7,9 +7,8 @@ class Item:
         self.versions = versions
 
 class Versions:
-    def __init__(self, timestamp: str, values: List[Union[str, float]]):
-        self.timestamp = timestamp
-        self.values = values
+    def __init__(self, timestamp: str, attributes):
+        setattr(self, timestamp, attributes)
 
 class Update:
     def __init__(self, timestamp: str, type: str, name: str, visible_item_ids: List[str]):
