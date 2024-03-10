@@ -50,21 +50,22 @@ export class DataSourceDatabase extends Dexie {
     addUpdate(update: Update): void {
         this.updates
             .add(update)
-            .catch((error) => {
-                console.error(`Failed to add update with timestamp ${update.timestamp}: ${error}`);
-            });
+            .catch((error) => {}); // Ignore errors
         this.setInfo({lastUpdate: update.timestamp.toString()});
     }
 
     addMetadata(metadata: Header[]): void {
-        for (const header of metadata) {
-            this.metadata
-                .add(header)
-                .catch((error) => {
-                    console.error(`Failed to add metadata with name ${header.name}: ${error}`);
-                });
-        }
+        if (metadata.length > 1) {
+            this.metadata.bulkAdd(metadata, {allKeys: true})
+            .catch((error) => {
+                if (error instanceof Dexie.BulkError) {} // Ignore errors
+            });
+        } else if (metadata.length === 1) {
+            this.metadata.add(metadata[0])
+                .catch((error) => {});
+        };
     }
+    
 
     getMetadata(): Observable<Header[]> {
         return liveQuery(() => this.metadata.toArray());
