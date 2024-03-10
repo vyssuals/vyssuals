@@ -34,11 +34,6 @@ export interface DataPayload {
     visibleItems?: Update; // The IDs of the items that are visible in the sender application
 }
 
-export interface MessageItem {
-    id: string;
-    attributes: Attributes;
-}
-
 export interface Header {
     name: string;
     type: "string" | "number"; // The type of the column, either 'string' or 'number'
