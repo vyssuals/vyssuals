@@ -31,7 +31,7 @@ type Payload = DataPayload; // No need for DisconnectPayload anymore
 export interface DataPayload {
     data?: Item[];
     metadata?: Header[];
-    visibleItems?: Update; // The IDs of the items that are visible in the sender application
+    update?: Update; // The IDs of the items that are visible in the sender application
 }
 
 export interface Header {
