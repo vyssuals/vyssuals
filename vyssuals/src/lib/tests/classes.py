@@ -2,7 +2,7 @@ from typing import List, Optional, Union
 import json
 
 class Item:
-    def __init__(self, id: str, versions: 'Versions'):
+    def __init__(self, id: str, versions: 'Version'):
         self.id = id
         self.versions = versions
 
