@@ -13,7 +13,7 @@
   // import { loadCSVFile } from "./DataConnector";
   import ConnectorList from "../connectors/ConnectorList.svelte";
   // import { autoChart } from "../charts/AutoCharts";
-  import { db } from "../data/db";
+  import { db } from "./databaseManager";
   import { liveQuery, type Observable } from "dexie";
 
   let files: FileList | null = null;
@@ -48,13 +48,13 @@
 
  
 
-  let wsDataSources: Observable<DataSource[]>;
-  let fileDataSources: Observable<DataSource[]>;
+  let wsDataSources: Observable<string[]>;
+  let fileDataSources: Observable<string[]>;
   let chartConfigs: Observable<ChartConfig[]>;
 
-  $: wsDataSources = db.getDataSourceByType("websocket");
-  $: fileDataSources = db.getDataSourceByType("file");
-  $: chartConfigs = db.getChartConfigs();
+  $: wsDataSources = db.wsNames;
+  $: fileDataSources = db.fileNames;
+  $: chartConfigs = db.vyssuals._chartConfigs;
       
   function hideDataSourceEditor() {
     showDataConnectionEditor.set(false);
@@ -107,7 +107,7 @@
   }
 
   function handleRemoveItem(dataSourceName: string) {
-    db.deleteDataSource(dataSourceName);
+    db.deleteDatabase(dataSourceName);
   }
 </script>
 
@@ -124,7 +124,7 @@
     {#if $wsDataSources }
       <div style="padding-bottom: 1em;">
         {#each $wsDataSources as item (item)}
-          <p class="file-path" style="margin: 2px;">{item.name}</p>
+          <p class="file-path" style="margin: 2px;">{item}</p>
         {/each}
       </div>
     {:else}
@@ -163,11 +163,11 @@
                   buttonText="Add Charts"
                 /></td
               >
-              <td><p class="file-path">{item.name}</p></td>
+              <td><p class="file-path">{item}</p></td>
               <td class="symbol"
                 ><button
                   style="font-size: 25px; padding: 0.15em"
-                  on:click={() => handleEditButton(item.name)}>&#9881;</button
+                  on:click={() => handleEditButton(item)}>&#9881;</button
                 ></td
               >
               <td class="symbol"
@@ -175,7 +175,7 @@
                   type="file"
                   id="filePicker"
                   accept=".csv"
-                  on:change={(e) => handleReloadCSVFile(item.name, e)}
+                  on:change={(e) => handleReloadCSVFile(item, e)}
                   style="display: none"
                 />
                 <button
@@ -194,7 +194,7 @@
                 ></td
               >
               <td class="symbol"
-                ><button on:click={() => handleRemoveItem(item.name)}>&times;</button
+                ><button on:click={() => handleRemoveItem(item)}>&times;</button
                 ></td
               >
             </tr>

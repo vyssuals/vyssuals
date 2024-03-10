@@ -5,12 +5,12 @@
   import DoughnutChart from "./DoughnutChart.svelte";
   import TotalChart from "./TotalChart.svelte";
   import LineChart from "./LineChart.svelte";
-  import { db } from "../data/db";
+  import { db } from "../data/databaseManager";
 
   export let index: string;
   let config: ChartConfig | undefined;
 
-  $: db.chartConfigs.get(index).then((chartConfig) => (config = chartConfig));
+  $: db.vyssuals.chartConfigs.get(index).then((c) => (config = c));
 
   let chartInstance: any; // Store reference to the chart instance
 

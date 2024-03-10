@@ -9,14 +9,15 @@
   import Draggable from "../wrapper/Draggable.svelte";
   import FloatingWindow from "../wrapper/FloatingWindow.svelte";
   import type { Observable, IndexableType } from "dexie";
-  import { db } from "../data/db";
+  import { db } from "../data/databaseManager";
 
   const left = window.innerWidth / 2 - 135;
   const top = window.innerHeight / 2 - 250;
 
   let chartConfigs: Observable<ChartConfig[]>;
   let dataSources: Observable<DataSource[]>;
-
+  
+  let dataSourceNames: Observable<string[]>;
   let dataSourceName: string;
 
   let chartType: ChartType;
@@ -27,13 +28,16 @@
 
   let attributeKeys: Observable<IndexableType[]>;
 
+  let config: ChartConfig;
+  $: config = $chartConfigs[$editChartIndex];
+
   if ($editChartIndex > -1) {
-    dataSourceName = $chartConfigs[$editChartIndex].dataSourceName;
-    chartType = $chartConfigs[$editChartIndex].chartType;
-    showValues = $chartConfigs[$editChartIndex].showValues;
-    groupBy = $chartConfigs[$editChartIndex].groupBy;
-    selectedStartColor = $chartConfigs[$editChartIndex].startColor;
-    selectedEndColor = $chartConfigs[$editChartIndex].endColor;
+    dataSourceName = config.dataSourceName;
+    chartType = config.chartType;
+    showValues = config.showValues;
+    groupBy = config.groupBy;
+    selectedStartColor = config.startColor;
+    selectedEndColor = config.endColor;
   } else {
     dataSourceName = $dataSources[0].name;
     chartType = "bar";
@@ -43,9 +47,9 @@
 
   // Reactive statement for data processing
   $: {
-    dataSources = db.getDataSources();
-    chartConfigs = db.getChartConfigs();
-    attributeKeys = db.getKeys(dataSourceName);
+    dataSourceNames = db.dataSourceNames;
+    chartConfigs = db.vyssuals._chartConfigs;
+    attributeKeys = db.get(dataSourceName).keys;
 
     if ($attributeKeys.length > 0) {
       if (!showValues || !$attributeKeys.includes(showValues)) {
@@ -87,7 +91,7 @@
       startColor: selectedStartColor,
       endColor: selectedEndColor,
     };
-    db.chartConfigs.put(config);
+    db.vyssuals.chartConfigs.put(config);
     startColor.set(selectedStartColor);
     endColor.set(selectedEndColor);
   }

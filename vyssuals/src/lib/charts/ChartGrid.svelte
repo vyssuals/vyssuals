@@ -3,13 +3,14 @@
   import Chart from "./Chart.svelte";
   import html2canvas from "html2canvas";
   import { formatTitle } from "../utils/textUtils";
-  import { db } from "../data/db";
+  import { db } from "../data/databaseManager";
   import type { ChartConfig } from "../types";
   import type { Observable } from "dexie";
 
   let gridItems: any = [];
   let chartConfigs: Observable<ChartConfig[]>;
-  $: chartConfigs = db.getChartConfigs(); 
+  
+  $: chartConfigs = db.vyssuals._chartConfigs; 
 
   const width: Record<string, string> = {
     bar: "595px",
@@ -18,7 +19,7 @@
   };
 
   function handleRemoveChart(chart: ChartConfig) {
-    db.chartConfigs.delete(chart.id);
+    db.vyssuals.chartConfigs.delete(chart.id);
   }
 
   function handleEditChart(index: number) {

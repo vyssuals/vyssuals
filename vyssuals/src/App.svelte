@@ -14,7 +14,7 @@
   import OpenDataSourcesButton from "./lib/buttons/OpenDataSourcesButton.svelte";
   import { connectWebSocket } from "./lib/data/websocket";
   import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
-  import { db } from "./lib/data/db";
+  import { db } from "./lib/data/databaseManager";
   import type { Observable } from "dexie";
   import type { ChartConfig, DataSource } from "./lib/types";
 
@@ -39,16 +39,16 @@
     showChartEditor.set(true);
   }
 
-  let chartConfigs: Observable<ChartConfig[]>;
-  let dataSources: Observable<DataSource[]>;
+  let hasChartConfigs: Observable<boolean>;
+  $: hasChartConfigs = db.vyssuals.hasChartConfigs;
 
-  $: chartConfigs = db.getChartConfigs();
-  $: dataSources = db.getDataSources();
+  let hasDatabases: Observable<boolean>;
+  $: hasDatabases = db.hasDatabases;
 
 </script>
 
 <main>
-  {#if $chartConfigs && $chartConfigs.length > 0}
+  {#if $hasChartConfigs}
     <ChartGrid />
   {:else}
     <Welcome />
@@ -66,7 +66,7 @@
   <DataSourceEditor />
   {/if}
 
-  {#if $dataSources && $dataSources.length > 0}
+  {#if $hasDatabases}
   <div style="padding-top: 2em; padding-bottom: 1em;">
     <GradientButton on:click={handleAddChart} />
   </div>
@@ -75,6 +75,7 @@
     <p>Load CSV File:</p>
   </div>
   {/if}
+  
   <OpenDataSourcesButton />
 </main>
 

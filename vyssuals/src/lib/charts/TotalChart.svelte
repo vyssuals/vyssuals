@@ -2,39 +2,45 @@
     import type { ChartConfig, DataSource, Header } from "../types";
     import { titleCase } from "../utils/textUtils";
     import { sumAttributeValues } from "./chartDataUtils";
-    import { db } from "../data/db";
+    import { db } from "../data/databaseManager";
 
     export let index: string;
+    
     let title: string = "";
-    
     let total: number = 0;
-    let fullFormattedNumber: string = "";
-    let dataType: string = "";
     let unitSymbol: string;
-    let dataSource: DataSource | undefined;
-    let config: ChartConfig | undefined;
-    let header: Header | undefined;
-    
+    let fullFormattedNumber: string = "";
+
     $: {
-        db.chartConfigs.get(index).then((chartConfig) => (config = chartConfig));
-        config && db.dataSources.get(config.dataSourceName).then((ds) => (dataSource = ds));
-        config && db.getHeaderByName(config.dataSourceName, config?.showValues).then((h) => (header = h));
-        
-        unitSymbol = header?.unitSymbol || "";
-        dataType = header?.type || "";
-        
-        dataSource && db.getLatestAttributes(dataSource.name).then((latestAttributes) => {
-            if (dataType === "number") {
-                total = config && sumAttributeValues(latestAttributes, config.showValues) || 0;
-                fullFormattedNumber = formatNumber(total);
-            } else {
-                // count the number of unique items in the dataset
-                total = latestAttributes.length;
-                fullFormattedNumber = total.toString();
-            }
-        });
-        }
-        $: config && (title = titleCase(config.showValues));
+        db.vyssuals.chartConfigs.get(index)
+            .then((config) => {
+                if (!config) config = {} as ChartConfig;
+                title = titleCase(config.showValues);
+                return config;
+            })
+            .then((config) => db.get(config.dataSourceName).getHeaderByName(config.showValues)
+                .then((header) => {
+                    return { config, header };
+                })
+            )
+            .then(({ config, header }) => {
+                unitSymbol = header?.unitSymbol || "";
+                let dataType = header?.type || "";
+                return { config, dataType };
+            })
+            .then(({ config, dataType }) => db.get(config.dataSourceName).getLatestAttributes()
+                .then((latestAttributes) => {
+                    if (dataType === "number") {
+                        total = sumAttributeValues(latestAttributes, config.showValues) || 0;
+                        fullFormattedNumber = formatNumber(total);
+                    } else {
+                        // count the number of unique items in the dataset
+                        total = latestAttributes.length;
+                        fullFormattedNumber = total.toString();
+                    }
+                })
+            );
+    }
 
     // function for formatting large numbers with ` , e.g. 1`000`000
     function formatNumber(num: number) {

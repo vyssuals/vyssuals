@@ -6,7 +6,7 @@
     dataSourceToEdit,
   } from "../store";
   import { UNIT_SYMBOLS, COLUMN_TYPES, type DataSource, type Header } from "../types";
-  import { db } from "./db";
+  import { db } from "./databaseManager";
   import { type Observable } from "dexie";
   import { onMount } from "svelte";
 
@@ -15,18 +15,12 @@
     showDataConnectionEditor.set(true);
   }
 
-  let dataSource: DataSource | undefined = undefined;
-  let dataSourceName: string = "";
-
   let metadata: Observable<Header[]>;
-
+  
   onMount(async () => {
-    dataSource = await db.dataSources.get(dataSourceToEdit);
-    if (dataSource) {
-      dataSourceName = dataSource.name;
-      metadata = db.getMetadata(dataSourceName);
-    }
-  });
+      metadata = db.get($dataSourceToEdit).getMetadata();
+    });
+
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -39,7 +33,7 @@
       on:click={() => hideDataSetEditor()}>&times;</button
     >
     <h1>Datasource Editor</h1>
-    <h2>{dataSourceName}</h2>
+    <h2>{dataSourceToEdit}</h2>
     <div class="grid-container">
       {#each $metadata as header (header)}
         <div class="grid-item">
@@ -54,7 +48,7 @@
                 if (header.type === "string") {
                   header.unitSymbol = "# Unique Items";
                 }
-                db.updateHeader(dataSourceName, header);
+                db.get($dataSourceToEdit).updateHeader(header);
               }}
             >
               {#each COLUMN_TYPES as type}

@@ -1,6 +1,6 @@
 import type { ChartConfig, Header, Attributes } from "../types";
 import { createColorArray } from "../utils/colorUtils";
-import { db } from "../data/db";
+import { db } from "../data/databaseManager";
 
 // function for creating chart data, returns chart data
 export async function getChartData(dataSourceName: string, config: ChartConfig): Promise<any> {

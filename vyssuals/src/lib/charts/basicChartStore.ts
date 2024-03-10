@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { ChartData} from "../types";
-import { db } from "../data/db";
+import { db } from "../data/databaseManager";
 import { getChartData } from "./chartDataUtils";
 
 interface ChartStore {
