@@ -3,6 +3,8 @@ import websockets
 import json
 import random
 import signal
+from classes import WebSocketMessage, DataPayload, Item, Versions, ComplexEncoder
+from datetime import datetime
 
 # Define possible values for the 'category' attribute
 categories = ['walls', 'doors', 'floors', 'windows', 'roofs', 'ceilings', 'stairs']
@@ -21,22 +23,34 @@ def get_random_number(min, max):
 def generate_dummy_data(data_source, count):
     data = []
     for i in range(count):
-        item = {
-            'id': str(get_random_number(1, 1000000)),
-            'dataSource': data_source,
-            'attributes': {
-                'Area': get_random_number(1, 10), # Generate a random value for 'area'
-                'Category': get_random_element(categories), # Select a random category
-                'Level': get_random_element(levels), # Select a random level
+        versions = Versions(
+            timestamp=str(datetime.now()),
+            values=[
+                get_random_number(1, 10), # Generate a random value for 'area'
+                get_random_element(categories), # Select a random category
+                get_random_element(levels), # Select a random level
                 # Generate a random value for 'fireRating' if the category is 'walls' or 'floors
-                'Fire Rating': get_random_element(fire_rating) if 'walls' in categories or 'floors' in categories else None,
+                get_random_element(fire_rating) if 'walls' in categories or 'floors' in categories else None,
                 # Generate a random value for 'height' if the category is 'walls'
-                'Height': get_random_element(heights) if 'walls' in categories else None,
-                'Some Long Parameter Name That Never Keeps on Goooooooooooooooooing': get_random_element(some_long_parameter_name), # Select a random value for 'someLongParameterName
-            },
-        }
-        data.append(item)   
-    return data
+                get_random_element(heights) if 'walls' in categories else None,
+                get_random_element(some_long_parameter_name), # Select a random value for 'someLongParameterName
+            ]
+        )
+        item = Item(id=str(get_random_number(1, 1000000)), versions=versions)
+        data.append(item)
+
+    payload = DataPayload(data=data)
+    message = WebSocketMessage(
+        type='data',
+        timestamp=str(datetime.now()),
+        version='1.0',
+        sender='server',
+        sender_version='1.0',
+        sender_name='Server',
+        payload=payload
+    )
+
+    return message
         
 
 async def server(websocket, path):
@@ -52,7 +66,7 @@ async def server(websocket, path):
                 data_source = get_random_element(data_sources)
                 count = get_random_number(1, 100)
                 dummy_data = generate_dummy_data(data_source, count)
-                await websocket.send(json.dumps(dummy_data))
+                await websocket.send(json.dumps(dummy_data, cls=ComplexEncoder))
                 print('Sent more dummy data')
                 await asyncio.sleep(10) # sleep for 5 seconds
         except websockets.exceptions.ConnectionClosed:
