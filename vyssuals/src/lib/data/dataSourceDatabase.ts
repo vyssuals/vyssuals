@@ -1,12 +1,12 @@
 import Dexie, { liveQuery, type IndexableType, type Observable, type PromiseExtended } from "dexie";
-import type { Header, Update, Item, Versions, Attributes } from "../types";
+import type { Header, Update, Item, Versions, Attributes, Info } from "../types";
 import { getSelectedItems, getLatestItemValue, getLatestItemAttributes } from "./itemUtils";
 
 export class DataSourceDatabase extends Dexie {
     updates: Dexie.Table<Update, string>;
     items: Dexie.Table<Item, string>;
     metadata: Dexie.Table<Header, string>;
-    info: Dexie.Table<{ id: number, value: any }, number>;
+    private info: Dexie.Table<Info, any>;
 
     constructor(name: string) {
         super(name);
@@ -15,7 +15,7 @@ export class DataSourceDatabase extends Dexie {
             updates: "&timestamp, type, name, visibleItemIds",
             items: "&id, versions",
             metadata: "&name, type, unitSymbol, uniqueValues, cardinalityRatio",
-            info: "++id"
+            info: "&key, value",
         });
 
         this.updates = this.table("updates");
@@ -24,59 +24,46 @@ export class DataSourceDatabase extends Dexie {
         this.info = this.table("info");
     }
 
-    private async setInfo(value: any): Promise<void> {
-        const existing = await this.info.get(1);
-        const merged = {...existing, ...value};
-        await this.info.put({id: 1, value: merged});
+    get lastUpdate(): Promise<string | undefined> {
+        return this.info.get("lastUpdate").then((x) => x?.value);
     }
 
-    private async getInfo(): Promise<any> {
-        const info = await this.info.get(1);
-        return info && info.value;
+    async setLastUpdate(lastUpdate: string) {
+        await this.info.put({key: "lastUpdate", value: lastUpdate});
     }
 
-    get lastUpdate(): Promise<string | undefined>{
-        return this.getInfo().then(info => info && info.lastUpdate);
+    get type(): Promise<string | undefined> {
+        return this.info.get("type").then((x) => x?.value);
     }
 
-    set type(type: string) {
-        this.setInfo({type});
-    }
-
-    get type(): Promise<string | undefined>{
-        return this.getInfo().then(info => info && info.type);
+    async setType(type: string) {
+        await this.info.put({key: "type", value: type});
     }
 
     addUpdate(update: Update): void {
-        this.updates
-            .add(update)
-            .catch((error) => {}); // Ignore errors
-        this.setInfo({lastUpdate: update.timestamp.toString()});
+        this.updates.add(update).catch((error) => {}); // Ignore errors
+        this.setLastUpdate(update.timestamp.toString());
     }
 
     addMetadata(metadata: Header[]): void {
         if (metadata.length > 1) {
-            this.metadata.bulkAdd(metadata, {allKeys: true})
-            .catch((error) => {
-                if (error instanceof Dexie.BulkError) {} // Ignore errors
+            this.metadata.bulkAdd(metadata, { allKeys: true }).catch((error) => {
+                if (error instanceof Dexie.BulkError) {
+                } // Ignore errors
             });
         } else if (metadata.length === 1) {
-            this.metadata.add(metadata[0])
-                .catch((error) => {});
-        };
+            this.metadata.add(metadata[0]).catch((error) => {});
+        }
     }
-    
 
-    getMetadata(): Observable<Header[]> {
+    get _metadata(): Observable<Header[]> {
         return liveQuery(() => this.metadata.toArray());
     }
 
     updateHeader(header: Header): void {
-        this.metadata
-            .put(header)
-            .catch((error) => {
-                console.error(`Failed to update metadata with name ${header.name}: ${error}`);
-            });
+        this.metadata.put(header).catch((error) => {
+            console.error(`Failed to update metadata with name ${header.name}: ${error}`);
+        });
     }
 
     getHeaderByName(name: string): PromiseExtended<Header | undefined> {
@@ -84,7 +71,7 @@ export class DataSourceDatabase extends Dexie {
     }
 
     addItems(items: Item[]): void {
-        items.forEach(item => this.addItem(item));
+        items.forEach((item) => this.addItem(item));
     }
 
     private async addItem(item: Item) {
