@@ -11,10 +11,11 @@ class DatabaseManager {
         this.vyssuals = new VyssualsDatabase();
     }
 
-    get(name: string): DataSourceDatabase {
+    get(name: string, type: string = 'websocket'): DataSourceDatabase {
         let database = this.databases.get(name);
         if (!database) {
             database = new DataSourceDatabase(name);
+            database.setType(type);
             this.databases.set(name, database);
         }
         return database;
