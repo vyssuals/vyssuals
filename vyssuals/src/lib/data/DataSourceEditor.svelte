@@ -18,7 +18,7 @@
   let metadata: Observable<Header[]>;
   
   onMount(async () => {
-      metadata = db.get($dataSourceToEdit).getMetadata();
+      metadata = db.get($dataSourceToEdit)._metadata;
     });
 
 </script>
