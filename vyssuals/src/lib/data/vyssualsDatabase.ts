@@ -9,7 +9,7 @@ export class VyssualsDatabase extends Dexie {
         super("vyssuals");
 
         this.version(1).stores({
-            chartConfigs: "&++id, dataSourceName, chartType, showValues, groupBy, startColor, endColor",
+            chartConfigs: "&id, dataSourceName, chartType, showValues, groupBy, startColor, endColor",
             // dataSources: "&name, type, lastUpdate",
         });
 

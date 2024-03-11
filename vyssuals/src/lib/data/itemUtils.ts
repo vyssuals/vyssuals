@@ -15,6 +15,10 @@ export function getLatestItemValue(item: Item, key: string): string | number {
         .map(Number)
         .sort((a, b) => b - a);
     const latestVersion = item.versions[timestamps[0]];
+    if (latestVersion === undefined) {
+        console.error("latestVersion is undefined");
+        return "";
+    }
     return latestVersion[key];
 }
 

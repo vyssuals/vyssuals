@@ -5,12 +5,9 @@
   import DoughnutChart from "./DoughnutChart.svelte";
   import TotalChart from "./TotalChart.svelte";
   import LineChart from "./LineChart.svelte";
-  import { db } from "../data/databaseManager";
+    import { db } from "../data/databaseManager";
 
-  export let index: string;
-  let config: ChartConfig | undefined;
-
-  $: db.vyssuals.chartConfigs.get(index).then((c) => (config = c));
+  export let config: ChartConfig;
 
   let chartInstance: any; // Store reference to the chart instance
 
@@ -36,5 +33,5 @@
 
 <!-- Render the chart instance based on the type specified in the config -->
 {#if chartInstance}
-  <svelte:component this={chartInstance} {index} />
+  <svelte:component this={chartInstance} {config} />
 {/if}

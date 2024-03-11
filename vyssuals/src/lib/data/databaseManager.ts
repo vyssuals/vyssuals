@@ -1,28 +1,42 @@
 import { liveQuery, type Observable } from 'dexie';
 import { DataSourceDatabase } from './dataSourceDatabase';
 import { VyssualsDatabase } from './vyssualsDatabase';  
+import Dexie from 'dexie';
+import { writable, type Writable } from 'svelte/store';
 
 class DatabaseManager {
     private databases: Map<string, DataSourceDatabase>;
     public vyssuals: VyssualsDatabase;
+    public hasDatabases = writable(false);
+    public dataSourceNames: Writable<string[]> = writable([]);
 
     constructor() {
         this.databases = new Map();
         this.vyssuals = new VyssualsDatabase();
+        Dexie.getDatabaseNames().then(names => {
+            for (let name of names) {
+                if (name === 'vyssuals') continue;
+                this.get(name);
+            }
+        });
     }
 
     get(name: string, type: string = 'websocket'): DataSourceDatabase {
+        if (name === 'vyssuals') {
+            throw new Error('The name "vyssuals" is reserved and cannot be used for a DataSourceDatabase.');
+        }
+
         let database = this.databases.get(name);
         if (!database) {
             database = new DataSourceDatabase(name);
             database.setType(type);
             this.databases.set(name, database);
+            this.hasDatabases.set(true);
+            this.dataSourceNames.update(names => {
+                return [...names, name];
+            });
         }
         return database;
-    }
-
-    get hasDatabases(): Observable<boolean> {
-        return liveQuery(() => this.databases.size > 0);
     }
 
     get wsNames(): Observable<string[]> {
@@ -47,10 +61,6 @@ class DatabaseManager {
             }
             return names;
         });
-    }
-
-    get dataSourceNames(): Observable<string[]> {
-        return liveQuery(() => Array.from(this.databases.keys()));
     }
 
     deleteDatabase(name: string) {

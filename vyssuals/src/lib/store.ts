@@ -6,7 +6,7 @@ import { produce } from "immer";
 
 // Chart Configs
 export const showChartEditor = writable(false);
-export const editChartIndex: Writable<number> = writable(-1);
+export const chartToEdit: Writable<string> = writable("");
 
 export const startColor: Writable<string> = writable("#DC0999");
 export const endColor: Writable<string> = writable("#05ACFF");

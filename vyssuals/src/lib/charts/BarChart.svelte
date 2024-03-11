@@ -5,14 +5,14 @@
     import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
     import type { ChartData, ChartConfig } from '../types';
 
-    export let index: string;
+    export let config: ChartConfig;
     let title: string;
 
     let state: ChartData | undefined;
-    basicChartStore.subscribe((value: Record<string, ChartData | undefined>) => { state = value[index]; });
+    basicChartStore.subscribe((value: Record<string, ChartData | undefined>) => { state = value[config.id]; });
 
-    $: index && basicChartStore.fetch(index);
-    $: state && state.config && (title = formatTitle(state.config as ChartConfig));
+    $: if (config) {basicChartStore.fetch(config)};
+    $: title = formatTitle(config);
 
 
     Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);

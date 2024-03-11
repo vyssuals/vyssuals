@@ -9,8 +9,6 @@ export interface ChartConfig {
 }
 
 export interface ChartData {
-    config: ChartConfig;
-    dataSource: DataSource;
     data: any;
     unitSymbol: string;
 }

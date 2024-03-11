@@ -4,24 +4,25 @@ import { db } from "../data/databaseManager";
 
 // function for creating chart data, returns chart data
 export async function getChartData(dataSourceName: string, config: ChartConfig): Promise<any> {
-    const values = await db.getLatestValues(dataSourceName, config.groupBy);
+    const ds = db.get(dataSourceName);
+    const values = await ds.getLatestValues(config.groupBy);
 
     let labels = Array.from(new Set(values))
         .sort()
         .map((label) => (label ? label.toString() : ""));
 
-    let header: Header = await db.getHeaderByName(dataSourceName, config.showValues);
-    let attributes = await db.getLatestAttributes(dataSourceName);
+    let header: Header | undefined = await ds.getHeaderByName(config.showValues);
+    let attributes = await ds.getLatestAttributes();
 
     let data: number[] = [];
 
-    if (header.type === "number") {
+    if (header?.type === "number") {
         data = labels.map((label) => sumAttributeBy(attributes, config.showValues, label?.toString() || "", config.groupBy));
     } else {
         // count unique values per label
         data = await Promise.all(
             labels.map(async (label) => {
-                const dataValues = await db.getLatestValues(dataSourceName, label);
+                const dataValues = await ds.getLatestValues(label);
                 return Array.from(new Set(dataValues)).length;
             })
         );

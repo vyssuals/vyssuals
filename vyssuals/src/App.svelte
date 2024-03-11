@@ -15,35 +15,23 @@
   import { connectWebSocket } from "./lib/data/websocket";
   import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
   import { db } from "./lib/data/databaseManager";
-  import type { Observable } from "dexie";
+  import { liveQuery, type Observable } from "dexie";
   import type { ChartConfig, DataSource } from "./lib/types";
+
 
   onMount(() => {
     connectWebSocket();
   });
 
-  //   onMount(() => {
-  //     const dataSources: string[] = ['Revit-2022__836_Project-Name', 'Rhino-8__2402_DR_some-long-filename', 'Csv_brutally-long-filename-2023-02-23_randomShit'];
-  //     generateDummyData(dataSources[0], 5);
-  //     // generate more dummy data every 5 seconds
-  //     setInterval(() => {
-  //       const randomDataSourceIndex = Math.floor(Math.random() * dataSources.length);
-  //       const randomCount = Math.floor(Math.random() * 100);
-  //       generateDummyData(dataSources[randomDataSourceIndex], randomCount);
-  //       console.log('Generated more dummy data');
-  //     }, 20000);
-  //     logDatasetContent(); // Call logDatasetContent after generateDummyData
-  // });
-
   function handleAddChart() {
     showChartEditor.set(true);
   }
 
-  let hasChartConfigs: Observable<boolean>;
+  // let hasChartConfigs: Observable<boolean>;
   $: hasChartConfigs = db.vyssuals.hasChartConfigs;
 
-  let hasDatabases: Observable<boolean>;
   $: hasDatabases = db.hasDatabases;
+
 
 </script>
 

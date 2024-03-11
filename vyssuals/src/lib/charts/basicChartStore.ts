@@ -1,11 +1,12 @@
-import { writable } from 'svelte/store';
-import type { ChartData} from "../types";
+import { writable } from "svelte/store";
+import type { ChartData } from "../types";
 import { db } from "../data/databaseManager";
 import { getChartData } from "./chartDataUtils";
+import type { ChartConfig } from "../types";
 
 interface ChartStore {
     subscribe: (run: (value: any) => void) => () => void;
-    fetch: (index: string) => void;
+    fetch: (config: ChartConfig) => void;
 }
 
 function createChartStore(): ChartStore {
@@ -13,25 +14,21 @@ function createChartStore(): ChartStore {
 
     return {
         subscribe,
-        fetch: (index: string) => {
-            db.chartConfigs.get(index).then((result) => {
-                const config = result;
-                if (config) {
-                    db.dataSources.get(config.dataSourceName || "").then((result) => {
-                        const dataSource = result;
-                        if (dataSource && config) {
-                            getChartData(dataSource.name, config).then((result) => {
-                                const data = result;
-                                db.getHeaderByName(dataSource.name, config.showValues).then((result) => {
-                                    const unitSymbol = result.unitSymbol;
-                                    update(store => ({ ...store, [index]: { config, dataSource, data, unitSymbol } }));
-                                });
-                            });
-                        }
+        fetch: (config: ChartConfig) => {
+            if (config) {
+                const ds = db.get(config.dataSourceName);
+                if (ds) {
+                    getChartData(ds.name, config).then((result) => {
+                        const data = result;
+                        ds.getHeaderByName(config.showValues).then((result) => {
+                            if (!result) return;
+                            const unitSymbol = result.unitSymbol;
+                            update((store) => ({ ...store, [config.id]: { data, unitSymbol } }));
+                        });
                     });
                 }
-            });
-        }
+            }
+        },
     };
 }
 

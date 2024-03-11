@@ -88,7 +88,7 @@ export class DataSourceDatabase extends Dexie {
         }
     }
 
-    get keys(): Observable<IndexableType[]> {
+    get _keys(): Observable<IndexableType[]> {
         return liveQuery(() => this.metadata.toCollection().primaryKeys());
     }
 
