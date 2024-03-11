@@ -24,14 +24,16 @@ function processDataMessage(message: WebSocketMessage): void {
     if (message.type === "data") {
         if (!message.senderName) return;
         if (message.payload) {
+            const database = db.get(message.senderName);
+            database.setType("websocket");
             if (message.payload.data) {
-                db.get(message.senderName).addItems(message.payload.data);
+                database.addItems(message.payload.data);
             }
             if (message.payload.metadata) {
-                db.get(message.senderName).addMetadata(message.payload.metadata);
+                database.addMetadata(message.payload.metadata);
             }
             if (message.payload.update) {
-                db.get(message.senderName).addUpdate(message.payload.update);
+                database.addUpdate(message.payload.update);
             }
         }
     }
