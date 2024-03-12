@@ -1,4 +1,4 @@
-import type { Attributes, Item } from "../types";
+import type { Attributes, Item, Versions } from "../types";
 import Dexie from "dexie";
 
 export function getLatestItemAttributes(item: Item): Attributes {
@@ -10,16 +10,18 @@ export function getLatestItemAttributes(item: Item): Attributes {
     return latestVersion;
 }
 
-export function getLatestItemValue(item: Item, key: string): string | number {
-    const timestamps = Object.keys(item.versions)
+export function getLatestItemValue(versions: Versions, key: string): string | number {
+    const versionCount = Object.keys(versions).length;
+    if (versionCount === 0) {
+        return "";
+    } else if (versionCount === 1) {
+        return versions[Object.keys(versions)[0]][key];
+    }
+    const timestamps = Object.keys(versions)
         .map(Number)
         .sort((a, b) => b - a);
-    const latestVersion = item.versions[timestamps[0]];
-    if (latestVersion === undefined) {
-        console.error("latestVersion is undefined");
-        return "";
-    }
-    return latestVersion[key];
+    return versions[timestamps[0]][key];
+
 }
 
 // Function to get selected items from a Dexie table
