@@ -9,6 +9,7 @@ async def websocket_server(websocket, path):
     # Add the new WebSocket connection to the list
     websockets_list.append(websocket)
     print('Client connected')
+    print(f'count of clients: {len(websockets_list)}')
 
     try:
         # Forward messages from this client to all other clients
