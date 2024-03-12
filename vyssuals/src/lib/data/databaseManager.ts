@@ -5,7 +5,7 @@ import Dexie from 'dexie';
 import { writable, type Writable } from 'svelte/store';
 
 class DatabaseManager {
-    private databases: Map<string, DataSourceDatabase>;
+    public databases: Map<string, DataSourceDatabase>;
     public vyssuals: VyssualsDatabase;
     public hasDatabases = writable(false);
     public dataSourceNames: Writable<string[]> = writable([]);
