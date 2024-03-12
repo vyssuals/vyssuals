@@ -19,8 +19,8 @@
         ds.lastUpdate.then((timestamp) => ds.updates.get(timestamp)).then((update) => ds.items.bulkGet(update?.visibleItemIds || []))
     );
 
-    $: labels = $items?.map((item) => item && getLatestItemValue(item.versions, config.groupBy).toString());
-    $: attributes = $items?.map((item) => item && getLatestItemAttributes(item.versions)) || [];
+    $: labels = [...new Set($items?.map((item) => item && getLatestItemValue(item.versions, config.groupBy).toString()).filter(Boolean).sort())];
+    $: attributes = $items?.map((item) => item && getLatestItemAttributes(item.versions)).filter(Boolean) || [];
     $: header = liveQuery(() => ds.metadata.get(config.showValues));
     $: chartData = { labels, attributes, header: $header };
 
