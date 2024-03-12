@@ -1,6 +1,5 @@
 import type { ChartConfig, Header, Attributes,  } from "../types";
 import { createColorArray } from "../utils/colorUtils";
-import type { DataSourceDatabase } from "../data/dataSourceDatabase";
 
 export async function calculateChartData(labels: string[], attributes: Attributes[], dataType: string, config: ChartConfig): Promise<any> {
     let data: number[] = [];
@@ -34,7 +33,6 @@ function assembleChartData(labels: string[], data: number[], startColor: string,
 
 
 // function to sum values of a specific attribute
-// function to sum values of a specific attribute
 export function sumAttributeValues(attributes: Attributes[], attribute: string): number {
     return attributes.reduce((total: number, item: Attributes) => {
         if (!item) return total;
@@ -50,7 +48,7 @@ export function sumAttributeValues(attributes: Attributes[], attribute: string):
 function sumAttributeBy(attributes: Attributes[], aggregateAttribute: string, label: string, groupBy: string): number {
     return attributes.reduce(
         (total: number, item: Attributes) =>
-            item && item[groupBy] === label && aggregateAttribute in item ? total + Number(item[aggregateAttribute]) : total,
+            item && item[groupBy] == label && aggregateAttribute in item ? total + Number(item[aggregateAttribute]) : total,
         0
     );
 }
@@ -58,7 +56,7 @@ function sumAttributeBy(attributes: Attributes[], aggregateAttribute: string, la
 function countAttributeBy(attributes: Attributes[], aggregateAttribute: string, label: string, groupBy: string): number {
     return attributes.reduce(
         (total: number, item: Attributes) =>
-            item && item[groupBy] === label && aggregateAttribute in item ? total + 1 : total,
+            item && item[groupBy] == label && aggregateAttribute in item ? total + 1 : total,
         0
     );
 }
