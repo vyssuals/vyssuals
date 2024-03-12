@@ -5,12 +5,10 @@
     import { formatTitle } from "../utils/textUtils";
     import { db } from "../data/databaseManager";
     import type { ChartConfig } from "../types";
-    import type { Observable } from "dexie";
 
     let gridItems: any = [];
 
     $: chartConfigs = db.vyssuals._chartConfigs;
-    $: console.log(`ChartGrid: chartConfigs:`, $chartConfigs);
 
     const width: Record<string, string> = {
         bar: "595px",
