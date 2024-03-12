@@ -5,10 +5,12 @@
     import { formatTitle } from "../utils/textUtils";
     import { db } from "../data/databaseManager";
     import type { ChartConfig } from "../types";
+    import { liveQuery } from "dexie";
+
 
     let gridItems: any = [];
 
-    $: chartConfigs = db.vyssuals._chartConfigs;
+    $: chartConfigs = liveQuery(() => db.vyssuals.chartConfigs.toArray().then((configs) => configs.sort((a, b) => a.index - b.index)));
 
     const width: Record<string, string> = {
         bar: "595px",
