@@ -74,8 +74,10 @@
     }
 
     export async function saveChartConfig() {
+        if (config.index <= 0) {
         const count = await db.vyssuals.chartConfigs.count()
         config.index = count + 1;
+        }
         db.vyssuals.chartConfigs.put(config);
         startColor.set(config.startColor);
         endColor.set(config.endColor);
