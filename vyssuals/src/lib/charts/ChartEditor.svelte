@@ -48,11 +48,11 @@
 
     function createConfig(): ChartConfig {
         return {
-            id: Math.random().toString(36).slice(2, 9),
-            dataSourceName: $dbNames[0].toString(),
+            id: Math.random().toString(36).slice(2, 12),
+            dataSourceName: $dbNames[0]?.toString() ?? "<No Data>",
             chartType: "bar",
-            showValues: attributeKeys[0].toString(),
-            groupBy: attributeKeys[0].toString(),
+            showValues: attributeKeys[0]?.toString() ?? "<No Data>",
+            groupBy: attributeKeys[0]?.toString() ?? "<No Data>",
             startColor: $startColor,
             endColor: $endColor,
         };
