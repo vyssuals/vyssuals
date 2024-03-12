@@ -1,5 +1,6 @@
 export interface ChartConfig {
     id: string;
+    index: number;
     dataSourceName: string;
     chartType: ChartType;
     showValues: string;
@@ -8,9 +9,10 @@ export interface ChartConfig {
     endColor: string;
 }
 
-export interface ChartData {
-    data: any;
-    unitSymbol: string;
+export interface RawChartData {
+    labels: string[];
+    attributes: Attributes[];
+    header: Header;
 }
 
 export interface WebSocketMessage {

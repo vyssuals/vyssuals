@@ -1,19 +1,16 @@
 <script lang="ts">
     import { Bar } from "svelte-chartjs";
-    import { basicChartStore } from './basicChartStore';
-    import { formatTitle } from "../utils/textUtils";
     import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
-    import type { ChartData, ChartConfig } from '../types';
+    import type {  ChartConfig, RawChartData } from '../types';
+    import { calculateChartData } from "./chartDataUtils";
+    import { formatTitle } from "../utils/textUtils";
 
     export let config: ChartConfig;
-    let title: string;
+    export let chartData: RawChartData;
 
-    let state: ChartData | undefined;
-    basicChartStore.subscribe((value: Record<string, ChartData | undefined>) => { state = value[config.id]; });
-
-    $: if (config) {basicChartStore.fetch(config)};
+    let data: any;
+    $: calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config).then((value) => { data = value });
     $: title = formatTitle(config);
-
 
     Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
@@ -51,8 +48,8 @@
     };
 </script>
 
-<h1 class="chart-title" style="width: 550px">{title}</h1>
-{#if state}
-<h3 title="You can edit the unit symbol in the settings of this datasource.">{state.unitSymbol}</h3>
-    <Bar data={state.data} {options} style="height: 310px; width: 595px" />
+<h1 class="chart-title">{title}</h1>
+{#if data}
+<h3 title="You can edit the unit symbol in the settings of this datasource.">{chartData.header.unitSymbol}</h3>
+    <Bar data={data} {options} style="height: 310px; width: 595px" />
 {/if}

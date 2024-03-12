@@ -49,6 +49,7 @@
     function createConfig(): ChartConfig {
         return {
             id: Math.random().toString(36).slice(2, 12),
+            index: 0,
             dataSourceName: $dbNames[0]?.toString() ?? "<No Data>",
             chartType: "bar",
             showValues: attributeKeys[0]?.toString() ?? "<No Data>",
@@ -72,7 +73,9 @@
         chartToEdit.set("");
     }
 
-    export function saveChartConfig(): void {
+    export async function saveChartConfig() {
+        const count = await db.vyssuals.chartConfigs.count()
+        config.index = count + 1;
         db.vyssuals.chartConfigs.put(config);
         startColor.set(config.startColor);
         endColor.set(config.endColor);

@@ -24,8 +24,8 @@ export class DataSourceDatabase extends Dexie {
         this.info = this.table("info");
     }
 
-    get lastUpdate(): Promise<string | undefined> {
-        return this.info.get("lastUpdate").then((x) => x?.value);
+    get lastUpdate(): Promise<string> {
+        return this.info.get("lastUpdate").then((x) => x?.value || "");
     }
 
     async setLastUpdate(lastUpdate: string) {

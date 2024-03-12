@@ -1,19 +1,11 @@
-import type { ChartConfig, Header, Attributes } from "../types";
+import type { ChartConfig, Header, Attributes,  } from "../types";
 import { createColorArray } from "../utils/colorUtils";
-import type { ChartData } from "chart.js";
 import type { DataSourceDatabase } from "../data/dataSourceDatabase";
 
-export async function getChartData(dataSource: DataSourceDatabase, config: ChartConfig): Promise<ChartData> {
-    const values = await dataSource.getLatestValues(config.groupBy);
-    const labels = Array.from(new Set(values))
-    .sort()
-    .map((label) => (label ? label.toString() : ""));
-    
+export async function calculateChartData(labels: string[], attributes: Attributes[], dataType: string, config: ChartConfig): Promise<any> {
     let data: number[] = [];
     
-    const attributes = await dataSource.getLatestAttributes();
-    const header: Header | undefined = await dataSource.getHeaderByName(config.showValues);
-    if (header?.type === "number") {
+    if (dataType === "number") {
         data = labels.map((label) => sumAttributeBy(attributes, config.showValues, label?.toString() || "", config.groupBy));
     } else {
         data = labels.map((label) => countAttributeBy(attributes, config.showValues, label?.toString() || "", config.groupBy))
@@ -22,7 +14,7 @@ export async function getChartData(dataSource: DataSourceDatabase, config: Chart
     return assembleChartData(labels, data, config.startColor, config.endColor);
 }
 
-function assembleChartData(labels: string[], data: number[], startColor: string, endColor: string): ChartData {
+function assembleChartData(labels: string[], data: number[], startColor: string, endColor: string) {
     const backgroundColor = createColorArray(data.length, startColor, endColor);
 
     return {
@@ -42,8 +34,16 @@ function assembleChartData(labels: string[], data: number[], startColor: string,
 
 
 // function to sum values of a specific attribute
+// function to sum values of a specific attribute
 export function sumAttributeValues(attributes: Attributes[], attribute: string): number {
-    return attributes.reduce((total: number, item: Attributes) => total + (Number(item[attribute]) || 0), 0);
+    return attributes.reduce((total: number, item: Attributes) => {
+        if (!item) return total;
+        if (attribute in item) {
+            return total + Number(item[attribute]);
+        } else {
+            return total;
+        }
+    }, 0);
 }
 
 // aggregate values of a specific attribute,  inputs: attribute to aggregate, list of labels to aggregate by, attibute key of labels

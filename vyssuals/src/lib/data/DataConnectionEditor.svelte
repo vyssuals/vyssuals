@@ -14,7 +14,7 @@
   import ConnectorList from "../connectors/ConnectorList.svelte";
   // import { autoChart } from "../charts/AutoCharts";
   import { db } from "./databaseManager";
-  import { liveQuery, type Observable } from "dexie";
+  import { type Observable } from "dexie";
 
   let files: FileList | null = null;
 
