@@ -1,18 +1,18 @@
 import type { ChartConfig, Header, Attributes } from "../types";
 import { createColorArray } from "../utils/colorUtils";
 import { db } from "../data/databaseManager";
+import type { ChartData } from "chart.js";
 
 // function for creating chart data, returns chart data
-export async function getChartData(dataSourceName: string, config: ChartConfig): Promise<any> {
+export async function getChartData(dataSourceName: string, config: ChartConfig): Promise<ChartData> {
     const ds = db.get(dataSourceName);
     const values = await ds.getLatestValues(config.groupBy);
+    const header: Header | undefined = await ds.getHeaderByName(config.showValues);
+    const attributes = await ds.getLatestAttributes();
 
-    let labels = Array.from(new Set(values))
+    const labels = Array.from(new Set(values))
         .sort()
         .map((label) => (label ? label.toString() : ""));
-
-    let header: Header | undefined = await ds.getHeaderByName(config.showValues);
-    let attributes = await ds.getLatestAttributes();
 
     let data: number[] = [];
 
@@ -28,10 +28,10 @@ export async function getChartData(dataSourceName: string, config: ChartConfig):
         );
     }
 
-    assembleChartData(labels, data, config.startColor, config.endColor);
+    return assembleChartData(labels, data, config.startColor, config.endColor);
 }
 
-function assembleChartData(labels: string[], data: number[], startColor: string, endColor: string) {
+function assembleChartData(labels: string[], data: number[], startColor: string, endColor: string): ChartData {
     const backgroundColor = createColorArray(data.length, startColor, endColor);
 
     return {
@@ -58,7 +58,7 @@ export function sumAttributeValues(attributes: Attributes[], attribute: string):
 function sumAttributeBy(attributes: Attributes[], aggregateAttribute: string, label: string, groupBy: string): number {
     return attributes.reduce(
         (total: number, item: Attributes) =>
-            item[groupBy] === label && aggregateAttribute in item ? total + Number(item[aggregateAttribute]) : total,
+            item && item[groupBy] === label && aggregateAttribute in item ? total + Number(item[aggregateAttribute]) : total,
         0
     );
 }
