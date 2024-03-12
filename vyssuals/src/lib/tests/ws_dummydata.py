@@ -11,7 +11,7 @@ fire_rating = ['A', 'B', 'C', 'D', 'E', 'F']
 heights = [3.5, 4.22, 4.5, 7]
 some_long_parameter_name = ['Alphaaaaaaaaaaaaaaaa', 'Betaaaaaaaaaaa', 'Gammaaaaa', 'Deltaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'Epsilonaaaa', 'Zetaaaaa']
 
-allIds = [str(i) for i in range(100)]
+allIds = [str(i) for i in range(100000)]
 
 def get_random_element(array):
     return random.choice(array)
@@ -25,8 +25,7 @@ def generate_dummy_data():
     timestamp = str(datetime.now())
 
     # get subset of allIds  
-    count = random.randint(30, 60)
-    ids = random.sample(allIds, count)
+    ids = random.sample(allIds, allIds.__len__()//11)
     update.visibleItemIds = ids
 
     metadata = [
