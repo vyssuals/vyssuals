@@ -104,7 +104,7 @@ export class DataSourceDatabase extends Dexie {
     getLatestAttributes(items: string[] = []): Promise<Attributes[]> {
         return new Promise(async (resolve) => {
             const selectedItems = await getSelectedItems(this.items, items);
-            const latestAttributes = selectedItems.map((item) => getLatestItemAttributes(item));
+            const latestAttributes = selectedItems.map((item) => getLatestItemAttributes(item.versions));
 
             resolve(latestAttributes);
         });
