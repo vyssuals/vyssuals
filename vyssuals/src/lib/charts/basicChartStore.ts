@@ -18,7 +18,7 @@ function createChartStore(): ChartStore {
             if (config) {
                 const ds = db.get(config.dataSourceName);
                 if (ds) {
-                    getChartData(ds.name, config).then((result) => {
+                    getChartData(ds, config).then((result) => {
                         const data = result;
                         ds.getHeaderByName(config.showValues).then((result) => {
                             if (!result) return;
