@@ -14,6 +14,19 @@
 
     $: chartConfigs = liveQuery(() => db.vyssuals.chartConfigs.toArray().then((configs) => configs.sort((a, b) => a.index - b.index)));
 
+    $: if ($chartConfigs) {
+        let isChanged = false;
+        $chartConfigs.forEach((config, index) => {
+            if (config.index !== index) {
+                config.index = index;
+                isChanged = true;
+            }
+        });
+        if (isChanged) {
+            db.vyssuals.chartConfigs.bulkPut($chartConfigs);
+        }
+    }
+
     const width: Record<string, string> = {
         bar: "595px",
         doughnut: "380px",
@@ -53,8 +66,8 @@
     }
 </script>
 
-<div class="grid-container">
-    {#if $chartConfigs}
+{#if $chartConfigs}
+    <div class="grid-container">
         {#each $chartConfigs as config, index (config.id)}
             <div class="grid-item" bind:this={gridItems[index]} style="width: {width[config.chartType]}" transition:blur={{ duration: 300 }} animate:flip={{ duration: 300 }}>
                 <Chart config={config} />
@@ -65,8 +78,8 @@
                 <h3 class="datasource-overlay">{$chartConfigs[index].dataSourceName}</h3>
             </div>
         {/each}
-    {/if}
-</div>
+    </div>
+{/if}
 
 <style>
     .grid-container {
