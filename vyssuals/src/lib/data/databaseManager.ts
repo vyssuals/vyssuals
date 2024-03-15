@@ -15,7 +15,12 @@ class DatabaseManager {
         Dexie.getDatabaseNames().then(names => {
             for (let name of names) {
                 if (name === 'vyssuals') continue;
-                this.get(name);
+                const db = this.get(name);
+                this.hasEmptyTables(db).then((empty) => {
+                    if (empty) {
+                        this.deleteDatabase(name);
+                    }
+                });
             }
         });
     }
@@ -69,6 +74,13 @@ class DatabaseManager {
             dbInstance.delete();
         }
         this.databases.delete(name);
+    }
+
+    private async hasEmptyTables(db: DataSourceDatabase): Promise<boolean> {
+        for (let table of db.tables) {
+            if (await table.count() > 0) return false;
+        }
+        return true;
     }
 }
 
