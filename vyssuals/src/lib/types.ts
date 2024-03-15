@@ -65,9 +65,9 @@ export interface Versions {
 }
 
 export interface Attributes {
-    id: string;
-    timestamp: string;
-    count: 1;
+    Id: string;
+    Timestamp: string;
+    Count: 1;
     [key: string]: string | number; // Key is the Column Name, Value is the Column Value
 }
 
@@ -77,6 +77,7 @@ export interface Info {
 }
 
 export const COLUMN_TYPES = ["string", "number"];
+export type ColumnType = "string" | "number";
 export type ChartType = "line" | "bar" | "doughnut" | "total";
 export const CHART_TYPES: ChartType[] = ["line", "bar", "doughnut", "total"];
 export type UnitSymbol =
