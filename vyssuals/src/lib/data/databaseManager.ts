@@ -74,6 +74,11 @@ class DatabaseManager {
             dbInstance.delete();
         }
         this.databases.delete(name);
+        this.cleanChartConfigs(name);
+    }
+
+    private cleanChartConfigs(name: string) {
+        this.vyssuals.chartConfigs.where('dataSourceName').equals(name).delete();
     }
 
     private async hasEmptyTables(db: DataSourceDatabase): Promise<boolean> {
