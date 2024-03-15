@@ -1,5 +1,8 @@
 // function for creating an array of colors. inputs: number of colors, start color, end color.
 export function createColorArray(numColors: number, startColor: string, endColor: string): string[] {
+    if (numColors < 2) {
+        return [startColor];
+    }
     const start = hexToRgb(startColor);
     const end = hexToRgb(endColor);
     const steps: number = numColors - 1;
