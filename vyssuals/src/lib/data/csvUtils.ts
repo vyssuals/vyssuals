@@ -31,13 +31,7 @@ export function loadCSVFile(file: File): Promise<DataPayload> {
                         if (!columns[key]) {
                             columns[key] = new Set();
                         }
-                        // convert value to number or string
-                        if (typeof value === "number") {
-                            columns[key].add(value);
-                        } else {
-                            value = String(value); // convert to string, also saves value as string to database
-                            columns[key].add(value);
-                        }
+                        columns[key].add(value);
                     });
 
                     const id = String(index);
@@ -71,7 +65,10 @@ export function loadCSVFile(file: File): Promise<DataPayload> {
 
 function makeHeader(name: string, data: Set<string | number>): Header {
     const type = majorityType(Array.from(data));
-    const unitSymbol = determineUnitSymbol(name, FuzzySet(Object.keys(keywordToUnitSymbol)));
+    let unitSymbol: UnitSymbol = "# Unique Items";
+    if (type == "number") {
+        unitSymbol = determineUnitSymbol(name, FuzzySet(Object.keys(keywordToUnitSymbol)));
+    } 
 
     const header: Header = {
         name,
