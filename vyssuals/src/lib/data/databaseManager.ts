@@ -20,7 +20,7 @@ class DatabaseManager {
         });
     }
 
-    get(name: string, type: string = 'websocket'): DataSourceDatabase {
+    get(name: string, type: string = ""): DataSourceDatabase {
         if (name === 'vyssuals') {
             throw new Error('The name "vyssuals" is reserved and cannot be used for a DataSourceDatabase.');
         }
@@ -28,7 +28,7 @@ class DatabaseManager {
         let database = this.databases.get(name);
         if (!database) {
             database = new DataSourceDatabase(name);
-            database.setType(type);
+            if (type) { database.setType(type) };
             this.databases.set(name, database);
             this.hasDatabases.set(true);
         }
