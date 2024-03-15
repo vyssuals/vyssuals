@@ -8,7 +8,6 @@ class DatabaseManager {
     public databases: Map<string, DataSourceDatabase>;
     public vyssuals: VyssualsDatabase;
     public hasDatabases = writable(false);
-    public dataSourceNames: Writable<string[]> = writable([]);
 
     constructor() {
         this.databases = new Map();
@@ -32,11 +31,12 @@ class DatabaseManager {
             database.setType(type);
             this.databases.set(name, database);
             this.hasDatabases.set(true);
-            this.dataSourceNames.update(names => {
-                return [...names, name];
-            });
         }
         return database;
+    }
+
+    get dataSourceNames(): string[] {
+        return Array.from(this.databases.keys());
     }
 
     get wsNames(): Observable<string[]> {

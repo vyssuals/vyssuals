@@ -14,15 +14,15 @@
     let chartConfigs: Observable<ChartConfig[]>;
     let config: ChartConfig;
 
-    let dbNames: Writable<string[]>;
+    let dsNames: string[];
 
     let attributeKeys: string[];
 
     onMount(async () => {
-        dbNames = db.dataSourceNames;
-        console.log(`dbNames: ${$dbNames}`); 
+        dsNames = db.dataSourceNames;
+        console.log(`dbNames: ${dsNames}`); 
         chartConfigs = db.vyssuals._chartConfigs;
-        await db.get($dbNames[0]).metadata.toCollection().primaryKeys().then((keys) => {
+        await db.get(dsNames[0]).metadata.toCollection().primaryKeys().then((keys) => {
             attributeKeys = keys;
         })
         console.log(`attributeKeys: ${attributeKeys}`); 
@@ -50,7 +50,7 @@
         return {
             id: Math.random().toString(36).slice(2, 12),
             index: 0,
-            dataSourceName: $dbNames[0]?.toString() ?? "<No Data>",
+            dataSourceName: dsNames[0]?.toString() ?? "<No Data>",
             chartType: "bar",
             showValues: attributeKeys[0]?.toString() ?? "<No Data>",
             groupBy: attributeKeys[0]?.toString() ?? "<No Data>",
@@ -90,12 +90,12 @@
     <Draggable {left} {top}>
         <div class="chart-editor" id="chartEditor">
             <h1>Chart Editor</h1>
-            {#if config && attributeKeys && $dbNames}
+            {#if config && attributeKeys && dsNames}
                 <div>
                     <div class="config-option">
                         <label for="dataSource">Data Source:</label>
                         <select class="config-select" id="dataSource" bind:value={config.dataSourceName}>
-                            {#each $dbNames as name}
+                            {#each dsNames as name}
                                 <option value={name}>{name}</option>
                             {/each}
                         </select>
