@@ -72,24 +72,18 @@
         console.log("fix me please! (handleAutoChart)");
     }
 
-    function handleReloadCSVFile(dataSourceName: string, e: Event) {
+    async function handleReloadCSVFile(dataSourceName: string, e: Event) {
         // check if file is the same as the one already loaded
-        // if (e.target instanceof HTMLInputElement && e.target.files && e.target.files.length > 0) {
-        //   const file: File = e.target.files[0];
-        //   if (dataSource.file?.name === file.name) {
-        //     dataSource.file = file;
-        //     loadCSVFile(dataSource);
-        //     const filePicker = document.getElementById('filePicker');
-        //     if (filePicker) {
-        //       (filePicker as HTMLInputElement).value = "";
-        //     }
-        //     return;
-        //   } else {
-        //     alert("Ooops, clicked on the wrong file? Please select the same file to reload it.");
-        //   }
-        // }
-
-        console.log("handleReloadCSVFile", dataSourceName);
+        if (e.target instanceof HTMLInputElement && e.target.files && e.target.files.length > 0) {
+          const file: File = e.target.files[0];
+          if (dataSourceName == file.name) {
+            let dataPayload = await loadCSVFile(file)
+            db.get(dataSourceName).push("file", dataPayload);
+            return;
+          } else {
+            alert("Ooops, clicked on the wrong file? Please select the same file to reload it.");
+          }
+        }
     }
 
     function handleEditButton(name: string) {
