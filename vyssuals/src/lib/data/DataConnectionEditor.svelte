@@ -3,66 +3,43 @@
     import { showDataConnectionEditor, showChartEditor, startColor, endColor, showDataSourceEditor, dataSourceToEdit } from "../store";
     import type { ChartConfig, DataSource, Header } from "../types";
     import GradientButton from "../buttons/GradientButton.svelte";
-    // import { loadCSVFile } from "./DataConnector";
     import ConnectorList from "../connectors/ConnectorList.svelte";
     // import { autoChart } from "../charts/AutoCharts";
     import { db } from "./databaseManager";
-    import { onMount } from "svelte";
     import { blur } from "svelte/transition";
+    import { loadCSVFile } from "./csvUtils";
 
     let files: FileList | null = null;
 
-    // $: if (files) {
-    //   const file = files?.[0];
-    //   if (file) {
-    //     const name = file.name;
-    //     if ($dataSources.some((item) => item.name === name)) {
-    //       alert(`File is already a data source: ${name}`);
-    //     } else {
-    //       const newSource: DataSource = {
-    //         name,
-    //         file,
-    //         type: 'file',
-    //         lastUpdate: new Date(),
-    //         header: [] as Header[],
-    //       };
-    //       (async () => {
-    //         try {
-    //           const result = await loadCSVFile(newSource);
-    //           $dataSources = [...$dataSources, result.dataSource];
-    //           $dataset = [...$dataset, ...result.data];
-    //         } catch (error) {
-    //           console.error("Error loading CSV file:", error);
-    //         }
-    //       })();
-    //     }
-    //   }
-    //   files = null;
-    // }
-
+    $: if (files) {
+        const file = files?.[0];
+        if (file) {
+            const name = file.name;
+            if (db.dataSourceNames.some((item) => item === name)) {
+                alert(`File is already a data source: ${name}`);
+            } else {
+                loadCSVFile(file).then((dataPayload): void => {
+                    db.get(name).push("file", dataPayload);
+            });
+            }
+            files = null;
+        }
+    }
 
     let wsDataSourcesPromise: Promise<string[]> = Promise.resolve([]);
     let fileDataSourcesPromise: Promise<string[]> = Promise.resolve([]);
 
     $: wsDataSourcesPromise = new Promise(async (resolve) => {
-            const promises = Array.from(db.databases.values()).map(db => 
-                db.type.then(type => 
-                    type === "websocket" ? db.name : null
-                )
-            );
-            const names = (await Promise.all(promises)).filter(Boolean) as string[];
-            resolve(names);
-        });
+        const promises = Array.from(db.databases.values()).map((db) => db.type.then((type) => (type === "websocket" ? db.name : null)));
+        const names = (await Promise.all(promises)).filter(Boolean) as string[];
+        resolve(names);
+    });
 
     $: fileDataSourcesPromise = new Promise(async (resolve) => {
-            const promises = Array.from(db.databases.values()).map(db => 
-                db.type.then(type => 
-                    type === "file" ? db.name : null
-                )
-            );
-            const names = (await Promise.all(promises)).filter(Boolean) as string[];
-            resolve(names);
-        });
+        const promises = Array.from(db.databases.values()).map((db) => db.type.then((type) => (type === "file" ? db.name : null)));
+        const names = (await Promise.all(promises)).filter(Boolean) as string[];
+        resolve(names);
+    });
 
     $: chartConfigs = db.vyssuals._chartConfigs;
 
@@ -123,32 +100,32 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <FloatingWindow on:click={hideDataSourceEditor}>
-        <div class="dataconnection-editor" transition:blur={{ duration: 100 }} >
-            <button title="Close" class="close-button" on:click={() => hideDataSourceEditor()}>&times;</button>
-            <h1>Real-Time Connections</h1>
-            {#await wsDataSourcesPromise then wsDataSources}
-                {#if wsDataSources.length > 0}
-                    <div style="padding-bottom: 1em;">
-                        {#each wsDataSources as item (item)}
-                            <p class="file-path" style="margin: 2px;">{item}</p>
-                        {/each}
-                    </div>
-                {:else}
-                    <p>
-                        No Real-Time Connection Active.<br />
-                        Start the Vyssuals plugin in your desktop application or install a connector plugin:
-                    </p>
-                    <div style="padding: 1em;">
-                        <ConnectorList />
-                    </div>
-                {/if}
-            {:catch error}
-                <p>Error: {error.message}</p>
-            {/await}
+<FloatingWindow on:click={hideDataSourceEditor}>
+    <div class="dataconnection-editor" transition:blur={{ duration: 100 }}>
+        <button title="Close" class="close-button" on:click={() => hideDataSourceEditor()}>&times;</button>
+        <h1>Real-Time Connections</h1>
+        {#await wsDataSourcesPromise then wsDataSources}
+            {#if wsDataSources.length > 0}
+                <div style="padding-bottom: 1em;">
+                    {#each wsDataSources as item (item)}
+                        <p class="file-path" style="margin: 2px;">{item}</p>
+                    {/each}
+                </div>
+            {:else}
+                <p>
+                    No Real-Time Connection Active.<br />
+                    Start the Vyssuals plugin in your desktop application or install a connector plugin:
+                </p>
+                <div style="padding: 1em;">
+                    <ConnectorList />
+                </div>
+            {/if}
+        {:catch error}
+            <p>Error: {error.message}</p>
+        {/await}
 
-            <h1>CSV Connections</h1>
-            {#await fileDataSourcesPromise then fileDataSources}
+        <h1>CSV Connections</h1>
+        {#await fileDataSourcesPromise then fileDataSources}
             {#if fileDataSources.length > 0}
                 <table>
                     <thead>
@@ -207,22 +184,21 @@
                     </tbody>
                 </table>
             {/if}
-            {:catch error}
-                <p>Error: {error.message}</p>
-            {/await}
-            <div>
-                <label for="filePicker">Add CSV:</label>
-                <input type="file" id="filePicker" accept=".csv" bind:files />
-            </div>
+        {:catch error}
+            <p>Error: {error.message}</p>
+        {/await}
+        <div>
+            <label for="filePicker">Add CSV:</label>
+            <input type="file" id="filePicker" accept=".csv" bind:files />
+        </div>
 
-            <!-- {#if fileDataSources || wsDataSources}
+        <!-- {#if fileDataSources || wsDataSources}
                 <div style="padding-top: 1em;">
                     <GradientButton on:click={handleAddChart} />
                 </div>
             {/if} -->
-        </div>
-    </FloatingWindow>
-
+    </div>
+</FloatingWindow>
 
 <style>
     .dataconnection-editor {
