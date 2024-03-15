@@ -41,12 +41,7 @@ export interface Header {
     cardinalityRatio?: number;
 }
 
-export interface Metadata {
-    [key: string]: Header; // Key is the Column Name, Value is the Column Metadata
-}
-
 export interface DataSource {
-    id: string;
     name: string;
     type: "file" | "websocket";
     lastUpdate: string;
