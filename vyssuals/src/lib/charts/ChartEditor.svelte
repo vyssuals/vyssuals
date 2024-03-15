@@ -1,63 +1,48 @@
 <script lang="ts">
     import { startColor, endColor, chartToEdit, showChartEditor } from "../store";
-    import type { ChartConfig, ChartType, DataSource } from "../types";
+    import type { ChartConfig } from "../types";
     import Draggable from "../wrapper/Draggable.svelte";
     import FloatingWindow from "../wrapper/FloatingWindow.svelte";
-    import type { Observable, IndexableType } from "dexie";
     import { db } from "../data/databaseManager";
     import { onMount } from "svelte";
-    import type { Writable } from "svelte/store";
     import { blur } from "svelte/transition";
 
     const left = window.innerWidth / 2 - 135;
     const top = window.innerHeight / 2 - 250;
 
-    let chartConfigs: Observable<ChartConfig[]>;
     let config: ChartConfig;
-
     let dsNames: string[];
-
     let attributeKeys: string[];
 
     onMount(async () => {
         dsNames = db.dataSourceNames;
-        console.log(`dbNames: ${dsNames}`); 
-        chartConfigs = db.vyssuals._chartConfigs;
-        await db.get(dsNames[0]).metadata.toCollection().primaryKeys().then((keys) => {
-            attributeKeys = keys;
-        })
-        console.log(`attributeKeys: ${attributeKeys}`); 
-
-        if ($chartToEdit != "") {
-            db.vyssuals.chartConfigs.get($chartToEdit).then((chart) => {
-                if (chart) {
-                    config = chart;
-                } else {
-                    config = createConfig();
-                }
-            });
-        } else {
-            config = createConfig();
-        }
+            const dbConfig = await db.vyssuals.chartConfigs.get($chartToEdit);
+            if (dbConfig) {
+                config = dbConfig;
+                attributeKeys = await db.get(config.dataSourceName).metadata.toCollection().primaryKeys() as string[];
+            } else {
+                attributeKeys = await db.get(dsNames[0]).metadata.toCollection().primaryKeys() as string[];
+                config = createConfig(dsNames[0], attributeKeys[0], attributeKeys[0]);
+            }
     });
-
-    $: if (config) {
-        db.get(config.dataSourceName).metadata.toCollection().primaryKeys().then((keys) => {
-            attributeKeys = keys;
-        })
-    }
-
-    function createConfig(): ChartConfig {
+    
+    function createConfig(dataSourceName: string, showValues: string, groupBy: string): ChartConfig {
         return {
             id: Math.random().toString(36).slice(2, 12),
             index: 0,
-            dataSourceName: dsNames[0]?.toString() ?? "<No Data>",
+            dataSourceName,
             chartType: "bar",
-            showValues: attributeKeys[0]?.toString() ?? "<No Data>",
-            groupBy: attributeKeys[0]?.toString() ?? "<No Data>",
+            showValues,
+            groupBy,
             startColor: $startColor,
             endColor: $endColor,
         };
+    }
+
+    async function handleDataSourceChange() {
+        attributeKeys = await db.get(config.dataSourceName).metadata.toCollection().primaryKeys()
+        config.showValues = attributeKeys[0];
+        config.groupBy = attributeKeys[0];
     }
 
     function handleCreateChart() {
@@ -74,7 +59,7 @@
         chartToEdit.set("");
     }
 
-    export async function saveChartConfig() {
+    async function saveChartConfig() {
         if (config.index <= 0) {
         const count = await db.vyssuals.chartConfigs.count()
         config.index = count + 1;
@@ -95,7 +80,7 @@
                 <div>
                     <div class="config-option">
                         <label for="dataSource">Data Source:</label>
-                        <select class="config-select" id="dataSource" bind:value={config.dataSourceName}>
+                        <select class="config-select" id="dataSource" bind:value={config.dataSourceName} on:change={handleDataSourceChange}>
                             {#each dsNames as name}
                                 <option value={name}>{name}</option>
                             {/each}
