@@ -7,6 +7,7 @@
     import { db } from "../data/databaseManager";
     import { onMount } from "svelte";
     import type { Writable } from "svelte/store";
+    import { blur } from "svelte/transition";
 
     const left = window.innerWidth / 2 - 135;
     const top = window.innerHeight / 2 - 250;
@@ -88,7 +89,7 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <FloatingWindow on:click={hideChartEditor}>
     <Draggable {left} {top}>
-        <div class="chart-editor" id="chartEditor">
+        <div class="chart-editor" id="chartEditor" transition:blur={{ duration: 100 }}>
             <h1>Chart Editor</h1>
             {#if config && attributeKeys && dsNames}
                 <div>
