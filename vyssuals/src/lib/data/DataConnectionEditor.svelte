@@ -8,40 +8,45 @@
     import { db } from "./databaseManager";
     import { blur } from "svelte/transition";
     import { loadCSVFile } from "./csvUtils";
+    import { onMount } from "svelte";
 
     let files: FileList | null = null;
-
-    $: if (files) {
-        const file = files?.[0];
-        if (file) {
-            const name = file.name;
-            if (db.dataSourceNames.some((item) => item === name)) {
-                alert(`File is already a data source: ${name}`);
-            } else {
-                loadCSVFile(file).then((dataPayload): void => {
-                    db.get(name).push("file", dataPayload);
-            });
-            }
-            files = null;
-        }
-    }
-
     let wsDataSourcesPromise: Promise<string[]> = Promise.resolve([]);
     let fileDataSourcesPromise: Promise<string[]> = Promise.resolve([]);
 
-    $: wsDataSourcesPromise = new Promise(async (resolve) => {
-        const promises = Array.from(db.databases.values()).map((db) => db.type.then((type) => (type === "websocket" ? db.name : null)));
-        const names = (await Promise.all(promises)).filter(Boolean) as string[];
-        resolve(names);
-    });
-
-    $: fileDataSourcesPromise = new Promise(async (resolve) => {
-        const promises = Array.from(db.databases.values()).map((db) => db.type.then((type) => (type === "file" ? db.name : null)));
-        const names = (await Promise.all(promises)).filter(Boolean) as string[];
-        resolve(names);
-    });
+    $: wsDataSourcesPromise = getDataSources("websocket");
+    $: fileDataSourcesPromise = getDataSources("file")
+    $: allDataSourcesPromise = Promise.all([wsDataSourcesPromise, fileDataSourcesPromise]);
 
     $: chartConfigs = db.vyssuals._chartConfigs;
+
+    async function getDataSources(type: string): Promise<string[]> {
+        return new Promise(async (resolve) => {
+            const promises = Array.from(db.databases.values()).map((db) => db.type.then((dbType) => (dbType === type ? db.name : null)));
+            const names = (await Promise.all(promises)).filter(Boolean) as string[];
+            resolve(names);
+        });
+    }
+
+    async function handleFileSelection(e: Event) {
+        if (e.target instanceof HTMLInputElement) {
+            files = e.target.files;
+            if (files) {
+                let file = files[0];
+                if (file) {
+                    const name = file.name;
+                    if (db.dataSourceNames.some((item) => item === name)) {
+                        alert(`File is already a data source: ${name}`);
+                    } else {
+                        let dataPayload = await loadCSVFile(file)
+                        db.get(name).push("file", dataPayload);
+                    }
+                    fileDataSourcesPromise = getDataSources("file");
+                    files = null;
+                }
+            }
+        }
+    }
 
     function hideDataSourceEditor() {
         showDataConnectionEditor.set(false);
@@ -95,6 +100,8 @@
 
     function handleRemoveItem(dataSourceName: string) {
         db.deleteDatabase(dataSourceName);
+        fileDataSourcesPromise = getDataSources("file");
+        wsDataSourcesPromise = getDataSources("websocket");
     }
 </script>
 
@@ -189,14 +196,16 @@
         {/await}
         <div>
             <label for="filePicker">Add CSV:</label>
-            <input type="file" id="filePicker" accept=".csv" bind:files />
+            <input type="file" id="filePicker" accept=".csv"  on:change={handleFileSelection}/>
         </div>
 
-        <!-- {#if fileDataSources || wsDataSources}
+        {#await allDataSourcesPromise then allDataSources}
+            {#if allDataSources.length > 0}
                 <div style="padding-top: 1em;">
                     <GradientButton on:click={handleAddChart} />
                 </div>
-            {/if} -->
+            {/if}
+        {/await}
     </div>
 </FloatingWindow>
 
