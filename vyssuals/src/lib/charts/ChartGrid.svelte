@@ -7,6 +7,7 @@
     import type { ChartConfig } from "../types";
     import { liveQuery } from "dexie";
     import { blur } from "svelte/transition";
+    import { flip } from "svelte/animate";
 
 
     let gridItems: any = [];
@@ -55,7 +56,7 @@
 <div class="grid-container">
     {#if $chartConfigs}
         {#each $chartConfigs as config, index (config.id)}
-            <div class="grid-item" bind:this={gridItems[index]} style="width: {width[config.chartType]}" transition:blur={{ duration: 500 }}>
+            <div class="grid-item" bind:this={gridItems[index]} style="width: {width[config.chartType]}" transition:blur={{ duration: 500 }} animate:flip={{ duration: 300 }}>
                 <Chart config={config} />
                 <button title="Close" class="close-button" on:click={() => handleRemoveChart(config)}>&times;</button>
                 <button title="Edit" class="edit-button" on:click={() => handleEditChart(config)}>&#9998;</button>
