@@ -1,5 +1,5 @@
 import Dexie, { liveQuery, type IndexableType, type Observable, type PromiseExtended } from "dexie";
-import type { Header, Update, Item, Versions, Attributes, Info } from "../types";
+import type { Header, Update, Item, Versions, Attributes, Info, DataPayload } from "../types";
 import { getSelectedItems, getLatestItemValue, getLatestItemAttributes } from "./itemUtils";
 
 export class DataSourceDatabase extends Dexie {
@@ -40,12 +40,25 @@ export class DataSourceDatabase extends Dexie {
         await this.info.put({key: "type", value: type});
     }
 
-    addUpdate(update: Update): void {
+    push(type: string, data: DataPayload): void {
+        this.setType(type)
+        if (data.data) {
+            this.addItems(data.data);
+        }
+        if (data.metadata) {
+            this.addMetadata(data.metadata);
+        }
+        if (data.update) {
+            this.addUpdate(data.update);
+        }
+    }
+
+    private addUpdate(update: Update): void {
         this.updates.add(update).catch((error) => {}); // Ignore errors
         this.setLastUpdate(update.timestamp.toString());
     }
 
-    addMetadata(metadata: Header[]): void {
+    private addMetadata(metadata: Header[]): void {
         if (metadata.length > 1) {
             this.metadata.bulkAdd(metadata, { allKeys: true }).catch((error) => {
                 if (error instanceof Dexie.BulkError) {
@@ -70,7 +83,7 @@ export class DataSourceDatabase extends Dexie {
         return this.metadata.get(name);
     }
 
-    addItems(items: Item[]): void {
+    private addItems(items: Item[]): void {
         items.forEach((item) => this.addItem(item));
     }
 

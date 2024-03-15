@@ -24,17 +24,7 @@ function processDataMessage(message: WebSocketMessage): void {
     if (message.type === "data") {
         if (!message.senderName) return;
         if (message.payload) {
-            const database = db.get(message.senderName);
-            database.setType("websocket");
-            if (message.payload.data) {
-                database.addItems(message.payload.data);
-            }
-            if (message.payload.metadata) {
-                database.addMetadata(message.payload.metadata);
-            }
-            if (message.payload.update) {
-                database.addUpdate(message.payload.update);
-            }
+            db.get(message.senderName).push("websocket", message.payload);
         }
     }
 }
