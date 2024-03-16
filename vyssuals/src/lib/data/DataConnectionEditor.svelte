@@ -48,12 +48,12 @@
         }
     }
 
-    function hideDataSourceEditor() {
+    function hideDataConnectionEditor() {
         showDataConnectionEditor.set(false);
     }
 
     function handleAddChart() {
-        hideDataSourceEditor();
+        hideDataConnectionEditor();
         showChartEditor.set(true);
     }
 
@@ -101,9 +101,9 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<FloatingWindow on:click={hideDataSourceEditor}>
+<FloatingWindow on:click={hideDataConnectionEditor}>
     <div class="dataconnection-editor" transition:blur={{ duration: 100 }}>
-        <button title="Close" class="close-button" on:click={() => hideDataSourceEditor()}>&times;</button>
+        <button title="Close" class="close-button" on:click={() => hideDataConnectionEditor()}>&times;</button>
         <h1>Real-Time Connections</h1>
         {#await wsDataSourcesPromise then wsDataSources}
             {#if wsDataSources.length > 0}
