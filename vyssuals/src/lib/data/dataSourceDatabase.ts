@@ -79,6 +79,12 @@ export class DataSourceDatabase extends Dexie {
         });
     }
 
+    updateHeaders(headers: Header[]): void {
+        this.metadata.bulkPut(headers).catch((error) => {
+            console.error(`Failed to bulk update metadata`)
+        })
+    }
+
     getHeaderByName(name: string): PromiseExtended<Header | undefined> {
         return this.metadata.get(name);
     }
@@ -121,5 +127,20 @@ export class DataSourceDatabase extends Dexie {
 
             resolve(latestAttributes);
         });
+    }
+
+    async addAnalyticsToHeaders(): Promise<void> {
+        const headers = await this.metadata.toCollection().toArray();
+        const lastUpdate = await this.lastUpdate;
+        const update = await this.updates.get(lastUpdate);
+        if (update) {
+            for (const header of headers) {
+                const values = await this.getLatestValues(header.name, update.visibleItemIds);
+                const uniqueValues = new Set(values).size;
+                header.uniqueValues = uniqueValues;
+                header.cardinalityRatio = uniqueValues / values.length;
+            }
+        }
+        this.updateHeaders(headers);
     }
 }
