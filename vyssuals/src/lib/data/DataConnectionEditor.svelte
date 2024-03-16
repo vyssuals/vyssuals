@@ -4,7 +4,7 @@
     import type { ChartConfig, DataSource, Header } from "../types";
     import GradientButton from "../buttons/GradientButton.svelte";
     import ConnectorList from "../connectors/ConnectorList.svelte";
-    // import { autoChart } from "../charts/AutoCharts";
+    import { autoChart } from "../charts/AutoCharts";
     import { db } from "./databaseManager";
     import { blur } from "svelte/transition";
     import { loadCSVFile } from "./csvUtils";
@@ -57,19 +57,21 @@
         showChartEditor.set(true);
     }
 
-    async function handleAutoChart(dataSource: DataSource) {
-        // try {
-        //   const autoChartConfig: ChartConfig[] = await autoChart(
-        //     dataSource,
-        //     5,
-        //     $startColor,
-        //     $endColor
-        //   );
-        //   chartConfigs.update((prev) => [...prev, ...autoChartConfig]);
-        // } catch (error) {
-        //   console.error("Error generating auto chart:", error);
-        // }
-        console.log("fix me please! (handleAutoChart)");
+    async function handleAutoChart(dataSourceName: string) {
+        const ds = db.get(dataSourceName)
+        const _ = await ds.addAnalyticsToHeaders()
+        try {
+          const autoChartConfigs: ChartConfig[] = await autoChart(
+            dataSourceName,
+            await ds.metadata.toCollection().toArray(),
+            5,
+            $startColor,
+            $endColor
+          );
+          db.vyssuals.addChartConfigs(autoChartConfigs)
+        } catch (error) {
+          console.error("Error generating auto chart:", error);
+        }
     }
 
     async function handleReloadCSVFile(dataSourceName: string, e: Event) {
@@ -144,8 +146,7 @@
                                 <td
                                     ><GradientButton
                                         on:click={() => {
-                                            // handleAutoChart(item);
-                                            console.log("please implement meeee (auto chart)!");
+                                            handleAutoChart(item);
                                         }}
                                         buttonText="Add Charts"
                                     /></td
