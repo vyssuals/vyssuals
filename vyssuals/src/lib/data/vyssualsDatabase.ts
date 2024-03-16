@@ -21,4 +21,13 @@ export class VyssualsDatabase extends Dexie {
     get _chartConfigs(): Observable<ChartConfig[]> {
         return liveQuery(() => this.chartConfigs.toArray());
     }
+
+    async addChartConfigs(configs: ChartConfig[]): Promise<void> {
+        let maxIndex: number = await this.chartConfigs.count()
+        configs.forEach((config) => {
+            maxIndex += 1 // this may need to be moved after the index assignment
+            config.index = maxIndex
+            this.chartConfigs.add(config)
+        })
+    }
 }
