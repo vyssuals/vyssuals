@@ -1,6 +1,6 @@
 import Dexie, { liveQuery, type IndexableType, type Observable, type PromiseExtended } from "dexie";
-import type { Header, Update, Item, Versions, Attributes, Info, DataPayload } from "../types";
-import { getSelectedItems, getLatestItemValue, getLatestItemAttributes } from "./itemUtils";
+import type { Header, Update, Item, Versions, Info, DataPayload } from "../types";
+import { getSelectedItems, getItemValue } from "./itemUtils";
 import { ensureUnitSymbol } from "./headerUtils";
 
 export class DataSourceDatabase extends Dexie {
@@ -119,18 +119,9 @@ export class DataSourceDatabase extends Dexie {
     getLatestValues(attribute: string, items: string[] = []): Promise<(string | number | undefined)[]> {
         return new Promise(async (resolve) => {
             const selectedItems = await getSelectedItems(this.items, items);
-            const latestValues = selectedItems.map((item) => getLatestItemValue(item.versions, attribute));
+            const latestValues = selectedItems.map((item) => getItemValue(item.versions, attribute));
 
             resolve(latestValues);
-        });
-    }
-
-    getLatestAttributes(items: string[] = []): Promise<Attributes[]> {
-        return new Promise(async (resolve) => {
-            const selectedItems = await getSelectedItems(this.items, items);
-            const latestAttributes = selectedItems.map((item) => getLatestItemAttributes(item.versions));
-
-            resolve(latestAttributes);
         });
     }
 
