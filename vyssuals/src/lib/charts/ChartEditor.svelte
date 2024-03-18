@@ -1,11 +1,12 @@
 <script lang="ts">
     import { startColor, endColor, chartToEdit, showChartEditor } from "../store";
-    import type { ChartConfig } from "../types";
+    import type { ChartConfig, _Update } from "../types";
     import Draggable from "../wrapper/Draggable.svelte";
     import FloatingWindow from "../wrapper/FloatingWindow.svelte";
     import { db } from "../data/databaseManager";
     import { onMount } from "svelte";
     import { blur } from "svelte/transition";
+    import { DataSourceDatabase } from "../data/dataSourceDatabase";
 
     const left = window.innerWidth / 2 - 135;
     const top = window.innerHeight / 2 - 250;
@@ -13,34 +14,50 @@
     let config: ChartConfig;
     let dsNames: string[];
     let attributeKeys: string[];
+    let updates: _Update[];
 
     onMount(async () => {
         dsNames = db.dataSourceNames;
-            const dbConfig = await db.vyssuals.chartConfigs.get($chartToEdit);
-            if (dbConfig) {
-                config = dbConfig;
-                attributeKeys = await db.get(config.dataSourceName).metadata.toCollection().primaryKeys() as string[];
-            } else {
-                attributeKeys = await db.get(dsNames[0]).metadata.toCollection().primaryKeys() as string[];
-                config = createConfig(dsNames[0], attributeKeys[0], attributeKeys[0]);
-            }
+        const dbConfig = await db.vyssuals.chartConfigs.get($chartToEdit);
+        if (dbConfig) {
+            config = dbConfig;
+            updates = await getUpdates(db.get(config.dataSourceName));
+            attributeKeys = (await db.get(config.dataSourceName).metadata.toCollection().primaryKeys()) as string[];
+        } else {
+            const ds = db.get(dsNames[0]);
+            updates = await getUpdates(ds);
+            attributeKeys = (await ds.metadata.toCollection().primaryKeys()) as string[];
+            config = createConfig(dsNames[0], attributeKeys[0], attributeKeys[0], updates[updates.length - 1].timestamp);
+        }
     });
-    
-    function createConfig(dataSourceName: string, showValues: string, groupBy: string): ChartConfig {
+
+    function createConfig(dataSourceName: string, showValues: string, groupBy: string, update: string): ChartConfig {
         return {
             id: Math.random().toString(36).slice(2, 12),
-            index: 0,
+            index: -1,
             dataSourceName,
             chartType: "bar",
             showValues,
             groupBy,
             startColor: $startColor,
             endColor: $endColor,
+            update,
         };
     }
 
+    async function getUpdates(ds: DataSourceDatabase): Promise<_Update[]> {
+        let updates =  (await ds.updates.orderBy("timestamp").toArray()) as _Update[];
+        updates.push({ timestamp: "", name: "Use Latest", type: "auto" });
+        return updates;
+    }
+
+    function formatUpdate(update: _Update) {
+        if (update.timestamp === "") return update.name;
+        return `${update.name} (${new Date(update.timestamp).toLocaleString()}, ${update.type})`;
+    }
+
     async function handleDataSourceChange() {
-        attributeKeys = await db.get(config.dataSourceName).metadata.toCollection().primaryKeys()
+        attributeKeys = await db.get(config.dataSourceName).metadata.toCollection().primaryKeys();
         config.showValues = attributeKeys[0];
         config.groupBy = attributeKeys[0];
     }
@@ -60,9 +77,9 @@
     }
 
     async function saveChartConfig() {
-        if (config.index <= 0) {
-        const count = await db.vyssuals.chartConfigs.count()
-        config.index = count + 1;
+        if (config.index < 0) {
+            const count = await db.vyssuals.chartConfigs.count();
+            config.index = count + 1;
         }
         db.vyssuals.chartConfigs.put(config);
         startColor.set(config.startColor);
@@ -83,6 +100,15 @@
                         <select class="config-select" id="dataSource" bind:value={config.dataSourceName} on:change={handleDataSourceChange}>
                             {#each dsNames as name}
                                 <option value={name}>{name}</option>
+                            {/each}
+                        </select>
+                    </div>
+
+                    <div class="config-option">
+                        <label for="update">Update:</label>
+                        <select class="config-select" id="update" bind:value={config.update}>
+                            {#each updates as update}
+                                <option value={update.timestamp}>{formatUpdate(update)}</option>
                             {/each}
                         </select>
                     </div>
