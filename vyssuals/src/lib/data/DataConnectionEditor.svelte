@@ -1,14 +1,13 @@
 <script lang="ts">
     import FloatingWindow from "../wrapper/FloatingWindow.svelte";
     import { showDataConnectionEditor, showChartEditor, startColor, endColor, showDataSourceEditor, dataSourceToEdit } from "../store";
-    import type { ChartConfig, DataSource, Header } from "../types";
+    import type { ChartConfig } from "../types";
     import GradientButton from "../buttons/GradientButton.svelte";
     import ConnectorList from "../connectors/ConnectorList.svelte";
     import { autoChart } from "../charts/AutoCharts";
     import { db } from "./databaseManager";
     import { blur } from "svelte/transition";
     import { loadCSVFile } from "./csvUtils";
-    import { onMount } from "svelte";
 
     let files: FileList | null = null;
     let wsDataSourcesPromise: Promise<string[]> = Promise.resolve([]);
@@ -17,8 +16,6 @@
     $: wsDataSourcesPromise = getDataSources("websocket");
     $: fileDataSourcesPromise = getDataSources("file");
     $: allDataSourcesPromise = Promise.all([wsDataSourcesPromise, fileDataSourcesPromise]);
-
-    $: chartConfigs = db.vyssuals._chartConfigs;
 
     async function getDataSources(type: string): Promise<string[]> {
         return new Promise(async (resolve) => {
