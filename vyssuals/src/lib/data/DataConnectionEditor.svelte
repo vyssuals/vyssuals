@@ -92,10 +92,13 @@
     }
 
     function handleRemoveItem(dataSourceName: string) {
-        db.deleteDatabase(dataSourceName);
-        fileDataSourcesPromise = getDataSources("file");
-        wsDataSourcesPromise = getDataSources("websocket");
+        if (confirm(`Are you sure you want to remove the data source: ${dataSourceName}`)) {
+            db.deleteDatabase(dataSourceName);
+            fileDataSourcesPromise = getDataSources("file");
+            wsDataSourcesPromise = getDataSources("websocket");
+        }
     }
+    
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
