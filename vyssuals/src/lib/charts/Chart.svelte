@@ -1,7 +1,7 @@
 <!-- Chart.svelte -->
 <script lang="ts">
-    import type { ChartConfig } from "../types";
-    import { getLatestItemValue, getLatestItemAttributes } from "../data/itemUtils";
+    import type { ChartConfig, Item } from "../types";
+    import { getItemValue, getItemAttributes } from "../data/itemUtils";
     import { liveQuery } from "dexie";
     import BarChart from "./BarChart.svelte";
     import DoughnutChart from "./DoughnutChart.svelte";
@@ -15,12 +15,24 @@
     let ds: DataSourceDatabase;
     $: ds = db.get(config.dataSourceName);
 
-    $: items = liveQuery(() =>
-        ds.lastUpdate.then((timestamp) => ds.updates.get(timestamp)).then((update) => ds.items.bulkGet(update?.visibleItemIds || []))
+    let timestamp: string = "";
+    $: {
+        async function getTimestamp() {
+            if (config.update != "") {
+                timestamp = config.update;
+            } else {
+                timestamp = await ds.lastUpdate;
+            }
+        }
+        getTimestamp();
+    }
+
+    $: items = liveQuery(() => 
+            ds.updates.get(timestamp).then((update) => ds.items.bulkGet(update?.visibleItemIds || []))
     );
 
-    $: labels = [...new Set($items?.map((item) => item && getLatestItemValue(item.versions, config.groupBy).toString()).filter(Boolean).sort())];
-    $: attributes = $items?.map((item) => item && getLatestItemAttributes(item.versions)).filter(Boolean) || [];
+    $: labels = [...new Set($items?.map((item) => item && getItemValue(item.versions, config.groupBy, config.update).toString()).filter(Boolean).sort())];
+    $: attributes = $items?.map((item) => item && getItemAttributes(item.versions, config.update)).filter(Boolean) || [];
     $: header = liveQuery(() => ds.metadata.get(config.showValues));
     $: chartData = { labels, attributes, header: $header };
 
