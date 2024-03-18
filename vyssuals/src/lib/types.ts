@@ -7,6 +7,7 @@ export interface ChartConfig {
     groupBy: string;
     startColor: string;
     endColor: string;
+    update: string; // The timestamp of the update to take
 }
 
 export interface RawChartData {
@@ -53,6 +54,12 @@ export interface Update {
     type: "auto" | "manual";
     name: string;
     visibleItemIds: string[];
+}
+
+export interface _Update {
+    timestamp: string;
+    type: "auto" | "manual";
+    name: string;
 }
 
 export interface Item {
