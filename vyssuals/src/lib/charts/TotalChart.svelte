@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ChartConfig, RawChartData } from "../types";
     import { formatSubtitle, titleCase } from "../utils/textUtils";
+    import Chart from "./Chart.svelte";
     import { sumAttributeValues } from "./chartDataUtils";
 
     export let config: ChartConfig;
@@ -46,6 +47,7 @@
 <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
 <div class="total">
     <h1 class="total-number">{abbreviateNumber(total)}</h1>
+    <h3>{chartData.header.unitSymbol}</h3>
 </div>
 {#if total > 999}
     <details>
@@ -64,6 +66,7 @@
     .total {
         margin-top: 90px;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
     }
