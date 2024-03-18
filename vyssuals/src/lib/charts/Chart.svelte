@@ -15,10 +15,10 @@
     let ds: DataSourceDatabase;
     $: ds = db.get(config.dataSourceName);
 
-    let timestamp: string = "";
+    let timestamp: string = "Latest Update";
     $: {
         async function getTimestamp() {
-            if (config.update != "") {
+            if (config.update != "Latest Update") {
                 timestamp = config.update;
             } else {
                 timestamp = await ds.lastUpdate;

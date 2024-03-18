@@ -3,7 +3,7 @@
     import { calculateChartData } from "./chartDataUtils";
     import { Doughnut } from "svelte-chartjs";
     import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, type ChartOptions } from "chart.js";
-    import { formatTitle } from "../utils/textUtils";
+    import { formatTitle, formatSubtitle } from "../utils/textUtils";
 
     export let config: ChartConfig;
     export let chartData: RawChartData;
@@ -11,6 +11,8 @@
     let data: any;
     $: calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config).then((value) => { data = value });
     $: title = formatTitle(config);
+    $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
+
 
     ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
@@ -41,6 +43,6 @@
 
 <h1 class="chart-title">{title}</h1>
 {#if data}
-    <h3 title="You can edit the unit symbol in the settings of this datasource.">{chartData.header.unitSymbol}</h3>
+<h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
     <Doughnut data={data} {options} style="height: 310px; width: 380px" />
 {/if}

@@ -2,7 +2,7 @@ import type { Attributes, Item, Versions } from "../types";
 import Dexie from "dexie";
 
 export function getItemAttributes(versions: Versions, timestamp: string = ""): Attributes {
-    if (timestamp != "") {
+    if (timestamp != "Latest Update") {
         if (timestamp in versions) { 
             console.log(`found timestamp: ${timestamp}, returning`)
             return versions[timestamp]; }
@@ -24,7 +24,7 @@ export function getItemAttributes(versions: Versions, timestamp: string = ""): A
 }
 
 export function getItemValue(versions: Versions, key: string, timestamp: string = ""): string | number {
-    if (timestamp != "") {
+    if (timestamp != "Latest Update") {
         // try to get the value from the specified timestamp
         if (timestamp in versions) { return versions[timestamp][key] ?? ""; }
         // if the timestamp is not in versions, get the values from a version prior to the specified timestamp

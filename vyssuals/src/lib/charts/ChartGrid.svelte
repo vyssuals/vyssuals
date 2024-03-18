@@ -30,7 +30,8 @@
     const width: Record<string, string> = {
         bar: "595px",
         doughnut: "380px",
-        total: "165px",
+        total: "280px",
+        // total: "165px",
     };
 
     function handleRemoveChart(chart: ChartConfig) {
@@ -74,8 +75,6 @@
                 <button title="Close" class="close-button" on:click={() => handleRemoveChart(config)}>&times;</button>
                 <button title="Edit" class="edit-button" on:click={() => handleEditChart(config)}>&#9998;</button>
                 <button title="Download Image" class="export-button" on:click={() => exportNodeAsPNG(index)}>&DownArrowBar;</button>
-
-                <h3 class="datasource-overlay">{$chartConfigs[index].dataSourceName}</h3>
             </div>
         {/each}
     </div>
@@ -94,7 +93,7 @@
         position: relative;
         height: 400px;
         background-color: var(--card-background-color);
-        padding: 20px;
+        padding: 0.3em 20px 20px;
         border-radius: 1em;
     }
 
@@ -141,8 +140,8 @@
 
     .edit-button {
         position: absolute;
-        top: 0.3em;
-        left: 0.3em;
+        top: 1.9em;
+        right: 0.3em;
     }
 
     .edit-button:hover {
@@ -151,8 +150,8 @@
 
     .export-button {
         position: absolute;
-        top: 0.3em;
-        left: 2.4em;
+        top: 3.4em;
+        right: 0.3em;
     }
 
     .export-button:hover {

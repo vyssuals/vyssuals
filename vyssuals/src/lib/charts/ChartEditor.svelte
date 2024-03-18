@@ -47,12 +47,12 @@
 
     async function getUpdates(ds: DataSourceDatabase): Promise<_Update[]> {
         let updates =  (await ds.updates.orderBy("timestamp").toArray()) as _Update[];
-        updates.push({ timestamp: "", name: "Use Latest", type: "auto" });
+        updates.push({ timestamp: "Latest Update", name: "Use Latest", type: "auto" });
         return updates;
     }
 
     function formatUpdate(update: _Update) {
-        if (update.timestamp === "") return update.name;
+        if (update.timestamp === "Latest Update") return update.name;
         return `${update.name} (${new Date(update.timestamp).toLocaleString()}, ${update.type})`;
     }
 
@@ -60,6 +60,7 @@
         attributeKeys = await db.get(config.dataSourceName).metadata.toCollection().primaryKeys();
         config.showValues = attributeKeys[0];
         config.groupBy = attributeKeys[0];
+        updates = await getUpdates(db.get(config.dataSourceName));
     }
 
     function handleCreateChart() {

@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { ChartConfig, RawChartData } from "../types";
-    import { titleCase } from "../utils/textUtils";
+    import { formatSubtitle, titleCase } from "../utils/textUtils";
     import { sumAttributeValues } from "./chartDataUtils";
 
     export let config: ChartConfig;
@@ -10,6 +10,8 @@
     let fullFormattedNumber: string = "";
     
     $: title = titleCase(config.showValues);
+    $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
+
     $: if (chartData.header.type === "number") {
             total = sumAttributeValues(chartData.attributes, config.showValues) || 0;
             fullFormattedNumber = formatNumber(total);
@@ -40,12 +42,11 @@
     }
 </script>
 
-<h1>Total</h1>
-<h2>{title}</h2>
+<h1 class="chart-title">Total {title}</h1>
+<h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
 <div class="total">
     <h1 class="total-number">{abbreviateNumber(total)}</h1>
 </div>
-<h3 title="You can edit the unit symbol in the settings of this datasource.">{chartData.header.unitSymbol}</h3>
 {#if total > 999}
     <details>
         <summary>&#9781;</summary>
@@ -61,15 +62,10 @@
     }
 
     .total {
+        margin-top: 90px;
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-
-    h2 {
-        overflow: hidden; /* Hide overflowed content */
-        text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
-        white-space: nowrap; /* Prevent text from wrapping onto the next line */
     }
 
     h3 {

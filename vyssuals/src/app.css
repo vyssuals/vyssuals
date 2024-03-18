@@ -82,6 +82,16 @@ label {
   overflow: hidden; /* Hide overflowed content */
   text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
   white-space: nowrap; /* Prevent text from wrapping onto the next line */
+  text-align: left; 
+  padding: 0.1em 0.5em 0 0.1em;
+}
+
+.chart-subtitle {
+  overflow: hidden; /* Hide overflowed content */
+  text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
+  white-space: nowrap; /* Prevent text from wrapping onto the next line */
+  text-align: left; 
+  padding: 0 2em 0 0.4em;
 }
 
 .datasource-overlay {
