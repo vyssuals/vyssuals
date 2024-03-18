@@ -15,7 +15,7 @@
     let fileDataSourcesPromise: Promise<string[]> = Promise.resolve([]);
 
     $: wsDataSourcesPromise = getDataSources("websocket");
-    $: fileDataSourcesPromise = getDataSources("file")
+    $: fileDataSourcesPromise = getDataSources("file");
     $: allDataSourcesPromise = Promise.all([wsDataSourcesPromise, fileDataSourcesPromise]);
 
     $: chartConfigs = db.vyssuals._chartConfigs;
@@ -38,7 +38,7 @@
                     if (db.dataSourceNames.some((item) => item === name)) {
                         alert(`File is already a data source: ${name}`);
                     } else {
-                        let dataPayload = await loadCSVFile(file)
+                        let dataPayload = await loadCSVFile(file);
                         db.get(name).push("file", dataPayload);
                     }
                     fileDataSourcesPromise = getDataSources("file");
@@ -58,33 +58,33 @@
     }
 
     async function handleAutoChart(dataSourceName: string) {
-        const ds = db.get(dataSourceName)
-        const _ = await ds.addAnalyticsToHeaders()
+        const ds = db.get(dataSourceName);
+        const _ = await ds.addAnalyticsToHeaders();
         try {
-          const autoChartConfigs: ChartConfig[] = await autoChart(
-            dataSourceName,
-            await ds.metadata.toCollection().toArray(),
-            5,
-            $startColor,
-            $endColor
-          );
-          db.vyssuals.addChartConfigs(autoChartConfigs)
+            const autoChartConfigs: ChartConfig[] = await autoChart(
+                dataSourceName,
+                await ds.metadata.toCollection().toArray(),
+                5,
+                $startColor,
+                $endColor
+            );
+            db.vyssuals.addChartConfigs(autoChartConfigs);
         } catch (error) {
-          console.error("Error generating auto chart:", error);
+            console.error("Error generating auto chart:", error);
         }
     }
 
     async function handleReloadCSVFile(dataSourceName: string, e: Event) {
         // check if file is the same as the one already loaded
         if (e.target instanceof HTMLInputElement && e.target.files && e.target.files.length > 0) {
-          const file: File = e.target.files[0];
-          if (dataSourceName == file.name) {
-            let dataPayload = await loadCSVFile(file)
-            db.get(dataSourceName).push("file", dataPayload);
-            return;
-          } else {
-            alert("Ooops, clicked on the wrong file? Please select the same file to reload it.");
-          }
+            const file: File = e.target.files[0];
+            if (dataSourceName == file.name) {
+                let dataPayload = await loadCSVFile(file);
+                db.get(dataSourceName).push("file", dataPayload);
+                return;
+            } else {
+                alert("Ooops, clicked on the wrong file? Please select the same file to reload it.");
+            }
         }
     }
 
@@ -110,9 +110,37 @@
         {#await wsDataSourcesPromise then wsDataSources}
             {#if wsDataSources.length > 0}
                 <div style="padding-bottom: 1em;">
-                    {#each wsDataSources as item (item)}
-                        <p class="file-path" style="margin: 2px;">{item}</p>
-                    {/each}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Auto Create</th>
+                                <th>Path</th>
+                                <th>Settings</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each wsDataSources as item (item)}
+                                <tr>
+                                    <td
+                                        ><GradientButton
+                                            on:click={() => {
+                                                handleAutoChart(item);
+                                            }}
+                                            buttonText="Add Charts"
+                                        /></td
+                                    >
+                                    <td><p class="file-path">{item}</p></td>
+                                    <td class="symbol"
+                                        ><button style="font-size: 25px; padding: 0.15em" on:click={() => handleEditButton(item)}
+                                            >&#9881;</button
+                                        ></td
+                                    >
+                                    <td class="symbol"><button on:click={() => handleRemoveItem(item)}>&times;</button></td>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
                 </div>
             {:else}
                 <p>
@@ -191,7 +219,7 @@
         {/await}
         <div>
             <label for="filePicker">Add CSV:</label>
-            <input type="file" id="filePicker" accept=".csv"  on:change={handleFileSelection}/>
+            <input type="file" id="filePicker" accept=".csv" on:change={handleFileSelection} />
         </div>
 
         {#await allDataSourcesPromise then allDataSources}
