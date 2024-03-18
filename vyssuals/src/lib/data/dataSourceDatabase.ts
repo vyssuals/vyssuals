@@ -1,6 +1,7 @@
 import Dexie, { liveQuery, type IndexableType, type Observable, type PromiseExtended } from "dexie";
 import type { Header, Update, Item, Versions, Attributes, Info, DataPayload } from "../types";
 import { getSelectedItems, getLatestItemValue, getLatestItemAttributes } from "./itemUtils";
+import { ensureUnitSymbol } from "./headerUtils";
 
 export class DataSourceDatabase extends Dexie {
     updates: Dexie.Table<Update, string>;
@@ -59,6 +60,10 @@ export class DataSourceDatabase extends Dexie {
     }
 
     private addMetadata(metadata: Header[]): void {
+        if (metadata) {
+            metadata.forEach((header) => { ensureUnitSymbol(header) });
+        } else { return; }
+        
         if (metadata.length > 1) {
             this.metadata.bulkAdd(metadata, { allKeys: true }).catch((error) => {
                 if (error instanceof Dexie.BulkError) {
