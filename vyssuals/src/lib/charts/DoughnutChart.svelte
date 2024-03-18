@@ -16,6 +16,7 @@
 
     ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
+    let delayed: any;
     let options: ChartOptions<"doughnut"> = {
         responsive: false,
         plugins: {
@@ -38,6 +39,10 @@
                 },
             },
         },
+        animation: {
+            easing: "easeInOutQuart",
+            duration: 600
+    }
     };
 </script>
 

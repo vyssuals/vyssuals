@@ -47,6 +47,10 @@
                 },
             },
         },
+        animation: {
+            easing: "easeInOutQuart",
+            duration: 600
+    }
     };
 </script>
 
