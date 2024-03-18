@@ -61,6 +61,7 @@
         config.showValues = attributeKeys[0];
         config.groupBy = attributeKeys[0];
         updates = await getUpdates(db.get(config.dataSourceName));
+        config.update = updates[updates.length - 1].timestamp;
     }
 
     function handleCreateChart() {
