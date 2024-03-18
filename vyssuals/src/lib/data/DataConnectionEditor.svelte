@@ -56,9 +56,9 @@
 
     async function handleAutoChart(dataSourceName: string) {
         const ds = db.get(dataSourceName);
-        const _ = await ds.addAnalyticsToHeaders();
+        await ds.addAnalyticsToHeaders();
         try {
-            const autoChartConfigs: ChartConfig[] = await autoChart(
+            const autoChartConfigs: ChartConfig[] = autoChart(
                 dataSourceName,
                 await ds.metadata.toCollection().toArray(),
                 5,
