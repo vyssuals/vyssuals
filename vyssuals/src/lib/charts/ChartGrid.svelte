@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { chartToEdit, showChartEditor } from "../store";
+    import { chartToEdit, showChartEditor, colorSyncChartConfig } from "../store";
     import Chart from "./Chart.svelte";
     import html2canvas from "html2canvas";
     import { formatTitle } from "../utils/textUtils";
@@ -65,6 +65,15 @@
         const title = formatTitle($chartConfigs[index]);
         return `${date}_${title}_${index}.png`;
     }
+
+    function toggleColorSync(config: ChartConfig): void {
+        if ($colorSyncChartConfig && $colorSyncChartConfig.id === config.id) {
+            colorSyncChartConfig.set(null);
+        } else {
+            colorSyncChartConfig.set(config);
+        }
+    }
+
 </script>
 
 {#if $chartConfigs}
@@ -75,6 +84,7 @@
                 <button title="Close" class="close-button" on:click={() => handleRemoveChart(config)}>&times;</button>
                 <button title="Edit" class="edit-button" on:click={() => handleEditChart(config)}>&#9998;</button>
                 <button title="Download Image" class="export-button" on:click={() => exportNodeAsPNG(index)}>&DownArrowBar;</button>
+                <button class="sync-button" on:click={() => toggleColorSync(config)}>Hi</button>
             </div>
         {/each}
     </div>
@@ -102,15 +112,7 @@
         transition: 100ms;
     }
 
-    .grid-item:hover .close-button {
-        visibility: visible;
-    }
-
-    .grid-item:hover .edit-button {
-        visibility: visible;
-    }
-
-    .grid-item:hover .export-button {
+    .grid-item:hover button {
         visibility: visible;
     }
 
@@ -121,35 +123,28 @@
         border: none;
         cursor: pointer;
         visibility: hidden;
+        right: 0.3em;
+        position: absolute;
+    }
+
+    button:hover {
+        filter: drop-shadow(0 0 8px #000000);
     }
 
     .close-button {
-        position: absolute;
         top: 0.3em;
-        right: 0.3em;
-    }
-
-    .close-button:hover {
-        filter: drop-shadow(0 0 8px #000000);
     }
 
     .edit-button {
-        position: absolute;
         top: 1.9em;
-        right: 0.3em;
-    }
-
-    .edit-button:hover {
-        filter: drop-shadow(0 0 8px #000000);
     }
 
     .export-button {
-        position: absolute;
         top: 3.4em;
-        right: 0.3em;
     }
 
-    .export-button:hover {
-        filter: drop-shadow(0 0 8px #000000);
+    .sync-button {
+        top: 5em;
     }
+
 </style>
