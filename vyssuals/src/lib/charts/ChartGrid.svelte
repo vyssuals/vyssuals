@@ -114,11 +114,6 @@
         visibility: visible;
     }
 
-    .grid-item:hover .datasource-overlay {
-        color: var(--color);
-        transition: 0.5s;
-    }
-
     button {
         font-weight: 700;
         font-size: large;
