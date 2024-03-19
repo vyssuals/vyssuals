@@ -19,7 +19,8 @@ export function autoChart(
     headers: Header[],
     amount: number,
     startColor: string,
-    endColor: string
+    endColor: string,
+    update: string = "Latest Update"
 ): ChartConfig[] {
     const chartConfigs: ChartConfig[] = [];
 
@@ -105,6 +106,7 @@ export function autoChart(
             groupBy,
             startColor: startColor.toString(),
             endColor: endColor.toString(),
+            update
         });
     }
     //   console.log("chartConfigs", chartConfigs);
