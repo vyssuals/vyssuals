@@ -1,14 +1,14 @@
 <!-- Chart.svelte -->
 <script lang="ts">
     import type { ChartConfig, Item } from "../types";
-    import { getItemValue, getItemAttributes } from "../data/itemUtils";
-    import { liveQuery } from "dexie";
+    import { liveQuery, type Observable } from "dexie";
     import BarChart from "./BarChart.svelte";
     import DoughnutChart from "./DoughnutChart.svelte";
     import TotalChart from "./TotalChart.svelte";
     import LineChart from "./LineChart.svelte";
     import { db } from "../data/databaseManager";
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
+    import { fetchItems, getLabelsAndAttributes } from "./chartDataUtils";
 
     export let config: ChartConfig;
 
@@ -27,12 +27,17 @@
         getTimestamp();
     }
 
-    $: items = liveQuery(() => 
-            ds.updates.get(timestamp).then((update) => ds.items.bulkGet(update?.visibleItemIds || []))
-    );
+    let items: Observable<Item[]>;
+    $: items = liveQuery(() => fetchItems(ds, timestamp));
 
-    $: labels = [...new Set($items?.map((item) => item && getItemValue(item.versions, config.groupBy, config.update).toString()).filter(Boolean).sort())];
-    $: attributes = $items?.map((item) => item && getItemAttributes(item.versions, config.update)).filter(Boolean) || [];
+    let labels: string[];
+    let attributes: any[];
+
+    $: {
+        const result = $items && getLabelsAndAttributes($items, config.groupBy, config.update);
+        labels = result?.labels;
+        attributes = result?.attributes;
+    }
     $: header = liveQuery(() => ds.metadata.get(config.showValues));
     $: chartData = { labels, attributes, header: $header };
 
