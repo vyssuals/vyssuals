@@ -23,7 +23,7 @@ export function getItemAttributes(versions: Versions, timestamp: string = ""): A
     return latestVersion;
 }
 
-export function getItemValue(versions: Versions, key: string, timestamp: string = ""): string | number {
+export function getItemValue(versions: Versions, key: string, timestamp: string = "Latest Update"): string | number {
     if (timestamp != "Latest Update") {
         // try to get the value from the specified timestamp
         if (timestamp in versions) { return versions[timestamp][key] ?? ""; }
