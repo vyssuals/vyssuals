@@ -1,5 +1,8 @@
 import type { ChartConfig, Header, Attributes,  } from "../types";
 import { createColorArray } from "../utils/colorUtils";
+import { getItemValue, getItemAttributes } from "../data/itemUtils";
+import type { Item } from "../types";
+import type { DataSourceDatabase } from "../data/dataSourceDatabase";
 
 export async function calculateChartData(labels: string[], attributes: Attributes[], dataType: string, config: ChartConfig): Promise<any> {
     let data: number[] = [];
@@ -59,4 +62,16 @@ function countAttributeBy(attributes: Attributes[], aggregateAttribute: string, 
             item && item[groupBy] == label && aggregateAttribute in item ? total + 1 : total,
         0
     );
+}
+
+export function getLabelsAndAttributes(items: Item[], groupBy: string, update: string) {
+    const labels = [...new Set(items.map((item) => item && getItemValue(item.versions, groupBy, update).toString()).filter(Boolean).sort())];
+    const attributes = items.map((item) => item && getItemAttributes(item.versions, update)).filter(Boolean) || [];
+    return { labels, attributes };
+}
+
+export async function fetchItems(ds: DataSourceDatabase, timestamp: string): Promise<Item[]> {
+    const update = await ds.updates.get(timestamp);
+    const rawItems = await ds.items.bulkGet(update?.visibleItemIds || []);
+    return rawItems.filter((item): item is Item => item !== undefined);
 }
