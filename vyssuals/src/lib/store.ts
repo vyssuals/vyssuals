@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 import type { Writable } from "svelte/store";
-
+import type { ChartConfig } from "./types";
 
 // Chart Configs
 export const showChartEditor = writable(false);
@@ -15,3 +15,5 @@ export const showDataConnectionEditor: Writable<boolean> = writable(false);
 
 export const showDataSourceEditor: Writable<boolean> = writable(false);
 export const dataSourceToEdit: Writable<string> = writable("");
+
+export const colorSyncChartConfig: Writable<ChartConfig | null> = writable({} as ChartConfig);
