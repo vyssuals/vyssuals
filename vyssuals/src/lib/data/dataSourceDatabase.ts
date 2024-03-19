@@ -1,5 +1,5 @@
 import Dexie, { liveQuery, type IndexableType, type Observable, type PromiseExtended } from "dexie";
-import type { Header, Update, Item, Versions, Info, DataPayload } from "../types";
+import type { Header, Update, Item, Versions, Info, DataPayload, Attributes } from "../types";
 import { getSelectedItems, getItemValue } from "./itemUtils";
 import { ensureUnitSymbol } from "./headerUtils";
 
@@ -99,8 +99,13 @@ export class DataSourceDatabase extends Dexie {
     }
 
     private async addItem(item: Item) {
+        for (const version in item.versions) {
+            const attributes: Attributes = item.versions[version];
+            if (!attributes.Id) attributes.Id = item.id;
+            if (!attributes.Timestamp) attributes.Timestamp = version;
+            if (!attributes.Count) attributes.Count = 1;
+        }
         const existingItem: Item | undefined = await this.items.get(item.id);
-
         if (existingItem) {
             const mergedVersions: Versions = {
                 ...existingItem.versions,
