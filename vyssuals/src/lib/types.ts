@@ -26,12 +26,23 @@ export interface WebSocketMessage {
     payload?: Payload; // The '?' makes this property optional, data messages will have it, disconnect messages won't
 }
 
-type Payload = DataPayload; // No need for DisconnectPayload anymore
+type Payload = DataPayload | ColorPayload; // No need for DisconnectPayload anymore
 
 export interface DataPayload {
     data?: Item[];
     metadata?: Header[];
     update?: Update; // The IDs of the items that are visible in the sender application
+}
+
+export interface ColorPayload {
+    [key: string]: ColorInformation; // Key is the color, Value is the ColorInformation
+}
+
+export interface ColorInformation {
+    color: string;
+    attributeName: string;
+    attributeValue: string | number;
+    ids: string[];
 }
 
 export interface Header {
