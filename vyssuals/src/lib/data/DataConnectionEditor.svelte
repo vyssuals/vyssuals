@@ -8,6 +8,7 @@
     import { db } from "./databaseManager";
     import { blur } from "svelte/transition";
     import { loadCSVFile } from "./csvUtils";
+    import posthog from "posthog-js";
 
     let files: FileList | null = null;
     let wsDataSourcesPromise: Promise<string[]> = Promise.resolve([]);
@@ -69,6 +70,7 @@
         } catch (error) {
             console.error("Error generating auto chart:", error);
         }
+        posthog.capture("auto_chart_created");
     }
 
     async function handleReloadCSVFile(dataSourceName: string, e: Event) {
@@ -83,12 +85,14 @@
                 alert("Ooops, clicked on the wrong file? Please select the same file to reload it.");
             }
         }
+        posthog.capture("csv_file_reloaded");
     }
 
     function handleEditButton(name: string) {
         dataSourceToEdit.set(name);
         showDataConnectionEditor.set(false);
         showDataSourceEditor.set(true);
+        posthog.capture("data_source_edit");
     }
 
     function handleRemoveItem(dataSourceName: string) {
@@ -97,6 +101,7 @@
             fileDataSourcesPromise = getDataSources("file");
             wsDataSourcesPromise = getDataSources("websocket");
         }
+        posthog.capture("data_source_removed");
     }
     
 </script>

@@ -1,20 +1,21 @@
+import posthog from "posthog-js";
 import type { WebSocketMessage } from "../types";
 import { db } from "./databaseManager";
 
 export const processMessage = (message: string) => {
     const parsedMessage: WebSocketMessage = JSON.parse(message);
-    console.log(parsedMessage);
     if (parsedMessage.type) {
         switch (parsedMessage.type) {
             case "data":
-                // Make sure the payload is of type DataPayload
+                posthog.capture("webSocket_message_received: data");
                 processDataMessage(parsedMessage);
                 break;
             case "disconnect":
+                posthog.capture("webSocket_message_received: disconnect");
                 processDisconnectMessage(parsedMessage);
                 break;
             default:
-                console.log("Unknown message type");
+                posthog.capture("webSocket_message_received: unknown type");
         }
     }
 };

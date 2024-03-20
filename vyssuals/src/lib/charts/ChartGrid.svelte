@@ -8,6 +8,7 @@
     import { liveQuery } from "dexie";
     import { blur } from "svelte/transition";
     import { flip } from "svelte/animate";
+    import posthog from "posthog-js";
 
     let gridItems: any = [];
 
@@ -34,11 +35,13 @@
 
     function handleRemoveChart(chart: ChartConfig) {
         db.vyssuals.chartConfigs.delete(chart.id);
+        posthog.capture("chart_removed", { chartType: chart.chartType });
     }
 
     function handleEditChart(chart: ChartConfig) {
         chartToEdit.set(chart.id);
         showChartEditor.set(true);
+        posthog.capture("chart_edit", { chartType: chart.chartType });
     }
 
     async function exportNodeAsPNG(index: number): Promise<void> {
@@ -55,6 +58,7 @@
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        posthog.capture("chart_exported", { chartType: $chartConfigs[index].chartType });
     }
 
     function generateFileName(index: number): string {
@@ -67,10 +71,11 @@
     function toggleColorSync(config: ChartConfig): void {
         if ($colorSyncChartConfig && $colorSyncChartConfig.id === config.id) {
             colorSyncChartConfig.set(null);
+            posthog.capture("color_sync_disabled", { chartType: config.chartType });
         } else {
             colorSyncChartConfig.set(config);
+            posthog.capture("color_sync_enabled", { chartType: config.chartType });
         }
-        console.log("colorSyncChartConfig", $colorSyncChartConfig);
     }
 </script>
 
@@ -89,9 +94,9 @@
                 animate:flip={{ duration: 300 }}
             >
                 <Chart {config} />
-                <button title="Close" class="close-button" on:click={() => handleRemoveChart(config)}>&#x2717;</button>
-                <button title="Edit" class="edit-button" on:click={() => handleEditChart(config)}>&#9998;</button>
-                <button title="Download Image" class="export-button" on:click={() => exportNodeAsPNG(index)}>&DownArrowBar;</button>
+                <button title="Close" class="close-button" on:click={(event) => {event.stopPropagation(); handleRemoveChart(config);}}>&#x2717;</button>
+                <button title="Edit" class="edit-button" on:click={(event) => {event.stopPropagation(); handleEditChart(config);}}>&#9998;</button>
+                <button title="Download Image" class="export-button" on:click={(event) => {event.stopPropagation(); exportNodeAsPNG(index);}}>&DownArrowBar;</button>
             </div>
         {/each}
     </div>

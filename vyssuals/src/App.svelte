@@ -20,7 +20,7 @@
     function handleAddChart() {
         showChartEditor.set(true);
     }
-
+    
     function handleDataInfo() {
         showDataInfo.set(true);
     }

@@ -7,6 +7,7 @@
     import { onMount } from "svelte";
     import { blur } from "svelte/transition";
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
+    import posthog from "posthog-js";
 
     const left = window.innerWidth / 2 - 135;
     const top = window.innerHeight / 2 - 250;
@@ -62,15 +63,18 @@
         config.groupBy = attributeKeys[0];
         updates = await getUpdates(db.get(config.dataSourceName));
         config.update = updates[updates.length - 1].timestamp;
+        posthog.capture("data_source_changed");
     }
 
     function handleCreateChart() {
         saveChartConfig();
         hideChartEditor();
+        posthog.capture("chart_created", { chartType: config.chartType });
     }
 
     function handleUpdateChart() {
         saveChartConfig();
+        posthog.capture("chart_updated", { chartType: config.chartType });
     }
 
     function hideChartEditor() {
