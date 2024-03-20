@@ -72,7 +72,10 @@
 
 <footer>
     <a class="info-text bottom-right" href="https://www.yssentyl.com" target="_blank">© Yssentyl 2024</a>
-    <button class="info-text bottom-left" on:click={() => handleDataInfo()}>What Happens To My Data?</button>
+    <span class="bottom-left">
+        <button class="info-text" on:click={() => handleDataInfo()}>My Data?</button>
+        <a class="info-text" href="https://www.yssentyl.com" target="_blank">Tutorial?</a>    
+    </span>
 </footer>
 
 <style>
