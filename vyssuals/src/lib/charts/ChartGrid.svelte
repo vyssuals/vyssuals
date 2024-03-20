@@ -72,6 +72,7 @@
         } else {
             colorSyncChartConfig.set(config);
         }
+        console.log("colorSyncChartConfig", $colorSyncChartConfig);
     }
 
 </script>
@@ -79,12 +80,14 @@
 {#if $chartConfigs}
     <div class="grid-container">
         {#each $chartConfigs as config, index (config.id)}
-            <div class="grid-item" bind:this={gridItems[index]} style="width: {width[config.chartType]}" transition:blur={{ duration: 300 }} animate:flip={{ duration: 300 }}>
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <div class={$colorSyncChartConfig && $colorSyncChartConfig.id === config.id ? 'grid-item color-sync' : 'grid-item'} bind:this={gridItems[index]} style="width: {width[config.chartType]}" transition:blur={{ duration: 300 }} animate:flip={{ duration: 300 }} on:click={() => toggleColorSync(config)}>
                 <Chart config={config} />
-                <button title="Close" class="close-button" on:click={() => handleRemoveChart(config)}>&times;</button>
+                <button title="Close" class="close-button" on:click={() => handleRemoveChart(config)}>&#x2717;</button>
                 <button title="Edit" class="edit-button" on:click={() => handleEditChart(config)}>&#9998;</button>
                 <button title="Download Image" class="export-button" on:click={() => exportNodeAsPNG(index)}>&DownArrowBar;</button>
-                <button class="sync-button" on:click={() => toggleColorSync(config)}>Hi</button>
+                <!-- <button title="Sync Colors" class="sync-button" on:click={() => toggleColorSync(config)}>&#x2756;</button> -->
             </div>
         {/each}
     </div>
@@ -107,13 +110,18 @@
         border-radius: 1em;
     }
 
+    .color-sync {
+        border: 2px solid red;
+    }
+
     .grid-item:hover {
         filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
         transition: 100ms;
     }
 
     .grid-item:hover button {
-        visibility: visible;
+        opacity: 0.8;
+        transition: 500ms;
     }
 
     button {
@@ -122,29 +130,35 @@
         background-color: #00000000;
         border: none;
         cursor: pointer;
-        visibility: hidden;
+        opacity: 0;
         right: 0.3em;
         position: absolute;
     }
-
+    
     button:hover {
-        filter: drop-shadow(0 0 8px #000000);
+        opacity: 1;
+        scale: 1.3;
     }
-
+    
     .close-button {
-        top: 0.3em;
+        opacity: 0.05;
+        top: 0.5rem;
     }
 
+    .close-button:hover {
+        content: "Close";
+    }
+    
     .edit-button {
-        top: 1.9em;
+        top: 2.75rem;
     }
-
+    
     .export-button {
-        top: 3.4em;
+        top: 5rem;
     }
 
     .sync-button {
-        top: 5em;
+        top: 7.25rem;
     }
 
 </style>
