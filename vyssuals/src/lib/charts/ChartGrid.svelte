@@ -9,7 +9,6 @@
     import { blur } from "svelte/transition";
     import { flip } from "svelte/animate";
 
-
     let gridItems: any = [];
 
     $: chartConfigs = liveQuery(() => db.vyssuals.chartConfigs.toArray().then((configs) => configs.sort((a, b) => a.index - b.index)));
@@ -31,7 +30,6 @@
         bar: "595px",
         doughnut: "380px",
         total: "280px",
-        // total: "165px",
     };
 
     function handleRemoveChart(chart: ChartConfig) {
@@ -74,7 +72,6 @@
         }
         console.log("colorSyncChartConfig", $colorSyncChartConfig);
     }
-
 </script>
 
 {#if $chartConfigs}
@@ -82,12 +79,19 @@
         {#each $chartConfigs as config, index (config.id)}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <div class={$colorSyncChartConfig && $colorSyncChartConfig.id === config.id ? 'grid-item color-sync' : 'grid-item'} bind:this={gridItems[index]} style="width: {width[config.chartType]}" transition:blur={{ duration: 300 }} animate:flip={{ duration: 300 }} on:click={() => toggleColorSync(config)}>
-                <Chart config={config} />
+            <div
+                title="Click to Sync Colors"
+                class={$colorSyncChartConfig && $colorSyncChartConfig.id === config.id ? "grid-item color-sync" : "grid-item"}
+                style="width: {width[config.chartType]}"
+                on:click={() => toggleColorSync(config)}
+                bind:this={gridItems[index]}
+                transition:blur={{ duration: 300 }}
+                animate:flip={{ duration: 300 }}
+            >
+                <Chart {config} />
                 <button title="Close" class="close-button" on:click={() => handleRemoveChart(config)}>&#x2717;</button>
                 <button title="Edit" class="edit-button" on:click={() => handleEditChart(config)}>&#9998;</button>
                 <button title="Download Image" class="export-button" on:click={() => exportNodeAsPNG(index)}>&DownArrowBar;</button>
-                <!-- <button title="Sync Colors" class="sync-button" on:click={() => toggleColorSync(config)}>&#x2756;</button> -->
             </div>
         {/each}
     </div>
@@ -111,7 +115,18 @@
     }
 
     .color-sync {
-        border: 2px solid red;
+        filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
+        animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%,
+        100% {
+            scale: 1;
+        }
+        50% {
+            scale: 0.95;
+        }
     }
 
     .grid-item:hover {
@@ -134,12 +149,12 @@
         right: 0.3em;
         position: absolute;
     }
-    
+
     button:hover {
         opacity: 1;
         scale: 1.3;
     }
-    
+
     .close-button {
         opacity: 0.05;
         top: 0.5rem;
@@ -148,17 +163,12 @@
     .close-button:hover {
         content: "Close";
     }
-    
+
     .edit-button {
         top: 2.75rem;
     }
-    
+
     .export-button {
         top: 5rem;
     }
-
-    .sync-button {
-        top: 7.25rem;
-    }
-
 </style>
