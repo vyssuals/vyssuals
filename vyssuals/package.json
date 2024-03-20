@@ -29,6 +29,6 @@
   },
   "dependencies": {
     "dexie": "^3.2.6",
-    "immer": "^10.0.3"
+    "posthog-js": "^1.116.2"
   }
 }
