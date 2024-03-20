@@ -1,11 +1,12 @@
 <script lang="ts">
     import GradientButton from "./lib/buttons/GradientButton.svelte";
     import { onMount } from "svelte";
-    import { colorSyncChartConfig, showChartEditor, showDataConnectionEditor, showDataSourceEditor } from "./lib/store";
+    import { colorSyncChartConfig, showChartEditor, showDataConnectionEditor, showDataSourceEditor, showDataInfo } from "./lib/store";
     import ChartGrid from "./lib/charts/ChartGrid.svelte";
     import ChartEditor from "./lib/charts/ChartEditor.svelte";
     import Welcome from "./lib/Welcome.svelte";
     import DataConnectionEditor from "./lib/data/DataConnectionEditor.svelte";
+    import DataInfo from "./lib/DataInfo.svelte";
     import OpenDataSourcesButton from "./lib/buttons/OpenDataSourcesButton.svelte";
     import ColorSynchronizer from "./lib/ColorSynchronizer.svelte";
     import { connectWebSocket } from "./lib/data/websocket";
@@ -18,6 +19,10 @@
 
     function handleAddChart() {
         showChartEditor.set(true);
+    }
+
+    function handleDataInfo() {
+        showDataInfo.set(true);
     }
 
     $: hasChartConfigs = db.vyssuals.hasChartConfigs;
@@ -43,6 +48,10 @@
         <DataSourceEditor />
     {/if}
 
+    {#if $showDataInfo}
+        <DataInfo />
+    {/if}
+
     {#if $hasDatabases}
         <div style="padding-top: 2em; padding-bottom: 1em;">
             <GradientButton on:click={handleAddChart} />
@@ -57,10 +66,13 @@
     {#if $colorSyncChartConfig}
         <ColorSynchronizer />
     {/if}
+
+    
 </main>
 
 <footer>
-    <a href="https://www.yssentyl.com">© Yssentyl 2024</a>
+    <a class="info-text bottom-right" href="https://www.yssentyl.com" target="_blank">© Yssentyl 2024</a>
+    <button class="info-text bottom-left" on:click={() => handleDataInfo()}>What Happens To My Data?</button>
 </footer>
 
 <style>
@@ -76,14 +88,36 @@
         padding-bottom: 40px;
     }
 
-    a {
+
+    .bottom-right {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .bottom-left {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .info-text {
         text-decoration: none;
         color: #7d7d7d;
         font-style: italic;
         font-weight: 300;
+        font-size: small;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
     }
 
-    a:hover {
-        color: #05acff;
+    .info-text:hover {
+        color: #000;
     }
+
 </style>
