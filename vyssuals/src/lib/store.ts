@@ -17,3 +17,5 @@ export const showDataSourceEditor: Writable<boolean> = writable(false);
 export const dataSourceToEdit: Writable<string> = writable("");
 
 export const colorSyncChartConfig: Writable<ChartConfig | null> = writable({} as ChartConfig);
+
+export const showDataInfo: Writable<boolean> = writable(false);
