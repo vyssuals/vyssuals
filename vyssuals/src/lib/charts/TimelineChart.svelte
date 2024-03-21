@@ -6,7 +6,6 @@
     import { getItemValue } from "../data/itemUtils";
     import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler } from "chart.js";
     import { liveQuery } from "dexie";
-    import { createColorArray } from "../utils/colorUtils";
 
     export let config: ChartConfig;
     export let chartData: RawChartData;
@@ -33,7 +32,7 @@
         const header = await ds.metadata.get(config.showValues);
         let labels: string[] = [];
         let data = updates.map((update) => {
-            labels.push(update.timestamp);
+            labels.push(new Date(update.timestamp).toLocaleString());
             let sum = 0;
             let visibleItems = update.visibleItemIds.map((id) => items[id]).filter((item) => item);
             visibleItems.forEach((item) => {
@@ -48,18 +47,30 @@
             });
             return sum;
         });
-        const backgroundColor = createColorArray(data.length, config.startColor, config.endColor);
 
         return {
             labels: labels,
             datasets: [
                 {
                     data: data,
-                    backgroundColor: backgroundColor,
+                    // backgroundColor: `${config.endColor}20`,
+                    backgroundColor: (ctx: any) => {
+                        const canvas = ctx.chart.ctx;
+                        const gradient = canvas.createLinearGradient(0, 0, 0, 300);
+                        gradient.addColorStop(0, `${config.startColor}50`);
+                        gradient.addColorStop(1, `${config.endColor}20`);
+                        return gradient;
+                    },
                     borderWidth: 2,
-                    borderColor: "#ffffff00",
+                    borderColor: config.startColor,
                     borderRadius: 8,
                     offset: 5,
+                    tension: 0,
+                    fill: true,
+                    pointRadius: 2,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: config.startColor,
+                    
                 },
             ],
         };
@@ -82,8 +93,8 @@
         scales: {
             x: {
                 ticks: {
-                    callback: function (value: any): string {
-                        let label = this.getLabelForValue(value);
+                    callback: function (value: string): string {
+                        let label = this.getLabelForValue(value).split(' ')[1];
                         return label.length > 8 ? `${label.slice(0, 20)}...` : label;
                     },
                 },
