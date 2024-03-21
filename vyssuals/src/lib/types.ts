@@ -73,6 +73,10 @@ export interface _Update {
     name: string;
 }
 
+export interface Items {
+    [Key: string]: Item; // Key is the Item ID
+}
+
 export interface Item {
     id: string;
     versions: Versions;
