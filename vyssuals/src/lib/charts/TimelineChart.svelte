@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Line } from "svelte-chartjs";
     import type { ChartConfig, RawChartData } from "../types";
-    import { calculateChartData } from "./chartDataUtils";
+    import { calculateChartData, calculateTimelineChartData } from "./chartDataUtils";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
 
     import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler } from "chart.js";
@@ -11,7 +11,7 @@
 
     let data: any;
     $: if (chartData.labels.length > 0 && chartData.attributes.length > 0  && chartData.header && chartData.header.type && config) {
-      data = calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config);
+      data = calculateTimelineChartData(chartData.labels, chartData.attributes, chartData.header.type, config);
     }
     $: title = formatTitle(config);
     $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);

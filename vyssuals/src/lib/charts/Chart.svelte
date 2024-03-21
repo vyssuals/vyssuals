@@ -35,8 +35,8 @@
 
     $: if (config && $items) {
         if (config.chartType === "timeline") {
-            ds.updates.toCollection().primaryKeys().then((timestamps: string[]) => {
-                labels = timestamps.sort();
+            ds.updates.toCollection().primaryKeys().then((keys) => {
+                labels = keys.sort().reverse();
             });
         } else {
             labels = getLabels($items, config.groupBy, config.update);
@@ -44,7 +44,7 @@
         attributes = getAttributes($items, config.update)
     }
     $: header = liveQuery(() => ds.metadata.get(config.showValues));
-    $: chartData = { labels, attributes, header: $header };
+    $: chartData = labels && { labels, attributes, header: $header };
 
     let chartInstance: any; // Store reference to the chart instance
 
