@@ -53,12 +53,11 @@
             datasets: [
                 {
                     data: data,
-                    // backgroundColor: `${config.endColor}20`,
                     backgroundColor: (ctx: any) => {
                         const canvas = ctx.chart.ctx;
                         const gradient = canvas.createLinearGradient(0, 0, 0, 300);
-                        gradient.addColorStop(0, `${config.startColor}50`);
-                        gradient.addColorStop(1, `${config.endColor}20`);
+                        gradient.addColorStop(0, `${config.startColor}70`);
+                        gradient.addColorStop(1, `${config.endColor}10`);
                         return gradient;
                     },
                     borderWidth: 2,
