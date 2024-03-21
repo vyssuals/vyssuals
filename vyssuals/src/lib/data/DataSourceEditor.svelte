@@ -18,12 +18,12 @@
     <div class="datasource-editor">
         <button title="Close" class="close-button" on:click={() => hideDataSourceEditor()}>&times;</button>
         <h1>Datasource Editor</h1>
-        <h2>{$dataSourceToEdit}</h2>
+        <p>{$dataSourceToEdit}</p>
         <div class="grid-container">
             {#await metadata then metadata}
                 {#each metadata as header (header)}
                     <div class="grid-item">
-                        <h2 class="chart-title">{header.name}</h2>
+                        <h2>{header.name}</h2>
                         <div class="config-option">
                             <label for="dataTypes">Data Type:</label>
                             <select
@@ -103,23 +103,21 @@
         max-height: 80%;
     }
 
-    h1 {
-        margin-bottom: 1em;
-    }
-
     h2 {
         margin: 0;
+        overflow: hidden; /* Hide overflowed content */
+        text-overflow: ellipsis; /* Show ellipsis (...) when the content overflows */
+        white-space: nowrap; /* Prevent text from wrapping onto the next line */
+        text-align: center;
+        padding: 0.1em 0.5em 0 0.1em;
+        font-weight: 500;
+        padding-top: 10px;
+        padding-bottom: 5px;
     }
 
     p {
         text-align: center;
         font-weight: 300;
-    }
-
-    .chart-title {
-        font-weight: 500;
-        padding-top: 10px;
-        padding-bottom: 5px;
     }
 
     .close-button {
