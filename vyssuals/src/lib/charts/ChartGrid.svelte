@@ -85,7 +85,6 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div
-                title="Click to Sync Colors"
                 class={$colorSyncChartConfig && $colorSyncChartConfig.id === config.id ? "grid-item color-sync" : "grid-item"}
                 style="width: {width[config.chartType]}"
                 on:click={() => toggleColorSync(config)}

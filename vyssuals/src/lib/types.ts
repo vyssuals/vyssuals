@@ -96,8 +96,8 @@ export interface Info {
 
 export const COLUMN_TYPES = ["string", "number"];
 export type ColumnType = "string" | "number";
-export type ChartType = "line" | "bar" | "doughnut" | "total";
-export const CHART_TYPES: ChartType[] = ["line", "bar", "doughnut", "total"];
+export type ChartType = "timeline" | "bar" | "doughnut" | "total";
+export const CHART_TYPES: ChartType[] = ["timeline", "bar", "doughnut", "total"];
 export type UnitSymbol =
     | "# Unique Items"
     | "# Items"

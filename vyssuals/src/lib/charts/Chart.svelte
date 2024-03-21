@@ -5,17 +5,17 @@
     import BarChart from "./BarChart.svelte";
     import DoughnutChart from "./DoughnutChart.svelte";
     import TotalChart from "./TotalChart.svelte";
-    import LineChart from "./LineChart.svelte";
+    import TimelineChart from "./TimelineChart.svelte";
     import { db } from "../data/databaseManager";
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
-    import { fetchItems, getLabelsAndAttributes } from "./chartDataUtils";
+    import { fetchItems, getAttributes, getLabels } from "./chartDataUtils";
 
     export let config: ChartConfig;
 
     let ds: DataSourceDatabase;
     $: ds = db.get(config.dataSourceName);
 
-    let timestamp: string = "Latest Update";
+    let timestamp: string;
     $: {
         async function getTimestamp() {
             if (config.update != "Latest Update") {
@@ -33,10 +33,15 @@
     let labels: string[];
     let attributes: any[];
 
-    $: {
-        const result = $items && getLabelsAndAttributes($items, config.groupBy, config.update);
-        labels = result?.labels;
-        attributes = result?.attributes;
+    $: if (config && $items) {
+        if (config.chartType === "timeline") {
+            ds.updates.toCollection().primaryKeys().then((timestamps: string[]) => {
+                labels = timestamps.sort();
+            });
+        } else {
+            labels = getLabels($items, config.groupBy, config.update);
+        }
+        attributes = getAttributes($items, config.update)
     }
     $: header = liveQuery(() => ds.metadata.get(config.showValues));
     $: chartData = { labels, attributes, header: $header };
@@ -54,8 +59,8 @@
             case "total":
                 chartInstance = TotalChart;
                 break;
-            case "line":
-                chartInstance = LineChart;
+            case "timeline":
+                chartInstance = TimelineChart;
                 break;
             default:
                 console.error("Invalid chart type specified in config");

@@ -3,7 +3,7 @@
     import { liveQuery, type Observable } from "dexie";
     import { colorSyncChartConfig } from "./store";
     import { DataSourceDatabase } from "./data/dataSourceDatabase";
-    import { fetchItems, getLabelsAndAttributes } from "./charts/chartDataUtils";
+    import { fetchItems, getLabels, getAttributes } from "./charts/chartDataUtils";
     import type { ColorPayload, Item, Attributes, ColorInformation } from "./types";
     import { createColorArray } from "./utils/colorUtils";
     import { socket } from './data/websocket';
@@ -35,9 +35,8 @@
     let attributes: any[];
 
     $: if ($colorSyncChartConfig && $items) {
-        const result = getLabelsAndAttributes($items, $colorSyncChartConfig.groupBy, $colorSyncChartConfig.update);
-        labels = result?.labels;
-        attributes = result?.attributes;
+        labels = getLabels($items, $colorSyncChartConfig.groupBy, $colorSyncChartConfig.update);
+        attributes = getAttributes($items, $colorSyncChartConfig.update)
     }
 
     let colorPayload: ColorPayload;

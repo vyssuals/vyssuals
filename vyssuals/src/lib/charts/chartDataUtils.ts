@@ -4,7 +4,8 @@ import { getItemValue, getItemAttributes } from "../data/itemUtils";
 import type { Item } from "../types";
 import type { DataSourceDatabase } from "../data/dataSourceDatabase";
 
-export async function calculateChartData(labels: string[], attributes: Attributes[], dataType: string, config: ChartConfig): Promise<any> {
+
+export function calculateChartData(labels: string[], attributes: Attributes[], dataType: string, config: ChartConfig): any {
     let data: number[] = [];
     
     if (dataType === "number") {
@@ -64,13 +65,31 @@ function countAttributeBy(attributes: Attributes[], aggregateAttribute: string, 
     );
 }
 
-export function getLabelsAndAttributes(items: Item[], groupBy: string, update: string) {
-    const labels = [...new Set(items.map((item) => item && getItemValue(item.versions, groupBy, update).toString()).filter(Boolean).sort())];
-    const attributes = items.map((item) => item && getItemAttributes(item.versions, update)).filter(Boolean) || [];
-    return { labels, attributes };
+export function getLabels(items: Item[], groupBy: string, update: string): string[] {
+    return [...new Set(items.map((item) => item && getItemValue(item.versions, groupBy, update).toString()).filter(Boolean).sort())];
 }
 
-export async function fetchItems(ds: DataSourceDatabase, timestamp: string): Promise<Item[]> {
+export function getAttributes(items: Item[], update: string): Attributes[] {
+    if (!update) {
+        // return all attributes from all versions for all items
+        let allAttributes: Attributes[] = [];
+        items.forEach((item) => {
+            if (item) {
+                allAttributes = allAttributes.concat(Object.values(item.versions));
+            }
+        });
+        return allAttributes;
+
+    }
+    return items.map((item) => item && getItemAttributes(item.versions, update)).filter(Boolean) || [];
+}
+
+
+export async function fetchItems(ds: DataSourceDatabase, timestamp: string = ""): Promise<Item[]> {
+    if (!timestamp) {
+        const rawItems = await ds.items.toArray();
+        return rawItems.filter((item): item is Item => item !== undefined);
+    }
     const update = await ds.updates.get(timestamp);
     const rawItems = await ds.items.bulkGet(update?.visibleItemIds || []);
     return rawItems.filter((item): item is Item => item !== undefined);

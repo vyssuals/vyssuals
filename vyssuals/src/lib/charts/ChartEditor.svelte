@@ -87,6 +87,10 @@
             const count = await db.vyssuals.chartConfigs.count();
             config.index = count + 1;
         }
+        if (config.chartType == "timeline") {
+            config.groupBy = "Timestamp";
+            config.update = "";
+        }
         db.vyssuals.chartConfigs.put(config);
         startColor.set(config.startColor);
         endColor.set(config.endColor);
@@ -111,6 +115,17 @@
                     </div>
 
                     <div class="config-option">
+                        <label for="chartType">Chart Type:</label>
+                        <select class="config-select" id="chartType" bind:value={config.chartType}>
+                            <option value="bar">Bar</option>
+                            <option value="doughnut">Doughnut</option>
+                            <option value="total">Total</option>
+                            <option value="timeline">Timeline</option>
+                        </select>
+                    </div>
+                    
+                    {#if !(config.chartType == "timeline")}
+                    <div class="config-option">
                         <label for="update">Update:</label>
                         <select class="config-select" id="update" bind:value={config.update}>
                             {#each updates as update}
@@ -118,16 +133,7 @@
                             {/each}
                         </select>
                     </div>
-
-                    <div class="config-option">
-                        <label for="chartType">Chart Type:</label>
-                        <select class="config-select" id="chartType" bind:value={config.chartType}>
-                            <option value="bar">Bar</option>
-                            <option value="doughnut">Doughnut</option>
-                            <option value="total">Total</option>
-                            <!-- <option value="line">Timeline</option> -->
-                        </select>
-                    </div>
+                    {/if}
 
                     <div class="config-option">
                         <label title="This attribute goes on the X axis" for="showValues">Show Values Of:</label>
@@ -138,7 +144,7 @@
                         </select>
                     </div>
 
-                    {#if !(config.chartType === "total" || config.chartType === "line")}
+                    {#if !(config.chartType === "total" || config.chartType === "timeline")}
                         <div class="config-option">
                             <label title="This attribute goes on the Y axis" for="groupBy">Grouped By:</label>
                             <select class="config-select" id="groupBy" bind:value={config.groupBy}>

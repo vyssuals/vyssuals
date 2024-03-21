@@ -1,23 +1,27 @@
 <script lang="ts">
-    import { Bar } from "svelte-chartjs";
-    import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
+    import { Line } from "svelte-chartjs";
     import type { ChartConfig, RawChartData } from "../types";
     import { calculateChartData } from "./chartDataUtils";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
 
+    import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler } from "chart.js";
+
     export let config: ChartConfig;
     export let chartData: RawChartData;
 
-    $: data = calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config);
+    let data: any;
+    $: if (chartData.labels.length > 0 && chartData.attributes.length > 0  && chartData.header && chartData.header.type && config) {
+      data = calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config);
+    }
     $: title = formatTitle(config);
     $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
 
-    Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+    ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler);
 
     let options = {
         responsive: false,
-        maintainAspectRatio: false,
-        // aspectRatio: 2,
+        maintainAspectRatio: true,
+        aspectRatio: 2,
         plugins: {
             legend: {
                 display: false,
@@ -27,8 +31,8 @@
             x: {
                 ticks: {
                     callback: function (value: any): string {
-                        let label = (this as any).getLabelForValue(value);
-                        return label?.length > 8 ? `${label.slice(0, 6)}...` : label;
+                        let label = this.getLabelForValue(value);
+                        return label.length > 8 ? `${label.slice(0, 20)}...` : label;
                     },
                 },
                 grid: {
@@ -45,15 +49,11 @@
                 },
             },
         },
-        animation: {
-            easing: "easeInOutQuart",
-            duration: 600,
-        },
     };
 </script>
 
 <h1 class="chart-title">{title}</h1>
 {#await data then data}
     <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
-    <Bar {data} {options} style="height: 310px; width: 595px" />
+    <Line {data} {options} style="height: 310px; width: 595px" />
 {/await}
