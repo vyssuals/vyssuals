@@ -4,26 +4,6 @@ import { getItemValue, getItemAttributes } from "../data/itemUtils";
 import type { Item } from "../types";
 import type { DataSourceDatabase } from "../data/dataSourceDatabase";
 
-export function calculateTimelineChartData(labels: string[], attributes: Attributes[], dataType: string, config: ChartConfig): any {
-    // per label (which is a timestamp), per attribute.Id, we need all attributes with timestamp equal to or less than the label
-    // convert attributes back into versions per unique attribute.Id
-    const items: { [key: string]: Versions } = {};
-    attributes.forEach((attribute) => {
-        if (!items[attribute.Id]) {
-            items[attribute.Id] = {};
-        }
-        items[attribute.Id][attribute.Timestamp] = attribute;
-    });
-    let data: number[] = [];
-    data = labels.map((label) => {
-        let sum = 0;
-        for (const [key, value] of Object.entries(items)) {
-            sum += Number(getItemValue(value, config.showValues, label));
-        }
-        return sum;
-    });
-    return assembleChartData(labels, data, config.startColor, config.endColor);
-}
 
 export function calculateChartData(labels: string[], attributes: Attributes[], dataType: string, config: ChartConfig): any {
     let data: number[] = [];

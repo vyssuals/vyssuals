@@ -8,8 +8,7 @@
     export let config: ChartConfig;
     export let chartData: RawChartData;
 
-    let data: any;
-    $: calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config).then((value) => { data = value });
+    $: data = calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config);
     $: title = formatTitle(config);
     $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
 
