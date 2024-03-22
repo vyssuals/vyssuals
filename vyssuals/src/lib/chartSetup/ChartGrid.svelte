@@ -1,6 +1,6 @@
 <script lang="ts">
     import { chartToEdit, showChartEditor, colorSyncChartConfig } from "../store";
-    import Chart from "./Chart.svelte";
+    import Chart from "../charts/Chart.svelte";
     import html2canvas from "html2canvas";
     import { formatTitle } from "../utils/textUtils";
     import { db } from "../data/databaseManager";

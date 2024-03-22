@@ -1,7 +1,7 @@
 import Dexie, { liveQuery, type IndexableType, type Observable, type PromiseExtended } from "dexie";
 import type { Header, Update, Item, Versions, Info, DataPayload, Attributes } from "../types";
-import { getSelectedItems, getItemValue } from "./itemUtils";
-import { ensureUnitSymbol } from "./headerUtils";
+import { getSelectedItems, getItemValue } from "../utils/itemUtils";
+import { ensureUnitSymbol } from "../utils/headerUtils";
 
 export class DataSourceDatabase extends Dexie {
     updates: Dexie.Table<Update, string>;

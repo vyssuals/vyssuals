@@ -2,7 +2,7 @@
     import { Bar } from "svelte-chartjs";
     import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
     import type { ChartConfig, RawChartData } from "../types";
-    import { calculateChartData } from "./chartDataUtils";
+    import { calculateChartData } from "../utils/chartDataUtils";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
     import { createColorArray } from "../utils/colorUtils";
 

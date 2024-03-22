@@ -8,7 +8,7 @@
     import TimelineChart from "./TimelineChart.svelte";
     import { db } from "../data/databaseManager";
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
-    import { fetchItems, getAttributes, getLabels } from "./chartDataUtils";
+    import { fetchItems, getAttributes, getLabels } from "../utils/chartDataUtils";
 
     export let config: ChartConfig;
 

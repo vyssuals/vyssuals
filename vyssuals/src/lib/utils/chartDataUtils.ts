@@ -1,6 +1,6 @@
 import type { ChartConfig, Header, Attributes, Versions,  } from "../types";
-import { createColorArray } from "../utils/colorUtils";
-import { getItemValue, getItemAttributes } from "../data/itemUtils";
+import { createColorArray } from "./colorUtils";
+import { getItemValue, getItemAttributes } from "./itemUtils";
 import type { Item } from "../types";
 import type { DataSourceDatabase } from "../data/dataSourceDatabase";
 

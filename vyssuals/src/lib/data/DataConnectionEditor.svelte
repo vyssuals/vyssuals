@@ -4,10 +4,10 @@
     import type { ChartConfig } from "../types";
     import GradientButton from "../buttons/GradientButton.svelte";
     import ConnectorList from "../connectors/ConnectorList.svelte";
-    import { autoChart } from "../charts/AutoCharts";
+    import { autoChart } from "../chartSetup/AutoCharts";
     import { db } from "./databaseManager";
     import { blur } from "svelte/transition";
-    import { loadCSVFile } from "./csvUtils";
+    import { loadCSVFile } from "../utils/csvUtils";
     import posthog from "posthog-js";
 
     let files: FileList | null = null;

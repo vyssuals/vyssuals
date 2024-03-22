@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { ChartConfig, RawChartData } from "../types";
-    import { calculateChartData } from "./chartDataUtils";
+    import { calculateChartData } from "../utils/chartDataUtils";
     import { Doughnut } from "svelte-chartjs";
     import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, type ChartOptions } from "chart.js";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";

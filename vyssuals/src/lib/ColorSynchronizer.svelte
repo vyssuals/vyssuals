@@ -3,7 +3,7 @@
     import { liveQuery, type Observable } from "dexie";
     import { colorSyncChartConfig } from "./store";
     import { DataSourceDatabase } from "./data/dataSourceDatabase";
-    import { fetchItems, getLabels, getAttributes } from "./charts/chartDataUtils";
+    import { fetchItems, getLabels, getAttributes } from "./utils/chartDataUtils";
     import type { ColorPayload, Item, Attributes, ColorInformation } from "./types";
     import { createColorArray } from "./utils/colorUtils";
     import { socket } from './websocket/websocket';

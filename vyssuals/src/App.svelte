@@ -2,8 +2,8 @@
     import GradientButton from "./lib/buttons/GradientButton.svelte";
     import { onMount } from "svelte";
     import { colorSyncChartConfig, showChartEditor, showDataConnectionEditor, showDataSourceEditor, showDataInfo } from "./lib/store";
-    import ChartGrid from "./lib/charts/ChartGrid.svelte";
-    import ChartEditor from "./lib/charts/ChartEditor.svelte";
+    import ChartGrid from "./lib/chartSetup/ChartGrid.svelte";
+    import ChartEditor from "./lib/chartSetup/ChartEditor.svelte";
     import Welcome from "./lib/Welcome.svelte";
     import DataConnectionEditor from "./lib/data/DataConnectionEditor.svelte";
     import DataInfo from "./lib/DataInfo.svelte";

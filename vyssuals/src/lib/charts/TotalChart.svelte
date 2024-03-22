@@ -2,7 +2,7 @@
     import type { ChartConfig, RawChartData } from "../types";
     import { formatSubtitle, titleCase } from "../utils/textUtils";
     import Chart from "./Chart.svelte";
-    import { sumAttributeValues } from "./chartDataUtils";
+    import { sumAttributeValues } from "../utils/chartDataUtils";
 
     export let config: ChartConfig;
     export let chartData: RawChartData;

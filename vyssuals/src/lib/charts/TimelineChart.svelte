@@ -3,7 +3,7 @@
     import type { ChartConfig, Items, RawChartData, Update } from "../types";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
     import { db } from "../data/databaseManager";
-    import { getItemValue } from "../data/itemUtils";
+    import { getItemValue } from "../utils/itemUtils";
     import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler } from "chart.js";
     import { liveQuery } from "dexie";
 
