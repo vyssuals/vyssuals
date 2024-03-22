@@ -9,6 +9,20 @@
 
     let total: number = 0;
     let fullFormattedNumber: string = "";
+
+    let fontSize: string = '3rem';
+    $: {
+        if (fullFormattedNumber.length > 13) {
+            fontSize = '2rem'; // adjust as needed
+        } 
+        else if (fullFormattedNumber.length > 10) {
+            fontSize = '2.5rem'; // adjust as needed
+        } else if (fullFormattedNumber.length > 5) {
+            fontSize = '3rem'; // adjust as needed
+        } else {
+            fontSize = '5rem'; // adjust as needed
+        }
+    }
     
     $: title = titleCase(config.showValues);
     $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
@@ -46,21 +60,16 @@
 <h1 class="chart-title">Total {title}</h1>
 <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
 <div class="total">
-    <h1 class="total-number">{abbreviateNumber(total)}</h1>
+    <h1 class="total-number" style="font-size: {fontSize};">{fullFormattedNumber}</h1>
     <h3>{chartData.header.unitSymbol}</h3>
 </div>
-{#if total > 999}
-    <details>
-        <summary>&#9781;</summary>
-        <p>{fullFormattedNumber}</p>
-    </details>
-{/if}
+
 
 <style>
     .total-number {
-        font-size: 3rem;
-        margin-top: 0.3em;
-        margin-bottom: 0.37em;
+        font-size: 5rem;
+        margin-top: 0;
+        margin-bottom: 10px;
     }
 
     .total {
@@ -75,21 +84,4 @@
         align-self: flex-end center;
     }
 
-    details {
-        margin-top: 2em;
-        font-weight: 300;
-    }
-
-    details summary {
-        cursor: pointer;
-        list-style: none;
-    }
-
-    details summary:hover {
-        scale: 1.5;
-    }
-
-    details p {
-        font-weight: 500;
-    }
 </style>
