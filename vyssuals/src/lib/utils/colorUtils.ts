@@ -41,3 +41,16 @@ export function darkenHexColor(color: string, amount: number): string {
     // Convert the color components back to a hex color
     return rgbToHex(r, g, b);
 }
+
+export function lightenHexColor(color: string, amount: number): string {
+    // Convert the hex color to RGB
+    let { r, g, b } = hexToRgb(color);
+
+    // Add the amount to each color component
+    r = Math.min(255, r + amount);
+    g = Math.min(255, g + amount);
+    b = Math.min(255, b + amount);
+
+    // Convert the color components back to a hex color
+    return rgbToHex(r, g, b);
+}

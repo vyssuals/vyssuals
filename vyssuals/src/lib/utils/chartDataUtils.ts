@@ -1,5 +1,5 @@
 import type { ChartConfig, Header, Attributes, Versions,  } from "../types";
-import { createColorArray, darkenHexColor } from "./colorUtils";
+import { createColorArray, darkenHexColor, lightenHexColor } from "./colorUtils";
 import { getItemValue, getItemAttributes } from "./itemUtils";
 import type { Item } from "../types";
 import type { DataSourceDatabase } from "../data/dataSourceDatabase";
@@ -35,7 +35,7 @@ function assembleChartData(labels: string[], data: number[], startColor: string,
                     const type = chart.config._config.type;
                     let gradient: CanvasGradient;
                     if (type === "doughnut") {
-                        return color;
+                        return lightenHexColor(color, 10);
                     } else {
                         gradient = ctx.createLinearGradient(0, 0, 0, chart.height);
                         gradient.addColorStop(1, `${color}99`);
@@ -44,10 +44,8 @@ function assembleChartData(labels: string[], data: number[], startColor: string,
                     return gradient;
                 },
                 borderColor: colors.map((color) => darkenHexColor(color, 60)),
-                // borderColor: 'red',
                 borderWidth: 1.7,
                 borderRadius: 5,
-                // offset: 3,
             },
         ],
     };
