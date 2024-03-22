@@ -28,3 +28,16 @@ function hexToRgb(hex: string): { r: number, g: number, b: number } {
 function rgbToHex(r: number, g: number, b: number): string {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
+
+export function darkenHexColor(color: string, amount: number): string {
+    // Convert the hex color to RGB
+    let { r, g, b } = hexToRgb(color);
+
+    // Subtract the amount from each color component
+    r = Math.max(0, r - amount);
+    g = Math.max(0, g - amount);
+    b = Math.max(0, b - amount);
+
+    // Convert the color components back to a hex color
+    return rgbToHex(r, g, b);
+}

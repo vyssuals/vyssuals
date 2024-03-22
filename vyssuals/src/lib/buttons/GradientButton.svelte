@@ -3,13 +3,11 @@
 
   export let buttonText = "Add Chart";
 
-  $: scolor = `${$startColor}99`;
-  $: ecolor = `${$endColor}99`;
 </script>
 
 <div>
   <button
-  style="background-image: linear-gradient(to right, {scolor}, {ecolor})"
+  style="background-image: linear-gradient(to right, {$startColor}, {$endColor})"
     on:click>{buttonText}</button
   >
 </div>

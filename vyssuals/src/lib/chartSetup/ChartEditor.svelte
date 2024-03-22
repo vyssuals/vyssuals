@@ -205,7 +205,7 @@
         cursor: pointer;
         -webkit-appearance: none;
         appearance: none;
-        opacity: 0.6;
+        /* opacity: 0.6; */
     }
 
     .color-input::-webkit-color-swatch {

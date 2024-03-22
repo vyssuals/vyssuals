@@ -1,5 +1,5 @@
 import type { ChartConfig, Header, Attributes, Versions,  } from "../types";
-import { createColorArray } from "./colorUtils";
+import { createColorArray, darkenHexColor } from "./colorUtils";
 import { getItemValue, getItemAttributes } from "./itemUtils";
 import type { Item } from "../types";
 import type { DataSourceDatabase } from "../data/dataSourceDatabase";
@@ -18,16 +18,34 @@ export function calculateChartData(labels: string[], attributes: Attributes[], d
 }
 
 function assembleChartData(labels: string[], data: number[], startColor: string, endColor: string) {
-    const backgroundColor = createColorArray(data.length, startColor, endColor);
+    const colors = createColorArray(data.length, startColor, endColor);
 
     return {
         labels: labels,
         datasets: [
             {
                 data: data,
-                backgroundColor: backgroundColor,
+                colors: colors,
+                // backgroundColor: colors,
+                backgroundColor: (context: any) => {
+                    let chart = context.chart;
+                    console.log(chart);
+                    let ctx = chart.ctx;
+                    let color = colors[context.dataIndex];
+                    const type = chart.config._config.type;
+                    let gradient: CanvasGradient;
+                    if (type === "doughnut") {
+                        return color;
+                    } else {
+                        gradient = ctx.createLinearGradient(0, 0, 0, chart.height);
+                        gradient.addColorStop(1, `${color}99`);
+                        gradient.addColorStop(0, color);
+                    }
+                    return gradient;
+                },
+                borderColor: colors.map((color) => darkenHexColor(color, 60)),
+                // borderColor: 'red',
                 borderWidth: 1.7,
-                // borderColor: "#ffffff00",
                 borderRadius: 5,
                 // offset: 3,
             },

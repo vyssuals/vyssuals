@@ -4,7 +4,7 @@
     import type { ChartConfig, RawChartData } from "../types";
     import { calculateChartData } from "../utils/chartDataUtils";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
-    import { createColorArray } from "../utils/colorUtils";
+    import { darkenHexColor } from "../utils/colorUtils";
 
     export let config: ChartConfig;
     export let chartData: RawChartData;
@@ -13,11 +13,27 @@
     $: title = formatTitle(config);
     $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
 
-    $: if (data.datasets) data.datasets[0].borderColor = data.datasets[0].backgroundColor;
-    $: if (data.datasets)
-        data.datasets[0].backgroundColor = data.datasets[0].backgroundColor.map((color: string) => {
-            return `${color}99`;
-        });
+    // let canvas: HTMLCanvasElement;
+    // let ctx: any;
+
+    // $: if (canvas) {
+    //     ctx = canvas.getContext('2d');
+    // }
+
+    // $: if (data.datasets) { data.datasets[0].backgroundColor = 
+    //     data.datasets[0].backgroundColor.map(() => {
+    //         return "red"
+    //     });
+    // }
+
+    // $: if (data.datasets) { data.datasets[0].backgroundColor = 
+    //     data.datasets[0].backgroundColor.map((color: string) => {
+    //         let gradient = ctx?.createLinearGradient(0, 0, 0, 310);
+    //         gradient?.addColorStop(0, config.startColor);
+    //         gradient?.addColorStop(1, config.endColor);
+    //         return gradient as CanvasGradient;
+    //     });
+    // }
 
     Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
@@ -61,6 +77,6 @@
 
 <h1 class="chart-title">{title}</h1>
 {#await data then data}
-    <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
+<h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
     <Bar id="barchart" {data} {options} style="height: 310px; width: 595px" />
 {/await}

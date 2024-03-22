@@ -2,6 +2,8 @@
     import type { ChartConfig, RawChartData } from "../types";
     import { calculateChartData } from "../utils/chartDataUtils";
     import { Doughnut } from "svelte-chartjs";
+    import { Pie } from "svelte-chartjs";
+    import { PolarArea } from "svelte-chartjs";
     import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, type ChartOptions } from "chart.js";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
 
@@ -12,12 +14,7 @@
     $: title = formatTitle(config);
     $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
 
-    $: if (data.datasets) { 
-        data.datasets[0].borderColor = data.datasets[0].backgroundColor;
-        data.datasets[0].backgroundColor = data.datasets[0].backgroundColor.map((color: string) => {
-            return `${color}99`;
-        });
-    }
+
 
     ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
@@ -31,8 +28,8 @@
                             datasetIndex: 0,
                             index: i,
                             text: l?.length > 8 ? `${l.slice(0, 6)}...` : l,
-                            fillStyle: chart.data.datasets[0].backgroundColor[i],
-                            strokeStyle: chart.data.datasets[0].backgroundColor[i],
+                            fillStyle: chart.data.datasets[0].colors[i],
+                            strokeStyle: chart.data.datasets[0].borderColor[i],
                             hidden: false,
                             fontColor: "#666666",
                         })),
@@ -53,5 +50,6 @@
 <h1 class="chart-title">{title}</h1>
 {#if data}
     <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
+    <!-- <PolarArea {data} {options} style="height: 310px; width: 380px" /> -->
     <Doughnut {data} {options} style="height: 310px; width: 380px" />
 {/if}
