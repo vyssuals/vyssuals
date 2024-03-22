@@ -22,50 +22,46 @@ export function autoChart(
     endColor: string,
     update: string = "Latest Update"
 ): ChartConfig[] {
-    const chartConfigs: ChartConfig[] = [];
+    let chartConfigs: ChartConfig[] = [];
 
-    let showValuesHeaders;
-    let groupByHeaders;
+    let showValuesHeaders: Header[];
+    let groupByHeaders : Header[];
 
     // List of words to filter out
     const filterShowValuesWords = ["id", "token", "timestamp", "date", "time"];
     const filterGroupByWords = ["id", "token", "value", "count"];
 
-    //   console.log("pre nlp showValuesHeaders", dataSource.header);
-    // Filter out columns based on NLP
     showValuesHeaders = headers.filter((header) => {
-        return !filterShowValuesWords.some((filterWord) => matchWord(header.name, filterShowValuesWords));
-    });
+        // Exclude headers that match any of the filterShowValuesWords
+        const doesNotMatchFilterWords = !filterShowValuesWords.some((filterWord) => matchWord(header.name, filterShowValuesWords));
 
-    // filter out columns that are not type number
-    showValuesHeaders = showValuesHeaders.filter((header) => {
-        return header.type === "number";
-    });
+        // Include only headers that are of type number
+        const isTypeNumber = header.type === "number";
 
-    //   console.log("post nlp showValuesHeaders", showValuesHeaders);
-    //   console.log("pre nlp groupByHeaders", dataSource.header);
-    // Filter out columns based on NLP
+        return doesNotMatchFilterWords && isTypeNumber;
+    });
+    if (showValuesHeaders.length === 0) return [];
+
     groupByHeaders = headers.filter((header) => {
-        return !filterGroupByWords.some((filterWord) => matchWord(header.name, filterGroupByWords));
+        // Exclude headers that are in showValuesHeaders
+        const isNotInShowValuesHeaders = !showValuesHeaders.some((showValuesHeader) => showValuesHeader.name === header.name);
+
+        // Exclude headers that match any of the filterGroupByWords
+        const doesNotMatchFilterWords = !filterGroupByWords.some((filterWord) => matchWord(header.name, filterGroupByWords));
+
+        // Exclude headers based on cardinality and unique values
+        const passesCardinalityCheck = header.uniqueValues && header.cardinalityRatio && (
+            (header.uniqueValues !== 1) &&
+            (header.uniqueValues <= 10) &&
+            (header.uniqueValues <= 5 || header.cardinalityRatio < 0.2)
+        );
+
+        return isNotInShowValuesHeaders && doesNotMatchFilterWords && passesCardinalityCheck;
     });
-    //   console.log("post nlp groupByHeaders", groupByHeaders);
+    if (groupByHeaders.length === 0) return [];
 
-    groupByHeaders = groupByHeaders.filter((header) => {
-        if (!header.cardinalityRatio || !header.uniqueValues) return;
-
-        const minUniqueValues = 5;
-        if (header.uniqueValues === 1) {
-            return false;
-        }
-        if (header.uniqueValues > 10) {
-            return false;
-        }
-        // Include the column if it has fewer unique values than the threshold,
-        // its cardinality ratio is less than 0.2, and not all values are the same
-        return header.uniqueValues <= minUniqueValues || header.cardinalityRatio < 0.2;
-    });
-
-    //   console.log("post cardinality groupByHeaders", groupByHeaders);
+    // limit the amount to the length of the groupByHeaders
+    amount = Math.min(amount, groupByHeaders.length);
 
     let showValuesIndex, groupByIndex;
     let showValues: string, groupBy: string;
@@ -73,21 +69,14 @@ export function autoChart(
     let chartType: ChartType;
 
     for (let i = 0; i < amount; i++) {
-        do {
-            // randomly select a chart type
-            chartType = chartTypes[Math.floor(Math.random() * chartTypes.length)] as ChartType;
+        // randomly select a chart type
+        chartType = chartTypes[Math.floor(Math.random() * chartTypes.length)] as ChartType;
 
-            showValuesIndex = Math.floor(Math.random() * showValuesHeaders.length);
-            showValues = showValuesHeaders[showValuesIndex]?.name || "";
+        showValuesIndex = Math.floor(Math.random() * showValuesHeaders.length);
+        showValues = showValuesHeaders[showValuesIndex]?.name || "";
 
-            groupByIndex = Math.floor(Math.random() * groupByHeaders.length);
-            groupBy = groupByHeaders[groupByIndex]?.name || "";
-
-            // If showValues or groupBy is an empty string, break the loop
-            if (showValues === "" || groupBy === "") {
-                break;
-            }
-        } while (showValues === groupBy); // Repeat if showValues and groupBy are the same
+        groupByIndex = Math.floor(Math.random() * groupByHeaders.length);
+        groupBy = groupByHeaders[groupByIndex]?.name || "";
 
         // If showValues or groupBy is an empty string, break the outer loop
         if (showValues === "" || groupBy === "") {
@@ -99,7 +88,7 @@ export function autoChart(
 
         chartConfigs.push({
             id: Math.random().toString(36).slice(2, 12).toString(),
-            index: 0,
+            index: -1,
             dataSourceName,
             chartType,
             showValues,
@@ -114,5 +103,18 @@ export function autoChart(
     if (chartConfigs.length === 0) {
         alert("Sorry, could not interpret dataset, no charts were generated.");
     }
+
+    // remove duplicates from chartConfigs
+    chartConfigs = chartConfigs.filter((chartConfig, index, self) => {
+        // If the chart type is 'total', only keep it if it's the first occurrence with the same showValues
+        if (chartConfig.chartType === 'total') {
+            const firstOccurrenceIndex = self.findIndex((t) => t.showValues === chartConfig.showValues && t.chartType === 'total');
+            return firstOccurrenceIndex === index;
+        }
+
+        // For other chart types, keep all occurrences
+        const firstOccurrenceIndex = self.findIndex((t) => t.showValues === chartConfig.showValues && t.groupBy === chartConfig.groupBy);
+        return firstOccurrenceIndex === index;
+    });
     return chartConfigs;
 }

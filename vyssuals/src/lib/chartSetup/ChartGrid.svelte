@@ -69,7 +69,8 @@
         return `${date}_${title}_${index}.png`;
     }
 
-    function toggleColorSync(config: ChartConfig): void {
+    async function toggleColorSync(config: ChartConfig) {
+        if (await db.get(config.dataSourceName).type == "file") return;
         if ($colorSyncChartConfig && $colorSyncChartConfig.id === config.id) {
             colorSyncChartConfig.set(null);
             posthog.capture("color_sync_disabled", { chartType: config.chartType });

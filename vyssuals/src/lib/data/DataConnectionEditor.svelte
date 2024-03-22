@@ -1,7 +1,7 @@
 <script lang="ts">
     import FloatingWindow from "../wrapper/FloatingWindow.svelte";
     import { showDataConnectionEditor, showChartEditor, startColor, endColor, showDataSourceEditor, dataSourceToEdit } from "../store";
-    import type { ChartConfig } from "../types";
+    import type { ChartConfig, Header } from "../types";
     import GradientButton from "../buttons/GradientButton.svelte";
     import ConnectorList from "../connectors/ConnectorList.svelte";
     import { autoChart } from "../chartSetup/AutoCharts";
@@ -58,20 +58,26 @@
 
     async function handleAutoChart(dataSourceName: string) {
         const ds = db.get(dataSourceName);
-        await ds.addAnalyticsToHeaders();
-        try {
-            const autoChartConfigs: ChartConfig[] = autoChart(
-                dataSourceName,
-                await ds.metadata.toCollection().toArray(),
-                5,
-                $startColor,
-                $endColor
-            );
-            db.vyssuals.addChartConfigs(autoChartConfigs);
-        } catch (error) {
-            console.error("Error generating auto chart:", error);
-        }
-        posthog.capture("auto_chart_created");
+        ds.addAnalyticsToHeaders().then(() => {
+            try {
+                ds.metadata
+                    .toCollection()
+                    .toArray()
+                    .then((headers: Header[]) => {
+                        if (headers.length === 0) {
+                            alert("No data found in the data source. Please add data to the data source before creating charts.");
+                            return;
+                        }
+
+                        const autoChartConfigs: ChartConfig[] = autoChart(dataSourceName, headers, 5, $startColor, $endColor);
+                        db.vyssuals.addChartConfigs(autoChartConfigs);
+                        posthog.capture("auto_chart_created");
+                    });
+            } catch (error: any) {
+                console.error("Error generating auto chart:", error);
+                posthog.capture("auto_chart_error", { error: error.message });
+            }
+        });
     }
 
     async function handleReloadCSVFile(dataSourceName: string, e: Event) {
@@ -104,7 +110,6 @@
         }
         posthog.capture("data_source_removed");
     }
-    
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
