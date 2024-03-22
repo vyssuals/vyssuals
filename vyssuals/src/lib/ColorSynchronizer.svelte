@@ -6,7 +6,7 @@
     import { fetchItems, getLabels, getAttributes } from "./charts/chartDataUtils";
     import type { ColorPayload, Item, Attributes, ColorInformation } from "./types";
     import { createColorArray } from "./utils/colorUtils";
-    import { socket } from './data/websocket';
+    import { socket } from './websocket/websocket';
 
 
     let ds: DataSourceDatabase;

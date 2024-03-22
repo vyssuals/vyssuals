@@ -9,7 +9,7 @@
     import DataInfo from "./lib/DataInfo.svelte";
     import OpenDataSourcesButton from "./lib/buttons/OpenDataSourcesButton.svelte";
     import ColorSynchronizer from "./lib/ColorSynchronizer.svelte";
-    import { connectWebSocket } from "./lib/data/websocket";
+    import { connectWebSocket } from "./lib/websocket/websocket";
     import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
     import { db } from "./lib/data/databaseManager";
 

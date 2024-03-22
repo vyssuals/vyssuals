@@ -1,6 +1,6 @@
 import posthog from "posthog-js";
 import type { WebSocketMessage } from "../types";
-import { db } from "./databaseManager";
+import { db } from "../data/databaseManager";
 
 export const processMessage = (message: string) => {
     const parsedMessage: WebSocketMessage = JSON.parse(message);
