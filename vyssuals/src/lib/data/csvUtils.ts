@@ -36,7 +36,7 @@ export function loadCSVFile(file: File): Promise<DataPayload> {
 
                     const id = String(index);
                     const attributes: Attributes = { Id: id, Count: 1, ...row, Timestamp: timestamp };
-                    const versions: Versions = { timestamp: attributes };
+                    const versions: Versions = { [timestamp]: attributes };
 
                     return {
                         id,
