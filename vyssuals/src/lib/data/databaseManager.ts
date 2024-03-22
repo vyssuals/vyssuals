@@ -75,6 +75,9 @@ class DatabaseManager {
         }
         this.databases.delete(name);
         this.cleanChartConfigs(name);
+        if (this.databases.size === 0) {
+            this.hasDatabases.set(false);
+        }
     }
 
     private cleanChartConfigs(name: string) {
