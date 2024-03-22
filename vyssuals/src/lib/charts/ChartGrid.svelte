@@ -31,6 +31,7 @@
         bar: "595px",
         doughnut: "380px",
         total: "280px",
+        timeline: "595px",
     };
 
     function handleRemoveChart(chart: ChartConfig) {
