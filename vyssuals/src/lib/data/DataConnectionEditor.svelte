@@ -17,6 +17,7 @@
     $: wsDataSourcesPromise = getDataSources("websocket");
     $: fileDataSourcesPromise = getDataSources("file");
     $: allDataSourcesPromise = Promise.all([wsDataSourcesPromise, fileDataSourcesPromise]);
+    $: hasDatabases = db.hasDatabases;
 
     async function getDataSources(type: string): Promise<string[]> {
         return new Promise(async (resolve) => {
@@ -227,13 +228,11 @@
             <input type="file" id="filePicker" accept=".csv" on:change={handleFileSelection} />
         </div>
 
-        {#await allDataSourcesPromise then allDataSources}
-            {#if allDataSources.length > 0}
-                <div style="padding-top: 1em;">
-                    <GradientButton on:click={handleAddChart} />
-                </div>
-            {/if}
-        {/await}
+        {#if $hasDatabases}
+            <div style="padding-top: 1em;">
+                <GradientButton on:click={handleAddChart} />
+            </div>
+        {/if}
     </div>
 </FloatingWindow>
 
