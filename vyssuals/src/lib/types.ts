@@ -35,7 +35,7 @@ export interface DataPayload {
 }
 
 export interface ColorPayload {
-    [key: string]: ColorInformation; // Key is the color, Value is the ColorInformation
+    colors: ColorInformation[];
 }
 
 export interface ColorInformation {
