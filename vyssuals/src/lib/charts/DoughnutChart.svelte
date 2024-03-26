@@ -1,70 +1,55 @@
 <script lang="ts">
-  import type { ChartConfig, DataSource } from "../types";
-  import { Doughnut } from "svelte-chartjs";
-  import { formatTitle } from "../utils/textUtils";
-  import { createChartData, getLastTimestamp } from "../data/dataUtils";
-  import { chartConfigs, dataset, dataSources } from "../store";
+    import type { ChartConfig, RawChartData } from "../types";
+    import { calculateChartData } from "../utils/chartDataUtils";
+    import { Doughnut } from "svelte-chartjs";
+    import { Pie } from "svelte-chartjs";
+    import { PolarArea } from "svelte-chartjs";
+    import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, type ChartOptions } from "chart.js";
+    import { formatTitle, formatSubtitle } from "../utils/textUtils";
 
-  import {
-    Chart as ChartJS,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement,
-    CategoryScale,
-  } from "chart.js";
+    export let config: ChartConfig;
+    export let chartData: RawChartData;
 
-  export let index: number;
-  let data: any;
-  let config: ChartConfig;
-  let unitSymbol: string;
+    $: data = calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config);
+    $: title = formatTitle(config);
+    $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
 
-  $: {
-    config = $chartConfigs[index];
-    let filteredDataset = $dataset.filter(
-      (item) => item.dataSourceName === config.dataSourceName
-    );
-    const timestamp = getLastTimestamp(filteredDataset);
-    if (timestamp) {
-      filteredDataset = filteredDataset.filter(
-        (item) => item.timestamp === timestamp
-      );
-    }
-    let dataSource: DataSource | undefined = $dataSources.find(
-      (item) => item.name === config.dataSourceName
-    );
-    if (dataSource) {
-      data = createChartData(dataSource, filteredDataset, config);
-      unitSymbol = dataSource.headerData.find(
-        (item) => item.name === config.showValues
-      )?.unitSymbol || "";
-    }
-  }
 
-  ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
-  let options = {
-    responsive: false,
-    plugins: {
-      legend: {
-        labels: {
-          generateLabels: (chart: any) =>
-          chart.data.labels.map((l: string, i: number) => ({
-            datasetIndex: 0,
-            index: i,
-            text: l?.length > 8 ? `${l.slice(0, 6)}...` : l,
-            fillStyle: chart.data.datasets[0].backgroundColor[i],
-            strokeStyle: chart.data.datasets[0].backgroundColor[i],
-            hidden: false,
-            fontColor: "#666666",
-            })),
+    ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
+
+    let options: ChartOptions<"doughnut"> = {
+        responsive: false,
+        plugins: {
+            legend: {
+                labels: {
+                    generateLabels: (chart: any) =>
+                        chart.data.labels.map((l: string, i: number) => ({
+                            datasetIndex: 0,
+                            index: i,
+                            text: l?.length > 8 ? `${l.slice(0, 6)}...` : l,
+                            fillStyle: chart.data.datasets[0].colors[i],
+                            strokeStyle: chart.data.datasets[0].borderColor[i],
+                            hidden: false,
+                            fontColor: "#666666",
+                        })),
+                },
+                position: "bottom",
+                onClick: (e, legendItem, legend) => {
+                    // Implement your onClick logic here
+                },
+            },
         },
-        position: "bottom",
-      },
-    },
-  };
+        animation: {
+            easing: "easeInOutQuart",
+            duration: 600,
+        },
+    };
 </script>
 
-<h1 class="chart-title" style="width: 350px">{formatTitle(config)}</h1>
-<h3 title="You can edit the unit symbol in the settings of this datasource.">{unitSymbol}</h3>
-<Doughnut {data} {options} style="height: 310px; width: 380px" />
+<h1 class="chart-title">{title}</h1>
+{#if data}
+    <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
+    <!-- <PolarArea {data} {options} style="height: 310px; width: 380px" /> -->
+    <Doughnut {data} {options} style="height: 310px; width: 380px" />
+{/if}

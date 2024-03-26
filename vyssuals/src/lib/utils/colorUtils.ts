@@ -1,5 +1,8 @@
 // function for creating an array of colors. inputs: number of colors, start color, end color.
 export function createColorArray(numColors: number, startColor: string, endColor: string): string[] {
+    if (numColors < 2) {
+        return [startColor];
+    }
     const start = hexToRgb(startColor);
     const end = hexToRgb(endColor);
     const steps: number = numColors - 1;
@@ -24,4 +27,30 @@ function hexToRgb(hex: string): { r: number, g: number, b: number } {
 // function for converting rgb color to hex
 function rgbToHex(r: number, g: number, b: number): string {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
+export function darkenHexColor(color: string, amount: number): string {
+    // Convert the hex color to RGB
+    let { r, g, b } = hexToRgb(color);
+
+    // Subtract the amount from each color component
+    r = Math.max(0, r - amount);
+    g = Math.max(0, g - amount);
+    b = Math.max(0, b - amount);
+
+    // Convert the color components back to a hex color
+    return rgbToHex(r, g, b);
+}
+
+export function lightenHexColor(color: string, amount: number): string {
+    // Convert the hex color to RGB
+    let { r, g, b } = hexToRgb(color);
+
+    // Add the amount to each color component
+    r = Math.min(255, r + amount);
+    g = Math.min(255, g + amount);
+    b = Math.min(255, b + amount);
+
+    // Convert the color components back to a hex color
+    return rgbToHex(r, g, b);
 }

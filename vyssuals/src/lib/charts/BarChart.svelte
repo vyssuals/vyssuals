@@ -1,90 +1,82 @@
 <script lang="ts">
-  import type { ChartConfig, DataSource } from "../types";
-  import { chartConfigs, dataset, dataSources } from "../store";
-  import { Bar } from "svelte-chartjs";
-  import { formatTitle } from "../utils/textUtils";
-  import { createChartData, getLastTimestamp } from "../data/dataUtils";
+    import { Bar } from "svelte-chartjs";
+    import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
+    import type { ChartConfig, RawChartData } from "../types";
+    import { calculateChartData } from "../utils/chartDataUtils";
+    import { formatTitle, formatSubtitle } from "../utils/textUtils";
+    import { darkenHexColor } from "../utils/colorUtils";
 
-  import {
-    Chart,
-    Title,
-    Tooltip,
-    Legend,
-    BarElement,
-    CategoryScale,
-    LinearScale,
-  } from "chart.js";
+    export let config: ChartConfig;
+    export let chartData: RawChartData;
 
-  export let index: number;
-  let data: any;
-  let config: ChartConfig;
-  let unitSymbol: string;
+    $: data = calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config);
+    $: title = formatTitle(config);
+    $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
 
-  $: {
-    config = $chartConfigs[index];
-    let filteredDataset = $dataset.filter(
-      (item) => item.dataSourceName === config.dataSourceName
-    );
-    const timestamp = getLastTimestamp(filteredDataset);
-    if (timestamp) {
-      filteredDataset = filteredDataset.filter(
-        (item) => item.timestamp === timestamp
-      );
-    }
-    let dataSource: DataSource | undefined = $dataSources.find(
-      (item) => item.name === config.dataSourceName
-    );
-    if (dataSource) {
-      data = createChartData(dataSource, filteredDataset, config);
-      unitSymbol = dataSource.headerData.find(
-        (item) => item.name === config.showValues
-      )?.unitSymbol || "";
-    }
-  }
+    // let canvas: HTMLCanvasElement;
+    // let ctx: any;
 
-  Chart.register(
-    Title,
-    Tooltip,
-    Legend,
-    BarElement,
-    CategoryScale,
-    LinearScale
-  );
+    // $: if (canvas) {
+    //     ctx = canvas.getContext('2d');
+    // }
 
-  let options = {
-    responsive: false,
-    maintainAspectRatio: false,
-    // aspectRatio: 2,
-    plugins: {
-      legend: {
-        display: false,
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          callback: function (value: any): string {
-            let label = this.getLabelForValue(value);
-            return label?.length > 8 ? `${label.slice(0, 6)}...` : label;
-          },
+    // $: if (data.datasets) { data.datasets[0].backgroundColor = 
+    //     data.datasets[0].backgroundColor.map(() => {
+    //         return "red"
+    //     });
+    // }
+
+    // $: if (data.datasets) { data.datasets[0].backgroundColor = 
+    //     data.datasets[0].backgroundColor.map((color: string) => {
+    //         let gradient = ctx?.createLinearGradient(0, 0, 0, 310);
+    //         gradient?.addColorStop(0, config.startColor);
+    //         gradient?.addColorStop(1, config.endColor);
+    //         return gradient as CanvasGradient;
+    //     });
+    // }
+
+    Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+
+    let options = {
+        responsive: false,
+        maintainAspectRatio: false,
+        // aspectRatio: 2,
+        plugins: {
+            legend: {
+                display: false,
+            },
         },
-        grid: {
-          display: true,
-          drawOnChartArea: false,
-          drawTicks: false,
+        scales: {
+            x: {
+                ticks: {
+                    callback: function (value: any): string {
+                        let label = (this as any).getLabelForValue(value);
+                        return label?.length > 8 ? `${label.slice(0, 6)}...` : label;
+                    },
+                },
+                grid: {
+                    display: true,
+                    drawOnChartArea: false,
+                    drawTicks: false,
+                },
+            },
+            y: {
+                grid: {
+                    display: true,
+                    drawOnChartArea: false,
+                    drawTicks: false,
+                },
+            },
         },
-      },
-      y: {
-        grid: {
-          display: true,
-          drawOnChartArea: false,
-          drawTicks: false,
+        animation: {
+            easing: "easeInOutQuart",
+            duration: 600,
         },
-      },
-    },
-  };
+    };
 </script>
 
-<h1 class="chart-title" style="width: 550px">{formatTitle(config)}</h1>
-<h3 title="You can edit the unit symbol in the settings of this datasource.">{unitSymbol}</h3>
-<Bar {data} {options} style="height: 310px; width: 595px" />
+<h1 class="chart-title">{title}</h1>
+{#await data then data}
+<h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
+    <Bar id="barchart" {data} {options} style="height: 310px; width: 595px" />
+{/await}

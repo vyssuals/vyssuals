@@ -1,42 +1,67 @@
 <!-- Chart.svelte -->
 <script lang="ts">
-  import { chartConfigs } from "../store";
-  import { type ChartConfig } from "../types";
-  import BarChart from "./BarChart.svelte";
-  import DoughnutChart from "./DoughnutChart.svelte";
-  import TotalChart from "./TotalChart.svelte";
-  import LineChart from "./LineChart.svelte";
+    import type { ChartConfig, Item } from "../types";
+    import { liveQuery, type Observable } from "dexie";
+    import BarChart from "./BarChart.svelte";
+    import DoughnutChart from "./DoughnutChart.svelte";
+    import TotalChart from "./TotalChart.svelte";
+    import TimelineChart from "./TimelineChart.svelte";
+    import { db } from "../data/databaseManager";
+    import { DataSourceDatabase } from "../data/dataSourceDatabase";
+    import { fetchItems, getAttributes, getLabels } from "../utils/chartDataUtils";
 
-  export let index: number;
-  let config: ChartConfig;
+    export let config: ChartConfig;
 
-  $: {
-    config = $chartConfigs[index];
-  }
+    let ds: DataSourceDatabase;
+    $: ds = db.get(config.dataSourceName);
 
-  let chartInstance: any; // Store reference to the chart instance
-
-  $: {
-    switch (config.chartType) {
-      case "bar":
-        chartInstance = BarChart;
-        break;
-      case "doughnut":
-        chartInstance = DoughnutChart;
-        break;
-      case "total":
-        chartInstance = TotalChart;
-        break;
-      case "line":
-        chartInstance = LineChart;
-        break;
-      default:
-        console.error("Invalid chart type specified in config");
+    let timestamp: string;
+    $: {
+        async function getTimestamp() {
+            if (config.update != "Latest Update") {
+                timestamp = config.update;
+            } else {
+                timestamp = await ds.lastUpdate;
+            }
+        }
+        getTimestamp();
     }
-  }
+
+    let items: Observable<Item[]>;
+    $: items = liveQuery(() => fetchItems(ds, timestamp));
+
+    let labels: string[];
+    let attributes: any[];
+
+    $: if (config && $items) {
+        labels = getLabels($items, config.groupBy, config.update);
+        attributes = getAttributes($items, config.update)
+    }
+    $: header = liveQuery(() => ds.metadata.get(config.showValues));
+    $: chartData = labels && { labels, attributes, header: $header };
+
+    let chartInstance: any; // Store reference to the chart instance
+
+    $: {
+        switch (config.chartType) {
+            case "bar":
+                chartInstance = BarChart;
+                break;
+            case "doughnut":
+                chartInstance = DoughnutChart;
+                break;
+            case "total":
+                chartInstance = TotalChart;
+                break;
+            case "timeline":
+                chartInstance = TimelineChart;
+                break;
+            default:
+                console.error("Invalid chart type specified in config");
+        }
+    }
 </script>
 
-<!-- Render the chart instance based on the type specified in the config -->
-{#if chartInstance}
-  <svelte:component this={chartInstance} {index} />
+{#if chartInstance && labels && attributes.length && $header}
+    <svelte:component this={chartInstance} {config} {chartData} />
 {/if}
