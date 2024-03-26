@@ -4,7 +4,7 @@
     import { colorSyncChartConfig } from "./store";
     import { DataSourceDatabase } from "./data/dataSourceDatabase";
     import { fetchItems, getLabels, getAttributes } from "./utils/chartDataUtils";
-    import type { ColorPayload, Item, Attributes, ColorInformation } from "./types";
+    import type { ColorPayload, Item, Attributes, ColorInformation, WebSocketMessage } from "./types";
     import { createColorArray } from "./utils/colorUtils";
     import { socket } from './websocket/websocket';
 
@@ -48,15 +48,23 @@
             createColorArray(labels.length, $colorSyncChartConfig.startColor, $colorSyncChartConfig.endColor)
         );
         if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify(colorPayload));
+            const message: WebSocketMessage = {
+                timestamp: new Date().toISOString(),
+                sender: "Vyssuals",
+                senderName: $colorSyncChartConfig.dataSourceName,
+                senderVersion: "1.0",
+                version: "1.0",
+                type: "color",
+                payload: colorPayload
+            };
+            socket.send(JSON.stringify(message));
         }
     }
 
     function createColorPayload(attributeName: string, labels: string[], attributes: Attributes[], colors: string[]): ColorPayload {
-    const colorPayload: ColorPayload = {};
+    const colorPayload: ColorPayload = { colors: []};
     labels.forEach((label, index) => {
-        const colorInformation = createColorInformation(attributeName, label, attributes, colors[index]);
-        colorPayload[colorInformation.color] = colorInformation;
+        colorPayload.colors.push(createColorInformation(attributeName, label, attributes, colors[index]));
     });
 
     return colorPayload;
