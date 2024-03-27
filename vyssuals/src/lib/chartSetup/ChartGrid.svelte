@@ -70,7 +70,10 @@
     }
 
     async function toggleColorSync(config: ChartConfig) {
+        if (config.chartType == "timeline") return;
         if (await db.get(config.dataSourceName).type == "file") return;
+        if (config.chartType == "total" ) config.groupBy = config.showValues;
+    
         if ($colorSyncChartConfig && $colorSyncChartConfig.id === config.id) {
             console.log("color sync disabled");
             colorSyncChartConfig.set(null);
