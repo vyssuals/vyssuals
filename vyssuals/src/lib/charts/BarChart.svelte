@@ -4,7 +4,7 @@
     import type { ChartConfig, RawChartData } from "../types";
     import { calculateChartData } from "../utils/chartDataUtils";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
-    import { darkenHexColor } from "../utils/colorUtils";
+    import { colorSyncChartConfig } from "../store";
 
     export let config: ChartConfig;
     export let chartData: RawChartData;
@@ -12,6 +12,10 @@
     $: data = calculateChartData(chartData.labels, chartData.attributes, chartData.header.type, config);
     $: title = formatTitle(config);
     $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
+
+    $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index) {
+        $colorSyncChartConfig.labels = data.labels;
+    }
 
     // let canvas: HTMLCanvasElement;
     // let ctx: any;

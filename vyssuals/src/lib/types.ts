@@ -8,6 +8,7 @@ export interface ChartConfig {
     startColor: string;
     endColor: string;
     update: string; // The timestamp of the update to take
+    labels?: string[];
 }
 
 export interface RawChartData {
@@ -40,8 +41,6 @@ export interface ColorPayload {
 
 export interface ColorInformation {
     color: string;
-    attributeName: string;
-    attributeValue: string | number;
     ids: string[];
 }
 

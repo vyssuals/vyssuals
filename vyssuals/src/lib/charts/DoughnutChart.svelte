@@ -2,10 +2,9 @@
     import type { ChartConfig, RawChartData } from "../types";
     import { calculateChartData } from "../utils/chartDataUtils";
     import { Doughnut } from "svelte-chartjs";
-    import { Pie } from "svelte-chartjs";
-    import { PolarArea } from "svelte-chartjs";
     import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, type ChartOptions } from "chart.js";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
+    import { colorSyncChartConfig } from "../store";
 
     export let config: ChartConfig;
     export let chartData: RawChartData;
@@ -14,7 +13,9 @@
     $: title = formatTitle(config);
     $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
 
-
+    $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index) {
+        $colorSyncChartConfig.labels = data.labels;
+    }
 
     ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 

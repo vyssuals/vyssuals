@@ -3,8 +3,8 @@
     import { liveQuery, type Observable } from "dexie";
     import { colorSyncChartConfig } from "./store";
     import { DataSourceDatabase } from "./data/dataSourceDatabase";
-    import { fetchItems, getLabels, getAttributes } from "./utils/chartDataUtils";
-    import type { ColorPayload, Item, Attributes, ColorInformation, WebSocketMessage } from "./types";
+    import { fetchItems, getLabels, getAttributes, calculateChartData } from "./utils/chartDataUtils";
+    import type { ColorPayload, Item, Attributes, ColorInformation, WebSocketMessage, Header } from "./types";
     import { createColorArray } from "./utils/colorUtils";
     import { socket } from './websocket/websocket';
 
@@ -34,8 +34,8 @@
     let labels: string[];
     let attributes: any[];
 
-    $: if ($colorSyncChartConfig && $items) {
-        labels = getLabels($items, $colorSyncChartConfig.groupBy, $colorSyncChartConfig.update);
+    $: if ($colorSyncChartConfig && $colorSyncChartConfig.labels && $colorSyncChartConfig.labels.length > 0 &&  $items) {
+        labels = $colorSyncChartConfig.labels ;
         attributes = getAttributes($items, $colorSyncChartConfig.update)
     }
 
@@ -93,8 +93,6 @@
         console.log(`creating color information for ${label}`);
         return {
             color,
-            attributeName,
-            attributeValue: label,
             ids: attributes.filter((attribute) => attribute[attributeName] == label).map((attribute) => attribute.Id)
         };
     }
