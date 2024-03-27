@@ -2,7 +2,9 @@
     import type { ChartConfig, RawChartData } from "../types";
     import { formatSubtitle, titleCase } from "../utils/textUtils";
     import Chart from "./Chart.svelte";
-    import { sumAttributeValues } from "../utils/chartDataUtils";
+    import { getLabels, sumAttributeValues } from "../utils/chartDataUtils";
+    import { colorSyncChartConfig } from "../store";
+
 
     export let config: ChartConfig;
     export let chartData: RawChartData;
@@ -36,6 +38,10 @@
             fullFormattedNumber = total.toString();
         }
     
+    $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index) {
+        let labels: string[] = [...new Set(chartData.attributes.map((attr) => attr[config.showValues].toString()).filter(Boolean))]
+        $colorSyncChartConfig.labels = labels
+    }
 
     // function for formatting large numbers with ` , e.g. 1`000`000
     function formatNumber(num: number) {
