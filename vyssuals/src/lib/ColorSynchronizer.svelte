@@ -57,9 +57,27 @@
                 type: "color",
                 payload: colorPayload
             };
-            console.log(`sending color payload: ${JSON.stringify(message)}`);
+            console.log(`sending color payload`);
             socket.send(JSON.stringify(message));
         }
+    }
+
+    $: if ($colorSyncChartConfig == null) {
+        console.log("sending color cleanup...");
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            const message: WebSocketMessage = {
+                timestamp: new Date().toISOString(),
+                sender: "Vyssuals",
+                senderName: "Vyssuals",
+                senderVersion: "1.0",
+                version: "1.0",
+                type: "colorCleanup",
+            };
+            console.log(`sending color cleanup: ${JSON.stringify(message)}`);
+            socket.send(JSON.stringify(message));
+        }
+        // Dummy reference to make $colorSyncChartConfig a dependency of this block
+        console.log($colorSyncChartConfig);
     }
 
     function createColorPayload(attributeName: string, labels: string[], attributes: Attributes[], colors: string[]): ColorPayload {

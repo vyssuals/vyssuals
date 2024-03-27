@@ -72,7 +72,9 @@
     async function toggleColorSync(config: ChartConfig) {
         if (await db.get(config.dataSourceName).type == "file") return;
         if ($colorSyncChartConfig && $colorSyncChartConfig.id === config.id) {
+            console.log("color sync disabled");
             colorSyncChartConfig.set(null);
+            console.log($colorSyncChartConfig)
             posthog.capture("color_sync_disabled", { chartType: config.chartType });
         } else {
             colorSyncChartConfig.set(config);

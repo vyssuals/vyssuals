@@ -63,9 +63,7 @@
     {/if}
 
     <OpenDataSourcesButton />
-    {#if $colorSyncChartConfig}
-        <ColorSynchronizer />
-    {/if}
+    <ColorSynchronizer />
 
     
 </main>
