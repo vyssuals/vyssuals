@@ -14,7 +14,11 @@ export function calculateChartData(labels: string[], attributes: Attributes[], d
         data = labels.map((label) => countAttributeBy(attributes, config.showValues, label?.toString() || "", config.groupBy))
     }
 
-    return assembleChartData(labels, data, config.startColor, config.endColor);
+    // remove labels and data where data is 0
+    const filteredData = data.filter((d) => d > 0);
+    const filteredLabels = labels.filter((label, index) => data[index] > 0);
+
+    return assembleChartData(filteredLabels, filteredData, config.startColor, config.endColor);
 }
 
 function assembleChartData(labels: string[], data: number[], startColor: string, endColor: string) {
