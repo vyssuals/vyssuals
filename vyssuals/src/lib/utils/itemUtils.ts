@@ -10,8 +10,6 @@ export function getItemAttributes(versions: Versions, timestamp: string = ""): A
         for (const ts of timestamps) {
             console.log(`ts: ${ts}, timestamp: ${timestamp}`)
             if (ts <= timestamp) {
-                console.log(`returning ${ts}`)
-                console.log(versions[ts])
                 return versions[ts];
             }
         }

@@ -3,6 +3,7 @@ import type { WebSocketMessage } from "../types";
 import { db } from "../data/databaseManager";
 
 export const processMessage = (message: string) => {
+    console.log("Received message: ", message);
     const parsedMessage: WebSocketMessage = JSON.parse(message);
     if (parsedMessage.type) {
         switch (parsedMessage.type) {

@@ -18,7 +18,6 @@
     $: if ($updates) {
         data = calculateChartData($updates, config);
     }
-    $: console.log(data);
 
     async function calculateChartData(updates: Update[], config: ChartConfig) {
         const items: Items = await ds.items.toArray().then((x) => {

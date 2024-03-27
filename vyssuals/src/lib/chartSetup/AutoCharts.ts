@@ -98,7 +98,6 @@ export function autoChart(
             update
         });
     }
-    //   console.log("chartConfigs", chartConfigs);
     // notify user if no charts were generated
     if (chartConfigs.length === 0) {
         alert("Sorry, could not interpret dataset, no charts were generated.");

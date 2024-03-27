@@ -19,7 +19,6 @@ export let top = 0;
 		moving = false;
 	}
 	
-	// $: console.log(moving);
 </script>
 
 <style>

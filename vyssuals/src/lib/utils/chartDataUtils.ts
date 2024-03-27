@@ -29,7 +29,6 @@ function assembleChartData(labels: string[], data: number[], startColor: string,
                 // backgroundColor: colors,
                 backgroundColor: (context: any) => {
                     let chart = context.chart;
-                    console.log(chart);
                     let ctx = chart.ctx;
                     let color = colors[context.dataIndex];
                     const type = chart.config._config.type;

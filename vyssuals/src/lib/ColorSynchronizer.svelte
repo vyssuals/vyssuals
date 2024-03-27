@@ -57,6 +57,7 @@
                 type: "color",
                 payload: colorPayload
             };
+            console.log(`sending color payload: ${JSON.stringify(message)}`);
             socket.send(JSON.stringify(message));
         }
     }
