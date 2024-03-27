@@ -1,5 +1,5 @@
 import posthog from "posthog-js";
-import type { WebSocketMessage } from "../types";
+import type { DataPayload, WebSocketMessage } from "../types";
 import { db } from "../data/databaseManager";
 
 export const processMessage = (message: string) => {
@@ -26,7 +26,7 @@ function processDataMessage(message: WebSocketMessage): void {
     if (message.type === "data") {
         if (!message.senderName) return;
         if (message.payload) {
-            db.get(message.senderName).push("websocket", message.payload);
+            db.get(message.senderName).push("websocket", message.payload as DataPayload);
         }
     }
 }
