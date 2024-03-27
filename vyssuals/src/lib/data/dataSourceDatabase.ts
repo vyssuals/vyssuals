@@ -64,7 +64,10 @@ export class DataSourceDatabase extends Dexie {
             metadata.forEach((header) => { ensureUnitSymbol(header) });
         } else { return; }
         
+        // add count metadata if it doesn't exist
+        if (!metadata.some((header) => header.name === "Count")) {
         metadata.push({ name: "Count", type: "number", unitSymbol: "# Items"});
+        }
         if (metadata.length > 1) {
             this.metadata.bulkAdd(metadata, { allKeys: true }).catch((error) => {
                 if (error instanceof Dexie.BulkError) {
