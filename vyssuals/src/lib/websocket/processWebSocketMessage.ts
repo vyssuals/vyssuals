@@ -34,7 +34,8 @@ function processDataMessage(message: WebSocketMessage): void {
 function processDisconnectMessage(message: WebSocketMessage): void {
     if (message.type === "disconnect") {
         if (message.senderName) {
-            db.deleteDatabase(message.senderName);
+            // db.deleteDatabase(message.senderName);
+            // eventually do something here
         }
     }
 }
