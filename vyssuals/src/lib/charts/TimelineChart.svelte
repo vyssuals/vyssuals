@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Line } from "svelte-chartjs";
-    import type { ChartConfig, Items, RawChartData, Update } from "../types";
+    import type { ChartConfig, Header, Items, RawChartData, Update } from "../types";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
     import { db } from "../data/databaseManager";
     import { getItemValue } from "../utils/itemUtils";
@@ -8,18 +8,22 @@
     import { liveQuery } from "dexie";
 
     export let config: ChartConfig;
-    export let chartData: RawChartData;
+    // export let chartData: RawChartData;
 
     $: ds = db.get(config.dataSourceName);
 
     $: updates = liveQuery(() => ds.updates.toCollection().sortBy("timestamp"));
+    $: header = liveQuery(() => ds.metadata.get(config.showValues));
+
 
     let data: any;
-    $: if ($updates) {
-        data = calculateChartData($updates, config);
+    let subtitle: string;
+    $: if ($updates && $header) {
+        data = calculateChartData($updates, config, $header);
+        subtitle = formatSubtitle(config, $header.unitSymbol);
     }
 
-    async function calculateChartData(updates: Update[], config: ChartConfig) {
+    async function calculateChartData(updates: Update[], config: ChartConfig, header: Header) {
         const items: Items = await ds.items.toArray().then((x) => {
             let items: Items = {};
             x.forEach((item) => {
@@ -28,7 +32,6 @@
             return items;
         });
 
-        const header = await ds.metadata.get(config.showValues);
         let labels: string[] = [];
         let data = updates.map((update) => {
             labels.push(new Date(update.timestamp).toLocaleString());
@@ -75,7 +78,6 @@
     }
 
     $: title = formatTitle(config);
-    $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
 
     ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale, Filler);
 
@@ -92,7 +94,7 @@
             x: {
                 ticks: {
                     callback: function (value: string): string {
-                        let label = this.getLabelForValue(value).split(' ')[1];
+                        let label = (this as any).getLabelForValue(value).split(' ')[1];
                         return label.length > 8 ? `${label.slice(0, 20)}...` : label;
                     },
                 },
