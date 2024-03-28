@@ -47,7 +47,7 @@ export interface ColorInformation {
 export interface Header {
     name: string;
     type: "string" | "number"; // The type of the column, either 'string' or 'number'
-    unitSymbol: UnitSymbol;
+    unitSymbol: string;
     uniqueValues?: number;
     cardinalityRatio?: number;
 }
