@@ -9,7 +9,20 @@
         showDataConnectionEditor.set(true);
     }
 
-    $: metadata = db.get($dataSourceToEdit).metadata.toCollection().toArray();
+    let allSymbols: string[] = [];
+    let metadata: Promise<Header[]> = Promise.resolve([]);
+
+    import { onMount } from 'svelte';
+
+    onMount(async () => {
+        metadata = db.get($dataSourceToEdit).metadata.toCollection().toArray();
+        metadata.then((data) => {
+            const headerSymbols = data.map((header: Header) => header.unitSymbol);
+            // union of all symbols, convert UNIT_SYMBOLS to a set to remove duplicates
+            allSymbols = [...new Set([...headerSymbols, ...UNIT_SYMBOLS])].sort();
+        });
+    });
+
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -51,7 +64,7 @@
                                 on:change={() => db.get($dataSourceToEdit).updateHeader(header)}
                                 disabled={header.type !== "number"}
                             >
-                                {#each UNIT_SYMBOLS as symbol}
+                                {#each allSymbols as symbol}
                                     <option value={symbol}>{symbol}</option>
                                 {/each}
                             </select>
