@@ -11,7 +11,7 @@ export function calculateChartData(labels: string[], attributes: Attributes[], d
     if (dataType === "number") {
         data = labels.map((label) => sumAttributeBy(attributes, config.showValues, label?.toString() || "", config.groupBy));
     } else {
-        data = labels.map((label) => countAttributeBy(attributes, config.showValues, label?.toString() || "", config.groupBy))
+        data = labels.map((label) => countUniqueAttributeBy(attributes, config.showValues, label?.toString() || "", config.groupBy))
     }
 
     // remove labels and data where data is 0
@@ -82,6 +82,16 @@ function countAttributeBy(attributes: Attributes[], aggregateAttribute: string, 
             item && item[groupBy] == label && aggregateAttribute in item ? total + 1 : total,
         0
     );
+}
+
+function countUniqueAttributeBy(attributes: Attributes[], aggregateAttribute: string, label: string, groupBy: string): number {
+    const uniqueValues = new Set();
+    attributes.forEach(item => {
+        if (item && item[groupBy] == label && aggregateAttribute in item) {
+            uniqueValues.add(item[aggregateAttribute]);
+        }
+    });
+    return uniqueValues.size;
 }
 
 export function getLabels(items: Item[], groupBy: string, update: string): string[] {
