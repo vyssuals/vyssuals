@@ -1,19 +1,24 @@
 <script lang="ts">
-    import type { ChartConfig, RawChartData } from "../types";
+    import type { ChartConfig, Item } from "../types";
     import { formatSubtitle, titleCase } from "../utils/textUtils";
     import Chart from "./Chart.svelte";
-    import { getLabels, sumAttributeValues } from "../utils/chartDataUtils";
+    import { getLabels, sumAttributeValues, getAttributes } from "../utils/chartDataUtils";
     import { colorSyncChartConfig } from "../store";
+    import { liveQuery, type Observable } from "dexie";
+    import { DataSourceDatabase } from "../data/dataSourceDatabase";
+    import { db } from "../data/databaseManager";
 
 
     export let config: ChartConfig;
-    export let chartData: RawChartData;
+
+    let ds: DataSourceDatabase;
+    $: ds = db.get(config.dataSourceName);
 
     let total: number = 0;
     let fullFormattedNumber: string = "";
 
     let fontSize: string = '3rem';
-    $: {
+    $: if (fullFormattedNumber) {
         if (fullFormattedNumber.length > 13) {
             fontSize = '2rem'; // adjust as needed
         } 
@@ -26,20 +31,54 @@
         }
     }
     
-    $: title = titleCase(config.showValues);
-    $: subtitle = formatSubtitle(config, chartData.header.unitSymbol);
+    $: lastUpdate = liveQuery(() => ds.info.get("lastUpdate"));
+    let timestamp: string;
+    $: {
+        async function getTimestamp() {
+            if (config.update != "Latest Update") {
+                timestamp = config.update;
+            } else {
+                timestamp = $lastUpdate?.value || "Latest Update";
+            }
+        }
+        getTimestamp();
+    }
 
-    $: if (chartData.header.type === "number") {
-            total = sumAttributeValues(chartData.attributes, config.showValues) || 0;
+    $: header = liveQuery(() => ds.metadata.get(config.showValues));
+
+    $: title = titleCase(config.showValues);
+    let subtitle: string;
+    $: if ($header) subtitle = formatSubtitle(config, $header.unitSymbol);
+
+    let items: Observable<Item[]>;
+    $: items = liveQuery(async () => {
+        if (!timestamp) {
+            const rawItems = await ds.items.toArray();
+            return rawItems.filter((item): item is Item => item !== undefined);
+        }
+        const update = await ds.updates.get(timestamp);
+        const rawItems = await ds.items.bulkGet(update?.visibleItemIds || []);
+        return rawItems.filter((item): item is Item => item !== undefined);
+    });
+
+    let attributes: any[];
+
+    $: if (config && $items) {
+        attributes = getAttributes($items, config.update);
+    }
+
+    $: if ($header && attributes && $header.type === "number") {
+            total = sumAttributeValues(attributes, config.showValues) || 0;
             fullFormattedNumber = formatNumber(total);
         } else {
             // count the number of unique items in the dataset
-            total = chartData.attributes.length;
-            fullFormattedNumber = total.toString();
+            total = attributes?.length;
+            fullFormattedNumber = total?.toString();
         }
     
     $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index) {
-        let labels: string[] = [...new Set(chartData.attributes.map((attr) => attr[config.showValues].toString()).filter(Boolean))]
+        
+        let labels: string[] = [...new Set(attributes.map((attr) => attr[config.showValues].toString()).filter(Boolean))]
         $colorSyncChartConfig.labels = labels
     }
 
@@ -67,7 +106,7 @@
 <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
 <div class="total">
     <h1 class="total-number" style="font-size: {fontSize};">{fullFormattedNumber}</h1>
-    <h3>{chartData.header.unitSymbol}</h3>
+    <h3>{$header?.unitSymbol}</h3>
 </div>
 
 
