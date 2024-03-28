@@ -17,28 +17,6 @@
         $colorSyncChartConfig.labels = data.labels;
     }
 
-    // let canvas: HTMLCanvasElement;
-    // let ctx: any;
-
-    // $: if (canvas) {
-    //     ctx = canvas.getContext('2d');
-    // }
-
-    // $: if (data.datasets) { data.datasets[0].backgroundColor = 
-    //     data.datasets[0].backgroundColor.map(() => {
-    //         return "red"
-    //     });
-    // }
-
-    // $: if (data.datasets) { data.datasets[0].backgroundColor = 
-    //     data.datasets[0].backgroundColor.map((color: string) => {
-    //         let gradient = ctx?.createLinearGradient(0, 0, 0, 310);
-    //         gradient?.addColorStop(0, config.startColor);
-    //         gradient?.addColorStop(1, config.endColor);
-    //         return gradient as CanvasGradient;
-    //     });
-    // }
-
     Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
     let options = {
