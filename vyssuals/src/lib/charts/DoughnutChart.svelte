@@ -43,8 +43,8 @@
 
     $: if ($items) console.log(`barchart.svelte: items changed, count: ${$items.length}`);
 
-    let labels: string[];
-    let attributes: any[];
+    let labels: string[] = [];
+    let attributes: any[] = [];
 
     $: if (config && $items) {
         labels = getLabels($items, config.groupBy, config.update);
@@ -54,7 +54,7 @@
 
     let data: any;
     let subtitle: string;
-    $: if (labels && attributes && $header) {
+    $: if (labels.length > 0 && attributes.length > 0 && $header) {
         data = calculateChartData(labels, attributes, $header.type, config);
         subtitle = formatSubtitle(config, $header.unitSymbol);
     }
