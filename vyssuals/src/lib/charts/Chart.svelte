@@ -28,14 +28,23 @@
     }
 
     let items: Observable<Item[]>;
-    $: items = liveQuery(() => fetchItems(ds, timestamp));
+    $: items = liveQuery(async () => {
+        if (!timestamp) {
+            const rawItems = await ds.items.toArray();
+            return rawItems.filter((item): item is Item => item !== undefined);
+        }
+        const update = await ds.updates.get(timestamp);
+        const rawItems = await ds.items.bulkGet(update?.visibleItemIds || []);
+        return rawItems.filter((item): item is Item => item !== undefined);
+    });
+
 
     let labels: string[];
     let attributes: any[];
 
     $: if (config && $items) {
         labels = getLabels($items, config.groupBy, config.update);
-        attributes = getAttributes($items, config.update)
+        attributes = getAttributes($items, config.update);
     }
     $: header = liveQuery(() => ds.metadata.get(config.showValues));
     $: chartData = labels && { labels, attributes, header: $header };

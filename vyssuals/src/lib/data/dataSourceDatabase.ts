@@ -7,7 +7,7 @@ export class DataSourceDatabase extends Dexie {
     updates: Dexie.Table<Update, string>;
     items: Dexie.Table<Item, string>;
     metadata: Dexie.Table<Header, string>;
-    private info: Dexie.Table<Info, any>;
+    info: Dexie.Table<Info, any>;
 
     constructor(name: string) {
         super(name);
