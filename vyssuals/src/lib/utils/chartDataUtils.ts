@@ -34,7 +34,7 @@ function assembleChartData(labels: string[], data: number[], startColor: string,
                 backgroundColor: (context: any) => {
                     let chart = context.chart;
                     let ctx = chart.ctx;
-                    let color = colors[context.dataIndex];
+                    let color = colors[context.dataIndex] || colors[0];
                     const type = chart.config._config.type;
                     let gradient: CanvasGradient;
                     if (type === "doughnut") {
