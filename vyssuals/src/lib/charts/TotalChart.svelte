@@ -61,13 +61,13 @@
         return rawItems.filter((item): item is Item => item !== undefined);
     });
 
-    let attributes: any[];
+    let attributes: any[] = [];
 
     $: if (config && $items) {
         attributes = getAttributes($items, config.update);
     }
 
-    $: if ($header && attributes && $header.type === "number") {
+    $: if ($header && attributes.length > 0 && $header.type === "number") {
             total = sumAttributeValues(attributes, config.showValues) || 0;
             fullFormattedNumber = formatNumber(total);
         } else {
@@ -76,9 +76,9 @@
             fullFormattedNumber = total?.toString();
         }
     
-    $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index) {
+    $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index && attributes.length > 0) {
         
-        let labels: string[] = [...new Set(attributes.map((attr) => attr[config.showValues].toString()).filter(Boolean))]
+        let labels: string[] = [...new Set(attributes.map((attr) => attr[config.showValues]?.toString()).filter(Boolean))]
         $colorSyncChartConfig.labels = labels
     }
 
