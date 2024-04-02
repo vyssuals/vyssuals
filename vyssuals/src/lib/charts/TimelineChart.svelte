@@ -20,7 +20,7 @@
     let subtitle: string;
     $: if ($updates && $header) {
         data = calculateChartData($updates, config, $header);
-        subtitle = formatSubtitle(config, $header.unitSymbol);
+        subtitle = formatSubtitle(config, $header.unitSymbol, "Timeline", "");
     }
 
     async function calculateChartData(updates: Update[], config: ChartConfig, header: Header) {

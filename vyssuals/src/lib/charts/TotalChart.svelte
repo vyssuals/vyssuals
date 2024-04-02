@@ -46,10 +46,8 @@
 
     $: header = liveQuery(() => ds.metadata.get(config.showValues));
 
-    $: title = titleCase(config.showValues);
-    let subtitle: string;
-    $: if ($header) subtitle = formatSubtitle(config, $header.unitSymbol);
-
+    let updateType: string = "auto";
+    let updateName: string = "";    
     let items: Observable<Item[]>;
     $: items = liveQuery(async () => {
         if (!timestamp) {
@@ -57,6 +55,8 @@
             return rawItems.filter((item): item is Item => item !== undefined);
         }
         const update = await ds.updates.get(timestamp);
+        updateType = update?.type || "auto";
+        updateName = update?.name || "";
         const rawItems = await ds.items.bulkGet(update?.visibleItemIds || []);
         return rawItems.filter((item): item is Item => item !== undefined);
     });
@@ -75,6 +75,10 @@
             total = attributes?.length;
             fullFormattedNumber = total?.toString();
         }
+        
+    $: title = titleCase(config.showValues);
+    let subtitle: string;
+    $: if ($header) subtitle = formatSubtitle(config, $header.unitSymbol, updateName, updateType);
     
     $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index && attributes.length > 0) {
         

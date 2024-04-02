@@ -11,11 +11,16 @@ export function titleCase(str: string): string {
     }).join(' ');
 }
 
-export function formatSubtitle(chartConfig: ChartConfig, unitSymbol: string): string {
+export function formatSubtitle(chartConfig: ChartConfig, unitSymbol: string, updateName: string, updateType: string = "auto"): string {
     let update: string = chartConfig.update;
     if (chartConfig.update != "Latest Update") {
-        update = new Date(chartConfig.update).toLocaleString();
+        if (updateType == "auto") {
+            update = new Date(chartConfig.update).toLocaleTimeString();
+        } else {
+            update = updateName;
+        }
     }
+
     return `${truncateString(chartConfig.dataSourceName)} // ${truncateString(update)} // ${unitSymbol}`;
 }
 

@@ -30,6 +30,8 @@
     }
     $: console.log(`barchart.svelte: timestamp changed ${timestamp}`);
 
+    let updateType: string = "auto";
+    let updateName: string = "";
     let items: Observable<Item[]>;
     $: items = liveQuery(async () => {
         if (!timestamp) {
@@ -37,6 +39,8 @@
             return rawItems.filter((item): item is Item => item !== undefined);
         }
         const update = await ds.updates.get(timestamp);
+        updateType = update?.type || "auto";
+        updateName = update?.name || "";
         const rawItems = await ds.items.bulkGet(update?.visibleItemIds || []);
         return rawItems.filter((item): item is Item => item !== undefined);
     });
@@ -56,7 +60,7 @@
     let subtitle: string;
     $: if (labels.length > 0 && attributes.length > 0 && $header) {
         data = calculateChartData(labels, attributes, $header.type, config);
-        subtitle = formatSubtitle(config, $header.unitSymbol);
+        subtitle = formatSubtitle(config, $header.unitSymbol, updateName, updateType);
     }
     $: title = formatTitle(config);
 
