@@ -23,7 +23,7 @@ export function calculateChartData(labels: string[], attributes: Attributes[], d
 
 function assembleChartData(labels: string[], data: number[], startColor: string, endColor: string) {
     const colors = createColorArray(data.length, startColor, endColor);
-
+    console.log('assembling chart data')
     return {
         labels: labels,
         datasets: [
