@@ -116,7 +116,9 @@
 </script>
 
 <h1 class="chart-title">{title}</h1>
-{#await data then data}
+{#await data}
+    <h3 class="chart-subtitle">Loading...</h3>
+{:then data}
     <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
     <Line {data} {options} style="height: 310px; width: 595px" />
 {/await}
