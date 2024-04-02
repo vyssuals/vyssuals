@@ -39,7 +39,9 @@
 
     let updateType: string = "auto";
     let updateName: string = "";
-    $: items = liveQuery(async () => {
+    $: if ($lastUpdate) {
+        items = undefined;
+        items = liveQuery(async () => {
         if (!timestamp) {
             const rawItems = await ds.items.toArray();
             return rawItems.filter((item): item is Item => item !== undefined);
@@ -49,7 +51,7 @@
         updateName = update?.name || "";
         const rawItems = await ds.items.bulkGet(update?.visibleItemIds || []);
         return rawItems.filter((item): item is Item => item !== undefined);
-    });
+    })};
 
     let labels: string[] = [];
     let attributes: any[] = [];
@@ -63,7 +65,7 @@
         if (labels.length > 0 && attributes.length > 0) {
             data = calculateChartData(labels, attributes, $header.type, config);
         }
-    }}, 400)
+    }}, 50)
 
     $: {
         config, $items, $header;

@@ -39,6 +39,7 @@
     let updateType: string = "auto";
     let updateName: string = "";
     $: if ($lastUpdate) {
+        items = undefined;
         items = liveQuery(async () => {
             if (!timestamp) {
                 const rawItems = await ds.items.toArray();
@@ -66,7 +67,7 @@
         if (labels.length > 0 && attributes.length > 0) {
             data = calculateChartData(labels, attributes, $header.type, config);
         }
-    }}, 400)
+    }}, 50)
     
     $: {
         config, $items, $header;
