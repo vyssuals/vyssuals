@@ -8,7 +8,7 @@ export function getItemAttributes(versions: Versions, timestamp: string = ""): A
             return versions[timestamp]; }
         const timestamps: string[] = Object.keys(versions).sort().reverse();
         for (const ts of timestamps) {
-            console.log(`ts: ${ts}, timestamp: ${timestamp}`)
+            // console.log(`ts: ${ts}, timestamp: ${timestamp}`)
             if (ts <= timestamp) {
                 return versions[ts];
             }
