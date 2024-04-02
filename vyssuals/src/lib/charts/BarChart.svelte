@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Bar } from "svelte-chartjs";
     import { Chart, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from "chart.js";
-    import type { ChartConfig, Item } from "../types";
+    import type { ChartConfig, Header, Info, Item } from "../types";
     import { calculateChartData } from "../utils/chartDataUtils";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
     import { colorSyncChartConfig } from "../store";
@@ -9,13 +9,20 @@
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
     import { getAttributes, getLabels } from "../utils/chartDataUtils";
     import { liveQuery, type Observable } from "dexie";
+    import { debounce } from "lodash";
+
 
     export let config: ChartConfig;
 
     let ds: DataSourceDatabase;
+    let items: Observable<Item[]>;
+    let lastUpdate: Observable<Info | undefined>;
+    let header: Observable<Header | undefined>;
+
     $: ds = db.get(config.dataSourceName);
     $: lastUpdate = liveQuery(() => ds.info.get("lastUpdate"));
-    $: console.log(`barchart.svelte: lastUpdate changed ${$lastUpdate?.value}`);
+    $: header = liveQuery(() => ds.metadata.get(config.showValues));
+    // $: console.log(`barchart.svelte: lastUpdate changed ${$lastUpdate?.value}`);
 
     let timestamp: string;
     $: {
@@ -28,11 +35,10 @@
         }
         getTimestamp();
     }
-    $: console.log(`barchart.svelte: timestamp changed ${timestamp}`);
+    // $: console.log(`barchart.svelte: timestamp changed ${timestamp}`);
 
     let updateType: string = "auto";
     let updateName: string = "";
-    let items: Observable<Item[]>;
     $: items = liveQuery(async () => {
         if (!timestamp) {
             const rawItems = await ds.items.toArray();
@@ -45,23 +51,26 @@
         return rawItems.filter((item): item is Item => item !== undefined);
     });
 
-    $: if ($items) console.log(`barchart.svelte: items changed, count: ${$items.length}`);
-
     let labels: string[] = [];
     let attributes: any[] = [];
+    let data: any = undefined;
+    let subtitle: string;
 
-    $: if (config && $items) {
+    const debouncedUpdate = debounce(() => { if (config && $items && $header) {
         labels = getLabels($items, config.groupBy, config.update);
         attributes = getAttributes($items, config.update);
-    }
-    $: header = liveQuery(() => ds.metadata.get(config.showValues));
-
-    let data: any;
-    let subtitle: string;
-    $: if (labels.length > 0 && attributes.length > 0 && $header) {
-        data = calculateChartData(labels, attributes, $header.type, config);
         subtitle = formatSubtitle(config, $header.unitSymbol, updateName, updateType);
+        if (labels.length > 0 && attributes.length > 0) {
+            data = calculateChartData(labels, attributes, $header.type, config);
+        }
+    }}, 400)
+
+    $: {
+        config, $items, $header;
+        data = undefined;
+        debouncedUpdate();
     }
+
     $: title = formatTitle(config);
 
     $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index) {
@@ -109,7 +118,9 @@
 </script>
 
 <h1 class="chart-title">{title}</h1>
-{#await data then data}
+{#if data !== undefined}
     <h3 class="chart-subtitle" title="You can edit the unit symbol in the settings of this datasource.">{subtitle}</h3>
     <Bar id="barchart" {data} {options} style="height: 310px; width: 595px" />
-{/await}
+{:else}
+    <h3 class="chart-subtitle">Loading...</h3>
+{/if}
