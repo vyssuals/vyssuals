@@ -31,7 +31,6 @@
   "dependencies": {
     "dexie": "^3.2.6",
     "lodash.debounce": "^4.0.8",
-    "lodash.isequal": "^4.5.0",
     "posthog-js": "^1.116.2"
   }
 }
