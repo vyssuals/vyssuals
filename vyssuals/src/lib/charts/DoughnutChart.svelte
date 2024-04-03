@@ -78,7 +78,7 @@
     $: console.log(`donutchart.svelte: data changed ${data}`);
     $: title = formatTitle(config);
 
-    $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index) {
+    $: if ($colorSyncChartConfig && data && $colorSyncChartConfig.index === config.index) {
         $colorSyncChartConfig.labels = data.labels;
     }
 
