@@ -80,6 +80,7 @@
             console.log($colorSyncChartConfig)
             posthog.capture("color_sync_disabled", { chartType: config.chartType });
         } else {
+            config.labels = undefined;
             colorSyncChartConfig.set(config);
             posthog.capture("color_sync_enabled", { chartType: config.chartType });
         }

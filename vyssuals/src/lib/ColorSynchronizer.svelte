@@ -90,7 +90,6 @@
     }
 
     function createColorInformation(attributeName: string, label: string, attributes: Attributes[], color: string): ColorInformation {
-        console.log(`creating color information for ${label}`);
         return {
             color,
             ids: attributes.filter((attribute) => attribute[attributeName] == label).map((attribute) => attribute.Id)

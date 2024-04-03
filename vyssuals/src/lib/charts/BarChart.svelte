@@ -9,7 +9,8 @@
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
     import { getAttributes, getLabels } from "../utils/chartDataUtils";
     import { liveQuery, type Observable } from "dexie";
-    import { debounce } from "lodash";
+    import { debounce, isEqual } from "lodash";
+
 
 
     export let config: ChartConfig;
@@ -76,7 +77,9 @@
     $: title = formatTitle(config);
 
     $: if ($colorSyncChartConfig && data && $colorSyncChartConfig.index === config.index) {
-        $colorSyncChartConfig.labels = data.labels;
+        if (!isEqual($colorSyncChartConfig.labels, data.labels)) {
+            $colorSyncChartConfig.labels = data.labels;
+        }
     }
 
     Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
