@@ -4,12 +4,13 @@
     import { Doughnut } from "svelte-chartjs";
     import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, type ChartOptions } from "chart.js";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
-    import { colorSyncChartConfig } from "../store";
+    import { syncChartIndex } from "../store";
     import { db } from "../data/databaseManager";
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
     import { getAttributes, getLabels } from "../utils/chartDataUtils";
     import { liveQuery, type Observable } from "dexie";
     import { debounce } from "lodash";
+    import { sendColors } from "../colorSynchronizer";
 
     export let config: ChartConfig;
 
@@ -78,8 +79,8 @@
     $: console.log(`donutchart.svelte: data changed ${data}`);
     $: title = formatTitle(config);
 
-    $: if ($colorSyncChartConfig && data && $colorSyncChartConfig.index === config.index) {
-        $colorSyncChartConfig.labels = data.labels;
+    $: if (data && $syncChartIndex == config.index) {
+        sendColors(config, data.labels);
     }
 
     ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);

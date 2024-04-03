@@ -1,12 +1,12 @@
 <script lang="ts">
     import type { ChartConfig, Item } from "../types";
     import { formatSubtitle, titleCase } from "../utils/textUtils";
-    import Chart from "./Chart.svelte";
     import { getLabels, sumAttributeValues, getAttributes } from "../utils/chartDataUtils";
-    import { colorSyncChartConfig } from "../store";
     import { liveQuery, type Observable } from "dexie";
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
     import { db } from "../data/databaseManager";
+    import { sendColors } from "../colorSynchronizer";
+    import { syncChartIndex } from "../store";
 
 
     export let config: ChartConfig;
@@ -80,10 +80,9 @@
     let subtitle: string;
     $: if ($header) subtitle = formatSubtitle(config, $header.unitSymbol, updateName, updateType);
     
-    $: if ($colorSyncChartConfig && $colorSyncChartConfig.index === config.index && attributes.length > 0) {
-        
+    $: if ($syncChartIndex == config.index && attributes.length > 0) {
         let labels: string[] = [...new Set(attributes.map((attr) => attr[config.showValues]?.toString()).filter(Boolean))]
-        $colorSyncChartConfig.labels = labels
+        sendColors(config, labels);
     }
 
     // function for formatting large numbers with ` , e.g. 1`000`000

@@ -4,13 +4,13 @@
     import type { ChartConfig, Header, Info, Item } from "../types";
     import { calculateChartData } from "../utils/chartDataUtils";
     import { formatTitle, formatSubtitle } from "../utils/textUtils";
-    import { colorSyncChartConfig } from "../store";
     import { db } from "../data/databaseManager";
     import { DataSourceDatabase } from "../data/dataSourceDatabase";
     import { getAttributes, getLabels } from "../utils/chartDataUtils";
     import { liveQuery, type Observable } from "dexie";
-    import { debounce, isEqual } from "lodash";
-
+    import { debounce } from "lodash";
+    import { sendColors } from "../colorSynchronizer";
+    import { syncChartIndex } from "../store";
 
 
     export let config: ChartConfig;
@@ -26,15 +26,12 @@
     // $: console.log(`barchart.svelte: lastUpdate changed ${$lastUpdate?.value}`);
 
     let timestamp: string;
-    $: {
-        async function getTimestamp() {
-            if (config.update != "Latest Update") {
-                timestamp = config.update;
-            } else {
-                timestamp = $lastUpdate?.value || "Latest Update";
-            }
-        }
-        getTimestamp();
+    $: if (config.update != "Latest Update") {
+        timestamp = config.update;
+    }
+
+    $: if ($lastUpdate && config.update == "Latest Update") {
+        timestamp = $lastUpdate?.value || "Latest Update";
     }
     // $: console.log(`barchart.svelte: timestamp changed ${timestamp}`);
 
@@ -76,10 +73,8 @@
 
     $: title = formatTitle(config);
 
-    $: if ($colorSyncChartConfig && data && $colorSyncChartConfig.index === config.index) {
-        if (!isEqual($colorSyncChartConfig.labels, data.labels)) {
-            $colorSyncChartConfig.labels = data.labels;
-        }
+    $: if (data && $syncChartIndex === config.index) {
+       sendColors(config, data.labels);
     }
 
     Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);

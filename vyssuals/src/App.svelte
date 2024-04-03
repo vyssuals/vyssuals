@@ -1,14 +1,13 @@
 <script lang="ts">
     import GradientButton from "./lib/buttons/GradientButton.svelte";
     import { onMount } from "svelte";
-    import { colorSyncChartConfig, showChartEditor, showDataConnectionEditor, showDataSourceEditor, showDataInfo } from "./lib/store";
+    import { showChartEditor, showDataConnectionEditor, showDataSourceEditor, showDataInfo } from "./lib/store";
     import ChartGrid from "./lib/chartSetup/ChartGrid.svelte";
     import ChartEditor from "./lib/chartSetup/ChartEditor.svelte";
     import Welcome from "./lib/Welcome.svelte";
     import DataConnectionEditor from "./lib/data/DataConnectionEditor.svelte";
     import DataInfo from "./lib/DataInfo.svelte";
     import OpenDataSourcesButton from "./lib/buttons/OpenDataSourcesButton.svelte";
-    import ColorSynchronizer from "./lib/ColorSynchronizer.svelte";
     import { connectWebSocket } from "./lib/websocket/websocket";
     import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
     import { db } from "./lib/data/databaseManager";
@@ -63,8 +62,6 @@
     {/if}
 
     <OpenDataSourcesButton />
-    <ColorSynchronizer />
-
     
 </main>
 

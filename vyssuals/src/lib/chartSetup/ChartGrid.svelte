@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { chartToEdit, showChartEditor, colorSyncChartConfig } from "../store";
+    import { chartToEdit, showChartEditor, syncChartIndex } from "../store";
     import Chart from "../charts/Chart.svelte";
     import html2canvas from "html2canvas";
     import { formatTitle } from "../utils/textUtils";
@@ -9,6 +9,7 @@
     import { blur } from "svelte/transition";
     import { flip } from "svelte/animate";
     import posthog from "posthog-js";
+    import { sendCleanup } from "../colorSynchronizer";
 
     let gridItems: any = [];
 
@@ -74,14 +75,13 @@
         if (await db.get(config.dataSourceName).type == "file") return;
         if (config.chartType == "total" ) config.groupBy = config.showValues;
     
-        if ($colorSyncChartConfig && $colorSyncChartConfig.id === config.id) {
+        if ($syncChartIndex === config.index) {
             console.log("color sync disabled");
-            colorSyncChartConfig.set(null);
-            console.log($colorSyncChartConfig)
+            syncChartIndex.set(-1);
+            sendCleanup();
             posthog.capture("color_sync_disabled", { chartType: config.chartType });
         } else {
-            config.labels = undefined;
-            colorSyncChartConfig.set(config);
+            syncChartIndex.set(config.index);
             posthog.capture("color_sync_enabled", { chartType: config.chartType });
         }
     }
@@ -93,7 +93,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div
-                class={$colorSyncChartConfig && $colorSyncChartConfig.id === config.id ? "grid-item color-sync" : "grid-item"}
+                class={$syncChartIndex == config.index ? "grid-item color-sync" : "grid-item"}
                 style="width: {width[config.chartType]}"
                 on:click={() => toggleColorSync(config)}
                 bind:this={gridItems[index]}
