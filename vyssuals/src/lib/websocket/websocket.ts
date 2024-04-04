@@ -36,7 +36,6 @@ export const connectWebSocket = () => {
 
     socket.onopen = (event: Event) => {
         console.log("Connected to server");
-        socket?.send("Vyssuals connected");
 
         // If the client reconnected before the timer expired, cancel the timer
         if (clearDataTimeout !== null) {
@@ -64,7 +63,6 @@ export const connectWebSocket = () => {
     window.addEventListener("beforeunload", () => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             // WebSocket is still open, send disconnection message to the server
-            socket.send("Vyssuals disconnected");
             socket.close();
         }
     });
