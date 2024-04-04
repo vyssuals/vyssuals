@@ -22,12 +22,12 @@ export async function sendColors(config: ChartConfig, labels: string[]) {
     }
 }
 
-export async function sendCleanup() {
+export async function sendCleanup(config: ChartConfig) {
     if (socket && socket.readyState === WebSocket.OPEN) {
         const message: WebSocketMessage = {
             timestamp: new Date().toISOString(),
             sender: "Vyssuals",
-            senderName: "Vyssuals",
+            senderName: config.dataSourceName,
             senderVersion: "1.0",
             version: "1.0",
             type: "colorCleanup",

@@ -78,7 +78,7 @@
         if ($syncChartIndex === config.index) {
             console.log("color sync disabled");
             syncChartIndex.set(-1);
-            sendCleanup();
+            sendCleanup(config);
             posthog.capture("color_sync_disabled", { chartType: config.chartType });
         } else {
             syncChartIndex.set(config.index);
