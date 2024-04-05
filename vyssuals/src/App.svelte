@@ -69,7 +69,7 @@
     <a class="info-text bottom-right" href="https://www.yssentyl.com" target="_blank">© Yssentyl 2024</a>
     <span class="bottom-left">
         <button class="info-text" on:click={() => handleDataInfo()}>My Data?</button>
-        <a class="info-text" href="https://yssentyl.com/blog/csv-data-visualization-in-under-10-seconds" target="_blank">Tutorial?</a>    
+        <a class="info-text" href="https://yssentyl.com/blog/real-time-data-visualization-for-revit-with-vyssuals-com" target="_blank">Tutorial?</a>    
     </span>
 </footer>
 
