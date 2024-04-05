@@ -6,7 +6,8 @@
 <h1>Revit Connector</h1>
 <a href={msiFileURL} download>Download Installer v0.1.0</a>
 
-<p>The Vyssuals Revit Connector enables you to synchronize your Revit model with Vyssuals.com.</p>
+<p>The Vyssuals Revit Connector enables you to synchronize your Revit model with Vyssuals.com.<br>
+Currently supported Revit versions are: 2024, 2023, 2022</p>
 <ol>
     <li>Download the installer by clicking the 'Download Installer' button above.</li>
     <li>Install the Vyssuals Revit Connector by running the installer.</li>
