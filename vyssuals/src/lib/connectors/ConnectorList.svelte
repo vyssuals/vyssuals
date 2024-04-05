@@ -9,7 +9,7 @@
 
 <div>
   <button on:click={() => handleClickConnector("revit")}>Revit</button>
-  <button on:click={() => handleClickConnector("rhino")}>Rhino</button>
+  <!-- <button on:click={() => handleClickConnector("rhino")}>Rhino</button> -->
 </div>
 
 {#if $showConnector.length > 0}

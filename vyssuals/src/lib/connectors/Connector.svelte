@@ -37,7 +37,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 300px;
+    max-width: 900px;
     gap: 10px;
     background-color: var(--card-background-color);
     border-radius: 1em;
