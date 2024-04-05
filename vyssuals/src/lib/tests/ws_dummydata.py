@@ -11,29 +11,29 @@ fire_rating = ['A', 'B', 'C', 'D', 'E', 'F']
 heights = [3.5, 4.22, 4.5, 7]
 some_long_parameter_name = ['Alphaaaaaaaaaaaaaaaa', 'Betaaaaaaaaaaa', 'Gammaaaaa', 'Deltaaaaaaaaaaaaaaaaaaaaaaaaaaa', 'Epsilonaaaa', 'Zetaaaaa']
 
-allIds = [str(i) for i in range(100000)]
+allIds = [str(i) for i in range(100)]
 
 def get_random_element(array):
     return random.choice(array)
 
 def get_random_number(min, max):
-    return random.randint(min, max)
+    return round(random.uniform(min, max), 2)
 
 def generate_dummy_data():
     data = []
-    update = Update(timestamp=str(datetime.now()), type='manual', name='example Name', visible_item_ids=[])
     timestamp = str(datetime.now())
+    update = Update(timestamp=timestamp, type='manual', name='example Name', visible_item_ids=[])
 
     # get subset of allIds  
-    ids = random.sample(allIds, allIds.__len__()//11)
+    ids = random.sample(allIds, 50)
     update.visibleItemIds = ids
 
     metadata = [
-        Header(name='area', type='number', unit_symbol='m2'),
+        Header(name='area', type='number', unit_symbol=''),
         Header(name='category', type='string', unit_symbol=''),
         Header(name='level', type='string', unit_symbol=''),
         Header(name='fireRating', type='string', unit_symbol=''),
-        Header(name='height', type='number', unit_symbol='m'),
+        Header(name='height', type='number', unit_symbol=''),
         Header(name='someLongParameterName', type='string', unit_symbol=''),
     ]
 
@@ -47,7 +47,8 @@ def generate_dummy_data():
         version = Version(
             timestamp=timestamp,
             attributes={
-            'area': get_random_number(1, 10), # Generate a random value for 'area'
+                'Id': i, # Set the 'Id' attribute to the current value of 'i
+            'area': get_random_number(100, 1000), # Generate a random value for 'area'
             'category': get_random_element(categories), # Select a random category
             'level': get_random_element(levels), # Select a random level
             'fireRating': get_random_element(fire_rating) if 'walls' in categories or 'floors' in categories else None, # Generate a random value for 'fireRating' if the category is 'walls' or 'floors'
