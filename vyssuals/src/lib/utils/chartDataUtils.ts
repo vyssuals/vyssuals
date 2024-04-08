@@ -95,7 +95,23 @@ function countUniqueAttributeBy(attributes: Attributes[], aggregateAttribute: st
 }
 
 export function getLabels(items: Item[], groupBy: string, update: string): string[] {
-    return [...new Set(items.map((item) => item && getItemValue(item.versions, groupBy, update).toString()).filter(Boolean).sort())];
+    let rawLabels = [...new Set(items.map((item) => item && getItemValue(item.versions, groupBy, update)))];
+    console.log('raw labels', rawLabels)
+    // log data type for every label
+    rawLabels.forEach((label) => console.log(typeof label))
+    
+    rawLabels = rawLabels.filter(Boolean)
+    // Check the type of the first element and sort accordingly
+    if (rawLabels.length > 0) {
+        if (typeof rawLabels[0] === 'string') {
+            rawLabels.sort();
+        } else if (typeof rawLabels[0] === 'number') {
+            rawLabels.sort((a, b) => a - b);
+        }
+    }
+    
+    console.log('filtered labels', rawLabels)
+    return rawLabels.map((label) => label?.toString() || "");
 }
 
 export function getAttributes(items: Item[], update: string): Attributes[] {
