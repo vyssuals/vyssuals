@@ -18,3 +18,11 @@ Feel free to suggest and contribute improvements!
   
 # 🚀 Getting Started 
 You can find a tutorial [here](https://yssentyl.com/blog/real-time-data-visualization-for-revit-with-vyssuals-com)
+
+# Technical Overview
+Vyssuals uses a WebSocket connection to transfer data from a desktop application to the web app. It utilizes a ws-client inside the connector that tries to connect to an existing [vyssuals-websocket-server](https://github.com/vyssuals/vyssuals-websocket-server). If the client in the connector does not find a server, it spins up one itself and then connects to it.
+
+The data in the web app is stored inside indexeddb using dexie, separeted by datasource. There are 3 tables per datasource:
+- **Updates**. This keeps track of the items 'visible' or 'included' when the data was recieved.
+- **Headers**. Contains metadata about the 'columns' or 'parameters' in the data.
+- **Items**. All items ever sent from that datasource. An Item has 'versions' of its parameters and their values. This allows to track changes over time.
