@@ -12,7 +12,9 @@ Here are some suggested features may be implemented in the future:
 - Functionality for deleting updates
 - More chart types
 - Archicad connector
-- A GraphQL connector
+- GraphQL connector
+- Select between custom color / color palette and color gradient
+- Add deleted marker to item
 
 Feel free to suggest and contribute improvements!
   
