@@ -11,6 +11,8 @@ Currently available connectors:
 Here are some suggested features may be implemented in the future:
 - Functionality for deleting updates
 - More chart types
+  - Principle Component Analysis on numeric parameters
+  - K-Means Clustering Chart 
 - Archicad connector
 - GraphQL connector
 - Select between custom color / color palette and color gradient
