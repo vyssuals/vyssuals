@@ -11,7 +11,9 @@ Currently available connectors:
 Here are some suggested features may be implemented in the future:
 - Functionality for deleting updates
 - More chart types
-  - K-Means Clustering Chart 
+  - K-Means Clustering Chart
+- Ability to select a bar/pie/... piece to highlight corresponding elements in Revit/...
+  - Evaluate if this should also filter other charts 
 - Archicad connector
 - GraphQL connector
 - Select between custom color / color palette and color gradient
