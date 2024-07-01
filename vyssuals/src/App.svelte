@@ -27,6 +27,12 @@
 
     $: hasChartConfigs = db.vyssuals.hasChartConfigs;
     $: hasDatabases = db.hasDatabases;
+
+    (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+    .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+    n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
+    (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+    ml('account', '1003753');
 </script>
 
 <main>
@@ -72,10 +78,15 @@
         <button class="info-text" on:click={() => handleDataInfo()}>My Data?</button>
         <a class="info-text" href="https://yssentyl.com/blog/real-time-data-visualization-for-revit-with-vyssuals-com" target="_blank">Tutorial?</a>    
     </span>
-        <MailingList />
+        <!-- <MailingList /> -->
+        <div class="ml-embedded mail-form" data-form="ZpeUge"></div>
 </footer>
 
 <style>
+    .mail-form {
+        min-width: 400px;
+    }
+
     main {
         padding: 2rem;
     }
