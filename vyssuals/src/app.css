@@ -1,5 +1,5 @@
 :root {
-  font-family:  Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family:  Poppins, sans-serif;
 
   color-scheme: light dark;
   color: var(--color);
@@ -25,12 +25,16 @@ body {
   min-height: 100vh;
 }
 
+input {
+  border-radius: 8px;
+}
+
 button {
   border-radius: 8px;
   border: none;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  font-weight: 300;
+  font-weight: 400;
   font-family: inherit;
   background-color: var(--card-background-color);
   cursor: pointer;
@@ -41,6 +45,13 @@ button:hover {
   filter: drop-shadow(0 0 0.5em var(--dropshadow-color));
 }
 
+input {
+  background: var(--card-background-color);
+  border-color: var(--outline-color);
+}
+input::placeholder {
+  color: #909090; /* Change to your desired placeholder text color */
+}
 h1 {
   font-size: 2em;
   margin: 0 auto;

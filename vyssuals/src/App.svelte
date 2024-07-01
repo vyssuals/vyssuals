@@ -11,6 +11,7 @@
     import { connectWebSocket } from "./lib/websocket/websocket";
     import DataSourceEditor from "./lib/data/DataSourceEditor.svelte";
     import { db } from "./lib/data/databaseManager";
+    import MailingList from "./lib/MailingList.svelte";
 
     onMount(() => {
         connectWebSocket();
@@ -71,6 +72,7 @@
         <button class="info-text" on:click={() => handleDataInfo()}>My Data?</button>
         <a class="info-text" href="https://yssentyl.com/blog/real-time-data-visualization-for-revit-with-vyssuals-com" target="_blank">Tutorial?</a>    
     </span>
+        <MailingList />
 </footer>
 
 <style>

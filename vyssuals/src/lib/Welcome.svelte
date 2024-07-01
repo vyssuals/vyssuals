@@ -27,7 +27,7 @@
 
   .gradient-text {
     font-size: 3em;
-    font-weight: 500;
+    font-weight: 700;
     margin: 0.3em;
     background: linear-gradient(to right, #dc0999, #05acff);
     -webkit-background-clip: text;
@@ -35,6 +35,5 @@
   }
   p {
     font-size: 1em;
-    font-weight: 300;
   }
 </style>
