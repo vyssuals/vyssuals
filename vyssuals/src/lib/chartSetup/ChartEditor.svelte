@@ -190,7 +190,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 260px;
+        width: 270px;
         gap: 10px;
         background-color: var(--card-background-color);
         border-radius: 1em;
